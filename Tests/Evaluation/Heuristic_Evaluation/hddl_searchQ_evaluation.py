@@ -3,7 +3,7 @@ from heuristic_evaluation import *
 
 class HDDLSearchQEvaluation(unittest.TestCase):
 
-    @unittest.skip
+    # @unittest.skip
     def test_00_Rover_1_4_BF_No_Pruning(self):
         """Test Rover p01 -> p04 with breadth first search without pruning - DONE"""
         tests = [("../../../../Examples/Rover/domain.hddl", "../../../../Examples/Rover/p01.hddl"),
