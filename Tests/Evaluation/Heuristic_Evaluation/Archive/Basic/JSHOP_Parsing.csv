@@ -1,6 +1,2 @@
 example_name,time_taken,search_models_created,serialised_actions_taken,serialised_state
-basic/problem.jshop,0.01686406135559082,0,NONE,NONE
-basic/problem.jshop,0.0009925365447998047,0,NONE,NONE
-basic/problem.jshop,0.0004956722259521484,0,NONE,NONE
-basic/problem.jshop,0.0009942054748535156,0,NONE,NONE
-basic/problem.jshop,0.0009915828704833984,0,NONE,NONE
+basic/problem.jshop,0.0009918212890625,0,NONE,NONE

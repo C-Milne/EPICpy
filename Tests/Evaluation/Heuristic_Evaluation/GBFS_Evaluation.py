@@ -72,7 +72,7 @@ class GBFSEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Rover", SearchQueue=GBFSSearchQueue)
 
-    # @unittest.skip
+    @unittest.skip
     def test_05_Rover_1_4_Hamming(self):
         """Test rover with Hamming Distance heuristic -> DONE"""
         tests = [("../../../../Examples/Rover/domain.hddl", "../../../../Examples/Rover/p01.hddl"),
@@ -98,7 +98,7 @@ class GBFSEvaluation(unittest.TestCase):
                   Strat("Tree_Distance_GBFS", TreeDistance)]
         run_tests(tests, strats, "translog", False, SearchQueue=GBFSSearchQueue)
 
-    # @unittest.skip
+    @unittest.skip
     def test_07_translog_Hamming(self):
         """Test translog1 -> DONE"""
         tests = [("../../../../Examples/IPC_Tests/um-translog01/domain.hddl",
@@ -142,7 +142,7 @@ class GBFSEvaluation(unittest.TestCase):
 
     @unittest.skip
     def test_11_depots_delete_relaxed(self):
-        """Test depot p1 -> p3 with Delete Relaxed"""
+        """Test depot p1 -> p3 with Delete Relaxed - DONE"""
         tests = [("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p01.hddl")]
         # ("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p02.hddl")]
         # ("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p03.hddl")]
@@ -151,7 +151,7 @@ class GBFSEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Depot", SearchQueue=GBFSSearchQueue)
 
-    # @unittest.skip
+    @unittest.skip
     def test_12_depots_hamming(self):
         """Test depot p1 -> p3 with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p01.hddl"),
@@ -217,7 +217,7 @@ class GBFSEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance_GBFS", TreeDistance)]
         run_tests(tests, strats, "Barman", SearchQueue=GBFSSearchQueue)
 
-    # @unittest.skip
+    @unittest.skip
     def test_18_barman_hamming(self):
         """Test Barman with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Barman/domain.hddl", "../../../../Examples/Barman/pfile01.hddl")]
@@ -247,7 +247,7 @@ class GBFSEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance_GBFS", TreeDistance)]
         run_tests(tests, strats, "Factories", SearchQueue=GBFSSearchQueue)
 
-    # @unittest.skip
+    @unittest.skip
     def test_22_factories_hamming(self):
         """Test Factories with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Factories/domain.hddl", "../../../../Examples/Factories/pfile01.hddl")]
