@@ -1,24 +1,19 @@
-# Installing the system
-This system can be downloaded from GitHub [here](https://github.com/C-Milne/4th-Year-Dissertation)
+# Components
+This section explains the functionality provided by each component of the planner.
 
-# Dependencies
-This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
+## Heuristics
+Heuristics are used to score states depending on how close to goal they are.
+Each developed heuristic **MUST** inherit the heuristic class found at /Solver/Heuristics/Heuristic.py.
 
-All other packages used by the system are included with Python as standard.
+### Delete Relaxed
+### Hamming Distance
+### Tree Distance
 
-This system has been tested with Python versions 3.9 & 3.10
-
-# Running the system
-From the command line a problem can be given to the planner to solve using the command:
-
-```commandline
-python ./Runner.py <Domain File Path> <Problem File Path>
-```
-
-For more information on running the system please refer to the User Manual [here](https://github.com/C-Milne/4th-Year-Dissertation/blob/main/README.md).
-
-# Space and memory requirements
-Memory requirements depend entirely on the size of the problem being solved. Larger problems require more options to be searched which in turn uses more memory.
+## Parameter Selectors
+## Search Queues
+## Solving Algorithms
+## Parsers
+## Representation Objects
 
 # Key File Paths
 - Heuristics : /Solver/Heuristics

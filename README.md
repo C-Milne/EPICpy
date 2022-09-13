@@ -1,7 +1,33 @@
-# Running the planner
+# Contents
+1. [Setup](#setup)
+2. [Running The Planner](#running-the-planner)
+   1. [Running from Command Line](#running-from-command-line)
+   2. [Running Via Runner Class](#running-via-runner-class)
+   3. [Memory Requirements](#memory-requirements)
+3. [Example Problems](#example-problems)
+4. [Component Selection](#component-selection)
+   1. [Total-Order Heuristics](#total-order-heuristics)
+   2. [Partial-Order Heuristics](#partial-order-heuristics)
+   3. [Search Queues](#search-queues)
+   4. [Parameter Selectors](#parameter-selectors)
+   5. [Solvers](#solvers)
+5. [Output](#output)
+   1. [Output Plan Reader](#output-plan-reader)
+6. [Running Unittests](#running-unittests)
+7. [System Evaluation](#system-evaluation)
+8. [Demo Running Configurations](#demo-running-configurations)
+
+# Setup
+This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
+
+All other packages used by the system are included with Python as standard.
+
+This system has been tested with Python versions 3.9 & 3.10
+
+# Running the planner 
 There are two methods of running the planner, from the command line and by using the Runner class.
 
-## Running from Command line
+## Running from Command Line
 From the main project directory the planner can be initiated using the command:
 
 ```commandline
@@ -28,6 +54,10 @@ controller.set_parameter_selector(ParameterSelector)
 controller.set_heuristic(Heuristic)
 result = controller.solve()
 ```
+
+## Memory Requirements
+Memory requirements depend entirely on the size of the problem being solved. Larger problems require more options to be searched which in turn uses more memory.
+
 
 # Example Problems
 Example problems can be found in the Tests/Examples directory.
