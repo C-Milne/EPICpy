@@ -1,7 +1,5 @@
 import unittest
-from Internal_Representation.precondition import Precondition
 from Solver.model import Model
-from Solver.Solving_Algorithms.solver import Solver
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
@@ -10,7 +8,7 @@ from Internal_Representation.problem import Problem
 from Internal_Representation.subtasks import Subtasks
 from Internal_Representation.state import State
 from Internal_Representation.reg_parameter import RegParameter
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Trackers.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection

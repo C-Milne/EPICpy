@@ -1,12 +1,9 @@
-import sys
-import copy
-from Internal_Representation.precondition import Precondition
 from Internal_Representation.method import Method
 from Internal_Representation.action import Action
 from Internal_Representation.task import Task
 from Internal_Representation.state import State
 from Internal_Representation.subtasks import Subtasks
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Trackers.action_tracker import ActionTracker
 
 """The idea here is that this class will contain all information regarding the current state of the environment"""
 

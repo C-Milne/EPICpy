@@ -104,12 +104,15 @@ Search Models Created During Search: 3
         self.assertTrue(os.path.exists("output/runner_test_basic_p1"))
 
     def test_file_writing_and_reading(self):
+        if os.path.isfile("output/runner_test_basic_p1"):
+            os.remove("output/runner_test_basic_p1")
+
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_domain_path)
         parser.parse_problem(self.basic_pb1_path)
         res = solver.solve()
         Runner.output_result_file(res, "runner_test_basic_p1")
-        plan = read_plan("../../output/runner_test_basic_p1")
+        plan = read_plan("output/runner_test_basic_p1")
 
         self.assertEqual(res.model_number, plan.model_number)
         self.assertEqual(res.current_state, plan.current_state)
