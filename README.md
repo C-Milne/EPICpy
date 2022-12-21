@@ -1,21 +1,50 @@
 # Contents
-1. [Setup](#setup)
-2. [Running The Planner](#running-the-planner)
-   1. [Running from Command Line](#running-from-command-line)
-   2. [Running Via Runner Class](#running-via-runner-class)
-   3. [Memory Requirements](#memory-requirements)
-3. [Example Problems](#example-problems)
-4. [Component Selection](#component-selection)
-   1. [Total-Order Heuristics](#total-order-heuristics)
-   2. [Partial-Order Heuristics](#partial-order-heuristics)
-   3. [Search Queues](#search-queues)
-   4. [Parameter Selectors](#parameter-selectors)
-   5. [Solvers](#solvers)
-5. [Output](#output)
-   1. [Output Plan Reader](#output-plan-reader)
-6. [Running Unittests](#running-unittests)
-7. [System Evaluation](#system-evaluation)
-8. [Demo Running Configurations](#demo-running-configurations)
+* [Setup](#setup)
+* [Running the planner](#running-the-planner)
+  * [Running from Command Line](#running-from-command-line)
+  * [Running Via Runner Class](#running-via-runner-class)
+  * [Memory Requirements](#memory-requirements)
+* [Example Problems](#example-problems)
+* [Components](#components)
+  * [Model](#model)
+  * [Heuristics](#heuristics)
+    * [Delete Relaxed](#delete-relaxed)
+    * [Hamming Distance](#hamming-distance)
+    * [Tree Distance](#tree-distance)
+  * [Parameter Selectors](#parameter-selectors)
+    * [All Parameters](#all-parameters)
+    * [Requirement Selector](#requirement-selector)
+  * [Search Queues](#search-queues)
+    * [Total Cost](#total-cost)
+    * [Greedy Best First Search (GBFS)](#greedy-best-first-search--gbfs-)
+    * [Greedy Cost](#greedy-cost)
+  * [Solving Algorithms](#solving-algorithms)
+    * [Total Order Solver](#total-order-solver)
+    * [Partial Order Solver](#partial-order-solver)
+* [Component Selection](#component-selection)
+  * [Total-Order Heuristics](#total-order-heuristics)
+  * [Partial-Order Heuristics](#partial-order-heuristics)
+  * [Search Queues](#search-queues)
+  * [Parameter Selectors](#parameter-selectors)
+  * [Solvers](#solvers)
+* [Output](#output)
+  * [Output Plan Reader](#output-plan-reader)
+* [Running Unittests](#running-unittests)
+* [System Evaluation](#system-evaluation)
+* [Key File Paths](#key-file-paths)
+* [Directions for Future Improvements](#directions-for-future-improvements)
+  * [Heuristic](#heuristic)
+  * [Parameter Selector](#parameter-selector)
+  * [Search Queue](#search-queue)
+  * [Solver](#solver)
+  * [Running Unittests](#running-unittests)
+* [Bug Solving](#bug-solving)
+* [Demo Running Configurations](#demo-running-configurations)
+
+# Welcome to EPICpy
+Extendable Planner with Interchangeable Components in Python
+
+There is a known issue with the unittests for this project in Linux based operating systems. These issues will be rectified come time.
 
 # Setup
 This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
@@ -61,6 +90,92 @@ Memory requirements depend entirely on the size of the problem being solved. Lar
 
 # Example Problems
 Example problems can be found in the Tests/Examples directory.
+
+# Components
+This section explains the functionality provided by each component of the planner.
+
+## Model
+One of the most fundamental aspects of HTN planning is the idea of search state,
+which store all the information regarding the environment during search.
+In this project the class Model undertakes the role of representing and managing a search state.
+
+At the beginning of search in a total-ordered problem usually only one model exists, during
+search as multiple options for decompositions appear more models are created to consider all
+decomposition options. Different decompositions add differing modifiers to the task network, this
+brings in the requirement for models to store and manage task networks.
+
+Source code for the model class can be found at **\Solver\model.py**.
+
+## Heuristics
+Heuristics are used to score states depending on how close to goal they are.
+Each developed heuristic **MUST** inherit the heuristic class found at **/Solver/Heuristics/Heuristic.py**.
+All heuristics are located within the **/Solver/Heuristics** folder.
+
+### Delete Relaxed
+The Delete and Ordering Relaxed Heuristic estimates the distance until a task
+network is fully decomposed by employing a bottom up reliability strategy. A key feature of this
+heuristic is that all delete effects of Actions and subtask orderings are completely ignored. This
+creates some interesting states, since predicates and their inverses can be in the state at the same
+time. For example (have, A) and not(have, A) can coexist in the state. When an Action is applied
+to the state its name is also added, since a Method is applicable when all its subtasks are present in
+the state. When a Method is decomposed the name of the Task it decomposes is added to the state.
+This strategy is iterative; each iteration collects all Actions and Methods which are applicable to
+the state. This continues until either all Tasks in the task network are present in the state or an
+iteration where no Actions or Methods are applicable. The number of iterations taken to add all
+Tasks in the task network to the state is returned as the estimated distance to goal.
+
+### Hamming Distance
+Hamming Distance proposed by Richard Hamming refers to the amount of times two strings
+differ. We adapt this principle to calculate the number of times a state differs from the goal
+conditions.
+
+### Tree Distance
+Since a HTN planning problem is considered complete when the task network is fully decomposed, we propose Tree Distance as a heuristic which estimates the cost to fully decompose a task
+network. The diagram below shows an example of the estimated costs assigned to a Tasks, Methods, and
+Actions in a problem. The cost of an Action is always 1. The cost of a Method is the combined
+cost of all its subtasks plus 1. The cost of a Task is the cheapest cost of all its Methods plus 1.
+![Tree Distance Example](./images/Tree_Distance_Example_Diagram.png)
+
+## Parameter Selectors
+Selecting parameters is an optimiser. Only selecting
+parameters which are likely to be useful can save searching with parameters which will never
+yield a valid plan. With less model’s to search, a goal can be found quicker.
+
+### All Parameters
+The AllParameters parameter selection class is the base parameter selection technique. All
+combinations of objects which satisfy the parameter type are returned
+
+### Requirement Selector
+The RequirementSelection parameter selection class only selects parameters which satisfy the precondition constraints of a
+parameter. This strategy aims to reduce the amount of parameter options returned to the solving
+algorithm for consideration.
+
+
+## Search Queues
+During search multiple models are created. To contain and order these models we use a Search Queue.
+All Search Queues are located within the **/Solver/Search_Queues** folder.
+
+### Total Cost
+The SearchQueue class is the default Search Queue and orders models based on the total estimated cost to goal.
+The total cost is calculated as the cost thus far plus the estimated cost to goal which is provided by a heuristic. 
+
+### Greedy Best First Search (GBFS)
+The Greedy Best First Search queue orders models solely on the heuristic estimate.
+
+### Greedy Cost
+The Greedy Cost Search Queue orders models by dividing the cost thus far by five and adding the estimated cost to goal.
+
+## Solving Algorithms
+The role of a solving algorithm is to apply Methods and Actions to models in order to find a valid solution.
+Solving Algorithms can be found in the **/Solver/Solving_Algorithms** folder.
+
+### Total Order Solver
+In total-order problems orderings or subtasks are final. As such sequences of
+subtasks can simply be iterated over and added to the task network during the expansion of Methods. 
+
+### Partial Order Solver
+The Partial-Order Solver builds upon the functionality of the Total-Order Solver  by adding
+consideration for different subtask orderings when decomposing Methods. To calculate all the possible orderings Khans algorithm is adapted (See /Internal_Representation/subtasks._create_orderings()).
 
 # Component Selection
 Interchangeable components can be set from the command line or via the Runner class as previously seen.
@@ -150,6 +265,63 @@ The Tests/Evaluation/Heuristic_Evaluation/Archive directory is where all the res
 Within this directory results are sorted by problem domain.
 The <em>Heuristic_Evaluation_Data_Processing.ipynb</em> notebook visualises the results collected using graphs.
 
+# Key File Paths
+- Heuristics : /Solver/Heuristics
+- Parameter Selectors : /Solver/Parameter_Selection
+- Search Queues : /Solver/Search_Queues
+- Solving Algorithms : /Solver/Solving_Algorithms
+- Parsers : /Parsers
+- Representation Objects : /Internal_Representation
+- Example Problems : /Tests/Examples
+- Evaluation methods : /Tests/Evaluation/Heuristic_Evaluation
+- Unit Tests : /Tests/UnitTests
+
+# Directions for Future Improvements
+When developing new interchangeable components specific classes need to be inherited by any developed component.
+
+## Heuristic
+Developed Heuristics need to inherit the Heuristic class found in the Solver/Heuristics/Heuristic.py file.
+There are some alternatives to inheriting the Heuristic class directly, the Pruning and NoPruning classes found in files Solver/Heuristics/pruning.py and Solver/Heuristics/no_pruning.py respectively.
+Both of these classes inherit from the Heuristic class. The Pruning Class contains functionality for basic model pruning that can be inherited by other heuristics. 
+The PartialOrderPruning Class from file Solver/Heuristics/partial_order_pruning.py provides the same functionality but for partial-order problems.
+
+## Parameter Selector
+Developed Parameter Selectors need to inherit the ParameterSelector Class found in file Solver/Parameter_Selection/ParameterSelector.py.
+
+## Search Queue
+Developed Search Queues need to inherit the SearchQueue class found in Solver/Search_Queues/search_queue.py.
+
+## Solver
+Developed Solvers need to inherit the Solver class within the Solver/Solving_Algorithms/solver.py file.
+
+## Running Unittests
+All of the unittests can be run from the Tests/UnitTests directory using the following command:
+
+```commandline
+python ./All_Tests.py
+```
+
+# Bug Solving
+When attempting to debug the system it is recommended that a debugger with breakpoints is used. To aid in the debugging 
+process the search procedure can be manually controlled using a script. 
+Below is a snippet of a test case from the file Tests/UnitTest/JSHOP_Solving_Tests.py:
+
+```python
+def test_rover_execution_part_guided(self):
+    domain, problem, parser, solver = env_setup(False)
+    parser.parse_domain(self.rover_test_path + "rover.jshop")
+    parser.parse_problem(self.rover_test_path + "problem.jshop")
+
+    execution_prep(problem, solver)
+    solver.parameter_selector.presolving_processing(domain, problem)
+    # res = solver.solve()
+
+    solver._search(True)
+```
+
+In this example the search produce is completely controlled by the script shown. Notice that instead of using ```solver.solve()```
+```solver._search(True)``` is being used. This acts as a step control for search. Each functional call of ```solver._search(True)```
+will only decompose 1 Task, Method, or Action. This is an effective way to debug and track search procedure.
 
 # Demo Running Configurations
 1. Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl
