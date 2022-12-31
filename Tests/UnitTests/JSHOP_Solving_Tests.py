@@ -2,7 +2,7 @@ import unittest
 from Tests.UnitTests.TestTools.rover_execution import execution_prep
 from Tests.UnitTests.TestTools.env_setup import env_setup
 from Internal_Representation.problem_predicate import ProblemPredicate
-from Solver.Progress_Trackers.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 
 class JSHOPSolvingTests(unittest.TestCase):
@@ -116,13 +116,13 @@ class JSHOPSolvingTests(unittest.TestCase):
 
         self.assertNotEqual(None, res)
         self.assertIn(ActionTracker(domain.actions['!load'], {'?z': problem.objects['p1'], '?t': problem.objects['t2']}),
-                      res.actions_taken)
+                      res.get_progress_tracker().actions_taken)
         self.assertIn(
             ActionTracker(domain.actions['!load'], {'?z': problem.objects['p4'], '?t': problem.objects['t2']}),
-            res.actions_taken)
+            res.get_progress_tracker().actions_taken)
         self.assertIn(
             ActionTracker(domain.actions['!drive'], {'?t': problem.objects['t2'], '?x': problem.objects['city2'],
-                                                     '?y': problem.objects['city1']}), res.actions_taken)
+                                                     '?y': problem.objects['city1']}), res.get_progress_tracker().actions_taken)
         self.assertIn(ProblemPredicate(domain.predicates['at'], [problem.objects['p1'], problem.objects['city1']]),
                       res.current_state.elements)
         self.assertIn(ProblemPredicate(domain.predicates['at'], [problem.objects['p3'], problem.objects['city1']]),
@@ -148,8 +148,8 @@ class JSHOPSolvingTests(unittest.TestCase):
         res = solver.solve()
 
         self.assertNotEqual(None, res)
-        self.assertIn(ActionTracker(domain.actions['!drop'], {'?a': problem.objects['kiwi']}), res.actions_taken)
-        self.assertIn(ActionTracker(domain.actions['!pickup'], {'?a': problem.objects['banjo']}), res.actions_taken)
+        self.assertIn(ActionTracker(domain.actions['!drop'], {'?a': problem.objects['kiwi']}), res.get_progress_tracker().actions_taken)
+        self.assertIn(ActionTracker(domain.actions['!pickup'], {'?a': problem.objects['banjo']}), res.get_progress_tracker().actions_taken)
 
     def test_rover_execution_part_guided(self):
         domain, problem, parser, solver = env_setup(False)

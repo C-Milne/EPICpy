@@ -131,7 +131,7 @@ class HDDLGroundingTests(unittest.TestCase):
         plan = solver.solve()
         solver.output(plan)
         self.assertIsNotNone(plan)
-        self.assertEqual(1, len(plan.actions_taken))
+        self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
 
         problem.initial_state.remove_element(domain.predicates['foo'], [problem.objects['a']])
         solver = PartialOrderSolver(domain, problem)

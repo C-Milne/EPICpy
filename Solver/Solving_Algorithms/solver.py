@@ -1,5 +1,6 @@
 import sys
 from abc import ABC, abstractmethod, ABCMeta
+import copy
 from Solver.model import Model
 from Solver.Search_Queues.search_queue import SearchQueue
 from Internal_Representation.method import Method
@@ -17,7 +18,10 @@ from Solver.Heuristics.pruning import Pruning
 
 """Space for importing parameter selection functions"""
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
-from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Requirements
+from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Requirements # Do not remove this import statement
+
+"""Space for importing progress_tracker classes"""
+from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 
 """Importing from sys modules"""
 Precondition = sys.modules['Internal_Representation.precondition'].Precondition
@@ -35,6 +39,7 @@ class Solver(ABC):
 
         self.parameter_selector = RequirementSelection(self)
         self._requirement_parameter_selector = RequirementSelection(self)
+        self.progress_tracker = ProgressTracker
         self.task_expansion_given_param_check = True
 
     def set_heuristic(self, heuristic):
@@ -56,6 +61,10 @@ class Solver(ABC):
         heu = self.search_models.heuristic
         self.search_models = search_queue
         self.search_models.add_heuristic(heu)
+
+    def set_progress_tracker(self):
+        # TODO: Implement this
+        raise NotImplementedError
 
     def solve(self, **kwargs):
         self.parameter_selector.presolving_processing(self.domain, self.problem)
@@ -91,7 +100,7 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT)
+            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT, progress_tracker_class=self.progress_tracker)
 
             self.search_models.add(initial_model)
 
@@ -270,8 +279,7 @@ class Solver(ABC):
         for i in model.waiting_subtasks:
             new_model.waiting_subtasks.append(i)
 
-        new_model.populate_actions_taken(Model.reproduce_actions_taken(model))
-        new_model.populate_operations_taken(Model.reproduce_operations_list(model))
+        new_model.set_progress_tracker(model.get_progress_tracker().reproduce())
         return new_model
 
     @staticmethod
@@ -279,16 +287,7 @@ class Solver(ABC):
         assert type(resulting_model) == Model or resulting_model is None
 
         if not resulting_model is None:
-            print("\nActions Taken:")
-            for a in resulting_model.actions_taken:
-                print(a)
-            if len(resulting_model.actions_taken) == 0:
-                print("No Actions")
-
-            print("\nOperations Taken:")
-            for a in resulting_model.operations_taken:
-                print(a)
-
+            print(resulting_model.get_progress_tracker())
             # print("\nFinal State:")
             # print(resulting_model.current_state)
 

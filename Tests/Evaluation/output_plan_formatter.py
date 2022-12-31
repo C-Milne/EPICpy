@@ -7,13 +7,13 @@ original_path = os.getcwd()
 try:
     from Solver.model import Model
     from Solver.Solving_Algorithms.solver import Solver
-    from Solver.Progress_Trackers.action_tracker import ActionTracker
+    from Solver.Progress_Tracking.action_tracker import ActionTracker
 except:
     os.chdir("../..")
     sys.path.insert(1, os.getcwd())
     from Solver.model import Model
     from Solver.Solving_Algorithms.solver import Solver
-    from Solver.Progress_Trackers.action_tracker import ActionTracker
+    from Solver.Progress_Tracking.action_tracker import ActionTracker
     os.chdir(original_path)
 
 

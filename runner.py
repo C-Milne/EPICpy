@@ -15,6 +15,7 @@ from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Solver.model import Model
 from Solver.Search_Queues.search_queue import SearchQueue
+from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 
 
 class Runner:
@@ -85,6 +86,13 @@ class Runner:
 
     def set_search_queue_from_file(self, module_name: str, file_path: str) -> None:
         self.set_search_queue(self._get_module_from_file(module_name, file_path))
+
+    def set_progress_tracker(self, progress_tracker: type(ProgressTracker)):
+        # TODO: Implement this
+        raise NotImplementedError
+
+    def set_progress_tracker_from_file(self, module_name: str, file_path: str):
+        self.set_progress_tracker(self._get_module_from_file(module_name, file_path))
 
     def set_early_task_precon_checker(self, v: bool) -> None:
         self.solver.task_expansion_given_param_check = v

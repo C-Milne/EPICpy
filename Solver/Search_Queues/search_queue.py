@@ -36,7 +36,7 @@ class SearchQueue:
 
     def _add_model(self, model):
         res = self.heuristic.ranking(model)
-        ranking = len(model.operations_taken) + res
+        ranking = model.get_progress_tracker().get_num_operations_taken() + res
 
         if type(res) != int and (res is None or res == False):
             return  # Do not add to search queue

@@ -8,7 +8,7 @@ from Internal_Representation.problem import Problem
 from Internal_Representation.subtasks import Subtasks
 from Internal_Representation.state import State
 from Internal_Representation.reg_parameter import RegParameter
-from Solver.Progress_Trackers.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
@@ -266,14 +266,14 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_basic_execution_to(self):
         domain, problem, parser, solver = env_setup(True, False)
@@ -282,14 +282,14 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_compare_parameters(self):
         domain, problem, solver = RovEx.setup()
@@ -365,7 +365,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -384,7 +384,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -479,7 +479,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
