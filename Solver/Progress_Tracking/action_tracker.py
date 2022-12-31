@@ -4,13 +4,14 @@ from Internal_Representation.list_parameter import ListParameter
 
 
 class ActionTracker:
-    def __init__(self, mod: Modifier, parameters_used: dict):
+    def __init__(self, mod: Modifier, parameters_used: dict, root: bool):
         assert isinstance(mod, Modifier)
         assert type(parameters_used) == dict
         for k in parameters_used:
             assert type(parameters_used[k]) == Object or type(parameters_used[k]) == ListParameter
         self.mod = mod
         self.parameters_used = parameters_used
+        self.root_task = root
 
     def __eq__(self, other):
         if self.mod != other.mod:

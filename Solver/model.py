@@ -32,6 +32,13 @@ class Model:
 
         self.progress_tracker = Model.PROGRESS_TRACKER()
 
+        if 'initial_model' in kwargs and kwargs['initial_model']:
+            # Mark all tasks as roots
+            for sub in self.search_modifiers:
+                sub.set_root_task(True)
+            for sub in self.waiting_subtasks:
+                sub.set_root_task(True)
+
         self.ranking = None
         self.num_models_used = None
         self.model_number = self.model_counter
@@ -65,9 +72,9 @@ class Model:
                (type(modifier) == Subtasks.Subtask and type(modifier.task) == Task)
         self.search_modifiers.insert(index, modifier)
 
-    def add_operation(self, mod, parameters_used):
+    def add_operation(self, mod, parameters_used, root=False):
         assert type(mod) == Action or type(mod) == Task or type(mod) == Method
-        op = ActionTracker(mod, parameters_used)
+        op = ActionTracker(mod, parameters_used, root)
         self.progress_tracker.add_operation(op)
 
     def set_progress_tracker(self, pt):

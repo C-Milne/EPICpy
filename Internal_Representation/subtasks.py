@@ -16,6 +16,7 @@ class Subtasks:
                     assert isinstance(p, Parameter)
             self.parameters = parameters
             self.given_params = {}
+            self.root_task = False
 
         def get_name(self) -> str:
             return self.task.name
@@ -32,6 +33,9 @@ class Subtasks:
                 return True
             else:
                 return self.task.preconditions.evaluate(params, model, problem)
+
+        def set_root_task(self, v: bool):
+            self.root_task = v
 
     def __init__(self, ordered: bool):
         self.tasks = []

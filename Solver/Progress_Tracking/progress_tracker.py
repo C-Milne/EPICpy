@@ -26,6 +26,7 @@ class ProgressTracker:
             new_tracker.add_operation(op)
         return new_tracker
 
+    @abstractmethod
     def __eq__(self, other):
         if type(self) != type(other):
             return False
@@ -41,6 +42,7 @@ class ProgressTracker:
                 return False
         return True
 
+    @abstractmethod
     def __str__(self):
         return_str = "\nActions Taken:"
         for a in self.actions_taken:

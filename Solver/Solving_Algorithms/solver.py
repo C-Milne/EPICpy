@@ -99,7 +99,7 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT, progress_tracker_class=self.progress_tracker)
+            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT, progress_tracker_class=self.progress_tracker, initial_model=True)
 
             self.search_models.add(initial_model)
 
