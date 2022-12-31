@@ -14,6 +14,7 @@ from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
+from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 
 
 class RunnerTests(unittest.TestCase):
@@ -134,6 +135,8 @@ Search Models Created During Search: 3
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Correct usage 'python runner.py <domain.suffix> <problem.suffix>'\r
 """, msg)
@@ -151,6 +154,8 @@ runner.py: error: Incorrect Usage. Correct usage 'python runner.py <domain.suffi
                  [-paramSelectPath PARAMSELECTPATH]
                  [-searchQueueName SEARCHQUEUENAME]
                  [-searchQueuePath SEARCHQUEUEPATH]
+                 [-progressTrackerName PROGRESSTRACKERNAME]
+                 [-progressTrackerPath PROGRESSTRACKERPATH]
                  [D] [P]
 
 positional arguments:
@@ -175,6 +180,10 @@ optional arguments:
                         Name of SearchQueue Class
   -searchQueuePath SEARCHQUEUEPATH
                         File path to SearchQueue File
+  -progressTrackerName PROGRESSTRACKERNAME
+                        Name of Progress Tracker Class
+  -progressTrackerPath PROGRESSTRACKERPATH
+                        File path to Progress Tracker File
 """, output)
 
     def test_runner_command_line_heupath_or_heuname_only(self):
@@ -193,6 +202,8 @@ optional arguments:
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r
 """, msg)
@@ -211,6 +222,8 @@ runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r
 """, msg)
@@ -284,6 +297,8 @@ runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r
 """, msg)
@@ -303,6 +318,8 @@ runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSel
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r
 """, msg)
@@ -326,6 +343,8 @@ runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSel
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r
 """, msg)
@@ -345,6 +364,8 @@ runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r
 """, msg)
@@ -368,6 +389,8 @@ runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r
 """, msg)
@@ -387,6 +410,8 @@ runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQu
                  [-paramSelectPath PARAMSELECTPATH]\r
                  [-searchQueueName SEARCHQUEUENAME]\r
                  [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r
 """, msg)
@@ -450,3 +475,26 @@ runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQu
         self.assertEqual(DeleteRelaxed.__name__, type(controller.solver.search_models.heuristic).__name__)
         self.assertEqual(AllParameters.__name__, type(controller.solver.parameter_selector).__name__)
         self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
+
+    def test_runner_setting_progressTracker_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_progress_tracker_from_file('PandaVerifyFormatTracker', '../../Solver/Progress_Tracking/panda_verify_format.py')
+        self.assertEqual(PandaVerifyFormatTracker.__name__, controller.solver.progress_tracker.__name__)
+
+    def test_runner_setting_progressTracker_from_command_line(self):
+        original_dir = os.getcwd()
+        os.chdir("../..")
+        error_raised = False
+        try:
+            res = subprocess.check_output(
+                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
+                "-progressTrackerName PandaVerifyFormatTracker -progressTrackerPath Solver/Progress_Tracking/panda_verify_format.py",
+                stderr=subprocess.PIPE)
+        except Exception as e:
+            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            print(msg)
+            error_raised = True
+        self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
+        os.chdir(original_dir)

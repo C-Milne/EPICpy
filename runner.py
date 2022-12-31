@@ -88,8 +88,7 @@ class Runner:
         self.set_search_queue(self._get_module_from_file(module_name, file_path))
 
     def set_progress_tracker(self, progress_tracker: type(ProgressTracker)):
-        # TODO: Implement this
-        raise NotImplementedError
+        self.solver.set_progress_tracker(progress_tracker)
 
     def set_progress_tracker_from_file(self, module_name: str, file_path: str):
         self.set_progress_tracker(self._get_module_from_file(module_name, file_path))
@@ -143,6 +142,8 @@ if __name__ == "__main__":
     argparser.add_argument("-paramSelectPath", type=str, help='File path to Parameter Selector File', default=None)
     argparser.add_argument("-searchQueueName", type=str, help='Name of SearchQueue Class', default=None)
     argparser.add_argument("-searchQueuePath", type=str, help='File path to SearchQueue File', default=None)
+    argparser.add_argument("-progressTrackerName", type=str, help='Name of Progress Tracker Class', default=None)
+    argparser.add_argument("-progressTrackerPath", type=str, help='File path to Progress Tracker File', default=None)
     argparser.format_help()
     args = argparser.parse_args()
 
@@ -157,6 +158,8 @@ if __name__ == "__main__":
     param_file = args.paramSelectPath
     searchQueue_mod_name = args.searchQueueName
     searchQueue_file = args.searchQueuePath
+    progressTracker_mod_name = args.progressTrackerName
+    progressTracker_file = args.progressTrackerPath
 
     if solver_mod_name is not None and solver_file is None or \
             solver_mod_name is None and solver_file is not None:
@@ -173,6 +176,10 @@ if __name__ == "__main__":
             searchQueue_mod_name is None and searchQueue_file is not None:
         argparser.error(
             "Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty")
+    elif progressTracker_mod_name is not None and progressTracker_file is None or \
+            progressTracker_mod_name is None and progressTracker_file is not None:
+        argparser.error(
+            "Incorrect Usage. Either both '-progressTrackerName' and '-progressTrackerPath' need to be set or both need to be empty")
 
     if domain_file is not None and problem_file is not None:
         # Setup runner object
@@ -197,6 +204,10 @@ if __name__ == "__main__":
         # SearchQueue Selection
         if searchQueue_mod_name is not None and searchQueue_file is not None:
             controller.set_search_queue_from_file(searchQueue_mod_name, searchQueue_file)
+
+        # Progress Tracker Selection
+        if progressTracker_mod_name is not None and progressTracker_file is not None:
+            controller.set_progress_tracker_from_file(progressTracker_mod_name, progressTracker_file)
 
         # Initiate solving
         result = controller.solve()

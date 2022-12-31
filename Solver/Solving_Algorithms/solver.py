@@ -62,9 +62,8 @@ class Solver(ABC):
         self.search_models = search_queue
         self.search_models.add_heuristic(heu)
 
-    def set_progress_tracker(self):
-        # TODO: Implement this
-        raise NotImplementedError
+    def set_progress_tracker(self, progress_tracker):
+        self.progress_tracker = progress_tracker
 
     def solve(self, **kwargs):
         self.parameter_selector.presolving_processing(self.domain, self.problem)
