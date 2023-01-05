@@ -1,0 +1,6 @@
+==>
+2 drop kiwi
+3 pickup banjo
+root 0
+0 swap banjo kiwi -> have_second 2 3
+<==

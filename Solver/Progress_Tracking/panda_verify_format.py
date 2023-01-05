@@ -39,9 +39,7 @@ class PandaVerifyFormatTracker(ProgressTracker):
         for ac in self.actions_taken:
             returnStrActions += "\n" + str(ac[0]) + " " + self.__extract_details_from_action_tracker(ac[1])
 
-        # Section for all operations
         # Add root
-        # TODO: Implement this root part
         returnStrRoot = "\nroot"
 
         # Add decompositions

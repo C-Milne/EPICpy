@@ -4,7 +4,7 @@ from Internal_Representation.list_parameter import ListParameter
 
 
 class ActionTracker:
-    def __init__(self, mod: Modifier, parameters_used: dict, root: bool):
+    def __init__(self, mod: Modifier, parameters_used: dict, root: bool = False):
         assert isinstance(mod, Modifier)
         assert type(parameters_used) == dict
         for k in parameters_used:

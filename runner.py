@@ -108,10 +108,18 @@ class Runner:
         if not os.path.isdir("output"):
             os.mkdir("output")
 
-        # Pickle output and write to file
-        file = open("output/" + write_file, "wb")
-        file.write(pickle.dumps(result))
-        file.close()
+        file_suffix = Runner.__get_suffix(write_file)
+        if file_suffix == 'txt':
+            file = open("output/" + write_file, "w")
+            file.write(str(result.progress_tracker))
+            file.close()
+        elif file_suffix is None or file_suffix.lower() == 'pickle':
+            # Pickle output and write to file
+            file = open("output/" + write_file, "wb")
+            file.write(pickle.dumps(result))
+            file.close()
+        else:
+            raise ValueError('Output Suffix {} not recognised'.format(file_suffix))
 
     @staticmethod
     def __check_file_exists(file_path: str, file_purpose: str = None) -> None:
