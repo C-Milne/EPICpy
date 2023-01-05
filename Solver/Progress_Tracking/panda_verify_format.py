@@ -48,7 +48,12 @@ class PandaVerifyFormatTracker(ProgressTracker):
         while i < len(self.operations_taken):
             id = self.operations_taken[i][0]
             op = self.operations_taken[i][1]
+
+            if type(op.mod) != Task:
+                i += 1
+                continue
             assert type(op.mod) == Task
+
             if op.root_task:
                 returnStrRoot += " " + str(id)
             returnStrDecomp += "\n" + str(id) + " " + self.__extract_details_from_action_tracker(op)
@@ -60,7 +65,6 @@ class PandaVerifyFormatTracker(ProgressTracker):
                 i += 1
                 added_subtask = self.operations_taken[i]
                 returnStrDecomp += " " + str(added_subtask[0])
-            i += 1
 
         returnStr = returnStrActions + returnStrRoot + returnStrDecomp + "\n<=="
         return returnStr
