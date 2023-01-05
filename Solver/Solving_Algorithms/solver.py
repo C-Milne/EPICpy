@@ -57,7 +57,7 @@ class Solver(ABC):
     def set_search_queue(self, search_queue):
         if type(search_queue) == type or type(search_queue) == ABCMeta:
             search_queue = search_queue()
-        assert isinstance(search_queue, SearchQueue)
+        assert isinstance(search_queue, SearchQueue) or isinstance(type(search_queue), type(SearchQueue))
         heu = self.search_models.heuristic
         self.search_models = search_queue
         self.search_models.add_heuristic(heu)

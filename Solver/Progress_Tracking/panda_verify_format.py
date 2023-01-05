@@ -61,9 +61,14 @@ class PandaVerifyFormatTracker(ProgressTracker):
             i += 1
             method = self.operations_taken[i]
             returnStrDecomp += " -> " + str(method[1].mod)
-            for j in range(len(method[1].mod.subtasks)):
-                i += 1
-                added_subtask = self.operations_taken[i]
+
+            if method[1].mod.subtasks is None:
+                num_subtasks = 0
+            else:
+                num_subtasks = len(method[1].mod.subtasks)
+
+            for j in range(num_subtasks):
+                added_subtask = self.operations_taken[i + j + 1]
                 returnStrDecomp += " " + str(added_subtask[0])
 
         returnStr = returnStrActions + returnStrRoot + returnStrDecomp + "\n<=="

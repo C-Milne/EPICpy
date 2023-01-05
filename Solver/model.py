@@ -83,6 +83,9 @@ class Model:
     def get_progress_tracker(self):
         return self.progress_tracker
 
+    def get_num_operations_taken(self):
+        return self.progress_tracker.get_num_operations_taken()
+
     def promote_waiting_subtask(self):
         if len(self.search_modifiers) == 0 and len(self.waiting_subtasks) > 0:
             self.search_modifiers.append(self.waiting_subtasks.pop(0))
