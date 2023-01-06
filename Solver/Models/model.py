@@ -5,11 +5,12 @@ from Internal_Representation.state import State
 from Internal_Representation.subtasks import Subtasks
 from Solver.Progress_Tracking.action_tracker import ActionTracker   # TODO : Remove this
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from abc import ABC, abstractmethod
 
 """The idea here is that this class will contain all information regarding the current state of the environment"""
 
 
-class Model:
+class Model(ABC):
 
     model_counter = 0
     PROGRESS_TRACKER = None
@@ -19,9 +20,9 @@ class Model:
         assert type(state) == State
         self.current_state = state
         assert type(search_modifiers) == list
-        for m in search_modifiers:
-            assert type(m) == Subtasks.Subtask and (
-                        type(m.task) == Method or type(m.task) == Action or type(m.task) == Task)
+        # for m in search_modifiers:
+        #     assert type(m) == Subtasks.Subtask and (
+        #                 type(m.task) == Method or type(m.task) == Action or type(m.task) == Task)
         self.search_modifiers = search_modifiers
         self.problem = problem  # Problem object from internal rep
         self.waiting_subtasks = waiting_subtasks
@@ -89,6 +90,27 @@ class Model:
     def promote_waiting_subtask(self):
         if len(self.search_modifiers) == 0 and len(self.waiting_subtasks) > 0:
             self.search_modifiers.append(self.waiting_subtasks.pop(0))
+
+    def get_search_modifier(self, index: int):
+        return self.search_modifiers[index]
+
+    def get_names_of_task_network_modifiers(self):
+        return [x.task.name for x in self.search_modifiers]
+
+    def reproduce(self, problem, search_mods=None):
+        if search_mods is None:
+            new_model = Model(State.reproduce(self.current_state),
+                                          self.search_modifiers, problem, [])
+        else:
+            new_model = Model(State.reproduce(self.current_state),
+                                          search_mods, problem, [])
+
+        i = 0
+        for i in self.waiting_subtasks:
+            new_model.waiting_subtasks.append(i)
+
+        new_model.set_progress_tracker(self.get_progress_tracker().reproduce())
+        return new_model
 
     @staticmethod
     def merge_dictionaries(a, b):
