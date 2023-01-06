@@ -4,7 +4,7 @@ Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
 Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
-Model = sys.modules['Solver.model'].Model
+Model = sys.modules['Solver.Models.model'].Model
 
 
 class Tree:
@@ -61,7 +61,7 @@ class TreeDistancePartialOrder(PartialOrderPruning):
         self.tree = Tree()
 
     def ranking(self, model: Model) -> float:
-        res = sum(self.tree[x.task.name].distance for x in model.search_modifiers)
+        res = sum(self.tree[x].distance for x in model.get_names_of_task_network_modifiers())
         return res + sum(self.tree[x.task.name].distance for x in model.waiting_subtasks)
 
     def _calculate_distance_tasks(self, model: Model):

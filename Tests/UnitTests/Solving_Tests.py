@@ -1,5 +1,5 @@
 import unittest
-from Solver.model import Model
+from Solver.Models.model import Model
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser

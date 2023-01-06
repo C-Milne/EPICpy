@@ -1,5 +1,4 @@
-from Solver.model import Model
-from Internal_Representation.state import State
+from Solver.Models.model import Model
 from Solver.Heuristics.Heuristic import Heuristic
 
 """
@@ -18,7 +17,7 @@ class SearchQueue:
         self.heuristic = heuristic
 
     def add(self, model):
-        if type(model) != Model:
+        if not isinstance(model, Model):
             raise TypeError("Invalid parameter type!\n"
                             "Expected Model got {}".format(type(model)))
 

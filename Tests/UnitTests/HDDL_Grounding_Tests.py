@@ -1,10 +1,9 @@
 import unittest
-from Solver.model import Model
+from Solver.Models.model import Model
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Internal_Representation.modifier import Modifier
-from Solver.Solving_Algorithms.solver import Solver
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.state import State

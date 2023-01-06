@@ -1,7 +1,6 @@
 import sys
 from abc import ABC, abstractmethod, ABCMeta
-import copy
-from Solver.model import Model
+from Solver.Models.model import Model
 from Solver.Search_Queues.search_queue import SearchQueue
 from Internal_Representation.method import Method
 from Internal_Representation.action import Action, Effects
@@ -18,7 +17,8 @@ from Solver.Heuristics.pruning import Pruning
 
 """Space for importing parameter selection functions"""
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
-from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Requirements # Do not remove this import statement
+from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, \
+    Requirements  # Do not remove this import statement
 
 """Space for importing progress_tracker classes"""
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
@@ -29,6 +29,8 @@ ForallCondition = sys.modules['Internal_Representation.conditions'].ForAllCondit
 
 
 class Solver(ABC):
+    ModelClass = Model
+
     def __init__(self, domain, problem):
         self.domain = domain
         self.problem = problem
@@ -61,6 +63,9 @@ class Solver(ABC):
         heu = self.search_models.heuristic
         self.search_models = search_queue
         self.search_models.add_heuristic(heu)
+
+    def set_model_class(self, model_class):
+        Solver.ModelClass = model_class
 
     def set_progress_tracker(self, progress_tracker):
         self.progress_tracker = progress_tracker
@@ -99,7 +104,8 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT, progress_tracker_class=self.progress_tracker, initial_model=True)
+            initial_model = self.ModelClass(State.reproduce(self.problem.initial_state), list_subT, self.problem,
+                                       waiting_subT, progress_tracker_class=self.progress_tracker, initial_model=True)
 
             self.search_models.add(initial_model)
 
@@ -209,11 +215,13 @@ class Solver(ABC):
         for i in self.domain.derived_predicates:
             pred = self.domain.derived_predicates[i]
             assert len(pred.conditions) == len(pred.cond_requirements)
-            found_predicates = []   # Used to make sure only one of each combination of variables is selected
+            found_predicates = []  # Used to make sure only one of each combination of variables is selected
 
             for j in range(len(pred.conditions)):
                 # Choose variables
-                found_params = self._requirement_parameter_selector._find_satisfying_parameters(search_model, pred.cond_requirements[j])
+                found_params = self._requirement_parameter_selector._find_satisfying_parameters(search_model,
+                                                                                                pred.cond_requirements[
+                                                                                                    j])
                 for param_option in found_params:
                     # Evaluate predicate
                     result = pred.conditions[j].evaluate(param_option, search_model, self.problem)
@@ -267,23 +275,11 @@ class Solver(ABC):
         :param search_mods: List [Subtasks.Subtask]
         :return: Model
         """
-        if search_mods is None:
-            new_model = Model(State.reproduce(model.current_state),
-                  model.search_modifiers, self.problem, [])
-        else:
-            new_model = Model(State.reproduce(model.current_state),
-                              search_mods, self.problem, [])
-
-        i = 0
-        for i in model.waiting_subtasks:
-            new_model.waiting_subtasks.append(i)
-
-        new_model.set_progress_tracker(model.get_progress_tracker().reproduce())
-        return new_model
+        return model.reproduce(self.problem, search_mods)
 
     @staticmethod
     def output(resulting_model: Model):
-        assert type(resulting_model) == Model or resulting_model is None
+        assert isinstance(resulting_model, Model) or resulting_model is None
 
         if not resulting_model is None:
             print(resulting_model.get_progress_tracker())

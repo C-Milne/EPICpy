@@ -8,22 +8,11 @@ import re
 working_dir = os.getcwd()
 os.chdir("../../..")
 sys.path.append(os.getcwd())
-from Solver.Heuristics.pruning import Pruning
-from Solver.Heuristics.no_pruning import NoPruning
-from Solver.Heuristics.hamming_distance import HammingDistance
-from Solver.Heuristics.delete_relaxed import DeleteRelaxed
-from Solver.Heuristics.tree_distance import TreeDistance
-from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
-from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
-from Solver.Heuristics.tree_distance_partial_order import TreeDistancePartialOrder
-from Solver.Heuristics.delete_relaxed_partial_order import DeleteRelaxedPartialOrder
 from Solver.Search_Queues.search_queue import SearchQueue
-from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
-from Solver.Search_Queues.Greedy_Cost_So_Far_Search_Queue import GreedyCostSearchQueue
 from runner import Runner
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
-from Solver.model import Model
+from Solver.Models.model import Model
 os.chdir(working_dir)
 
 """Methods for Operation"""

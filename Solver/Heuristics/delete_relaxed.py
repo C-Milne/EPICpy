@@ -10,9 +10,9 @@ Subtasks = sys.modules['Internal_Representation.subtasks'].Subtasks
 Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
 
 if 'Solver.Model' in sys.modules:
-    Model = sys.modules['Solver.model'].Model
+    Model = sys.modules['Solver.Models.model'].Model
 else:
-    from Solver.model import Model
+    from Solver.Models.model import Model
 
 if 'Internal_Representation.domain' in sys.modules:
     Domain = sys.modules['Internal_Representation.domain'].Domain

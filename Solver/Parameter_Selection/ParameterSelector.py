@@ -2,7 +2,7 @@ from __future__ import annotations
 import sys
 from abc import ABC, abstractmethod
 """Import already imported modules from sys.modules"""
-from Solver.model import Model
+from Solver.Models.model import Model
 # Model = sys.modules["Solver.model"].Model
 # Method = sys.modules["Solver.model"].Method
 # Action = sys.modules["Solver.model"].Action

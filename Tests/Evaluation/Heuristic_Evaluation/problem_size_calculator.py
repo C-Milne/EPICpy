@@ -5,7 +5,7 @@ import copy
 from typing import List
 from runner import Runner
 from Internal_Representation.action import Action
-from Solver.model import Model
+from Solver.Models.model import Model
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed
 from Internal_Representation.state import State

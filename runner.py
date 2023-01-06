@@ -13,7 +13,7 @@ from Solver.Heuristics.Heuristic import Heuristic
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Solver.model import Model
+from Solver.Models.model import Model
 from Solver.Search_Queues.search_queue import SearchQueue
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 
@@ -93,6 +93,12 @@ class Runner:
     def set_progress_tracker_from_file(self, module_name: str, file_path: str):
         self.set_progress_tracker(self._get_module_from_file(module_name, file_path))
 
+    def set_model_from_file(self, model_mod_name: str, model_file: str):
+        self.set_model(self._get_module_from_file(model_mod_name, model_file))
+
+    def set_model(self, model_class: type(Model)):
+        self.solver.set_model_class(model_class)
+
     def set_early_task_precon_checker(self, v: bool) -> None:
         self.solver.task_expansion_given_param_check = v
 
@@ -152,6 +158,8 @@ if __name__ == "__main__":
     argparser.add_argument("-searchQueuePath", type=str, help='File path to SearchQueue File', default=None)
     argparser.add_argument("-progressTrackerName", type=str, help='Name of Progress Tracker Class', default=None)
     argparser.add_argument("-progressTrackerPath", type=str, help='File path to Progress Tracker File', default=None)
+    argparser.add_argument("-modelModName", type=str, help='Name of Model Class', default=None)
+    argparser.add_argument("-modelPath", type=str, help='File path to Model File', default=None)
     argparser.format_help()
     args = argparser.parse_args()
 
@@ -168,6 +176,8 @@ if __name__ == "__main__":
     searchQueue_file = args.searchQueuePath
     progressTracker_mod_name = args.progressTrackerName
     progressTracker_file = args.progressTrackerPath
+    model_mod_name = args.modelModName
+    model_file = args.modelPath
 
     if solver_mod_name is not None and solver_file is None or \
             solver_mod_name is None and solver_file is not None:
@@ -188,6 +198,9 @@ if __name__ == "__main__":
             progressTracker_mod_name is None and progressTracker_file is not None:
         argparser.error(
             "Incorrect Usage. Either both '-progressTrackerName' and '-progressTrackerPath' need to be set or both need to be empty")
+    elif model_mod_name is not None and model_file is None or model_mod_name is None and model_file is not None:
+        argparser.error(
+            "Incorrect Usage. Either both '-modelModName' and '-modelPath' need to be set or both need to be empty")
 
     if domain_file is not None and problem_file is not None:
         # Setup runner object
@@ -212,6 +225,10 @@ if __name__ == "__main__":
         # SearchQueue Selection
         if searchQueue_mod_name is not None and searchQueue_file is not None:
             controller.set_search_queue_from_file(searchQueue_mod_name, searchQueue_file)
+
+        # Model Selection
+        if model_mod_name is not None and model_file is not None:
+            controller.set_model_from_file(model_mod_name, model_file)
 
         # Progress Tracker Selection
         if progressTracker_mod_name is not None and progressTracker_file is not None:

@@ -2,7 +2,7 @@ from Internal_Representation.Object import Object
 from Internal_Representation.state import State
 from Internal_Representation.Type import Type
 from Internal_Representation.precondition import Precondition
-from Solver.model import Model
+from Solver.Models.model import Model
 from Internal_Representation.subtasks import Subtasks
 from Internal_Representation.problem_predicate import ProblemPredicate
 

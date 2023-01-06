@@ -6,7 +6,7 @@ Modifier = sys.modules["Internal_Representation.modifier"].Modifier
 Method = sys.modules["Internal_Representation.method"].Method
 Action = sys.modules["Internal_Representation.action"].Action
 Task = sys.modules["Internal_Representation.task"].Task
-Model = sys.modules["Solver.model"].Model
+Model = sys.modules["Solver.Models.model"].Model
 Object = sys.modules["Internal_Representation.Object"].Object
 ListParameter = sys.modules["Internal_Representation.list_parameter"].ListParameter
 Type = sys.modules["Internal_Representation.Type"].Type
@@ -128,7 +128,7 @@ class RequirementSelection(ParameterSelector):
         :parameter param_dict:    : parameters already set - {'?objective': Object, '?mode': Object}
         :return: list of possible combinations of parameters
         """
-        assert type(model) == Model
+        assert isinstance(model, Model)
         assert type(given_requirements) == dict
         assert type(param_dict) == dict
         for required_param_name in given_requirements:

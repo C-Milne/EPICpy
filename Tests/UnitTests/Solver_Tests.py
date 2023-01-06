@@ -1,5 +1,5 @@
 import unittest
-from Solver.model import Model
+from Solver.Models.model import Model
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Internal_Representation.state import State

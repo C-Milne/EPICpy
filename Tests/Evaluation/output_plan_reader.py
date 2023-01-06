@@ -5,12 +5,12 @@ import pickle
 
 original_path = os.getcwd()
 try:
-    from Solver.model import Model
+    from Solver.Models.model import Model
     from Solver.Solving_Algorithms.solver import Solver
 except:
     os.chdir("../..")
     sys.path.insert(1, os.getcwd())
-    from Solver.model import Model
+    from Solver.Models.model import Model
     from Solver.Solving_Algorithms.solver import Solver
     os.chdir(original_path)
 

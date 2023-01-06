@@ -5,7 +5,7 @@ from Solver.Heuristics.tree_distance_partial_order import TreeDistancePartialOrd
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, AltPrecondition, AltOperatorCondition
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Internal_Representation.conditions import PredicateCondition
-from Solver.model import Model
+from Solver.Models.model import Model
 from Internal_Representation.state import State
 
 
