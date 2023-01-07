@@ -46,8 +46,8 @@ class PandaVerifyFormatTracker(ProgressTracker):
     def add_method(self, method):
         self.operations_taken[-1].add_decomp_method(method)
 
-    def add_action(self, action: ActionTracker, id):
-        self.actions_taken.append((id, action))
+    def add_action(self, action: ActionTracker, id, root=False):
+        self.actions_taken.append((id, action, root))
         # self.operations_taken[-1].add_subtask(id)
 
     def add_subtask_id(self, id):
@@ -72,14 +72,16 @@ class PandaVerifyFormatTracker(ProgressTracker):
         raise NotImplementedError
 
     def __str__(self):
+        # Add root
+        returnStrRoot = "\nroot"
+
         returnStrActions = ""
         # Section for actions
         returnStrActions += "==>"
         for ac in self.actions_taken:
             returnStrActions += "\n" + str(ac[0]) + " " + self.__extract_details_from_action_tracker(ac[1])
-
-        # Add root
-        returnStrRoot = "\nroot"
+            if ac[2]:
+                returnStrRoot += " " + str(ac[0])
 
         # Add decompositions
         returnStrDecomp = ""

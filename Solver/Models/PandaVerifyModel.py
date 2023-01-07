@@ -43,7 +43,7 @@ class PandaVerifyModel(Model):
     def add_operation(self, mod, parameters_used, root=False):
         """This method records which operations have been taken by the planner"""
         if type(mod) == Action:
-            self.progress_tracker.add_action(ActionTracker(mod, parameters_used), self.last_dispense.ID)
+            self.progress_tracker.add_action(ActionTracker(mod, parameters_used), self.last_dispense.ID, root)
         elif type(mod) == Method:
             self.progress_tracker.add_method(mod)
         elif type(mod) == Task:

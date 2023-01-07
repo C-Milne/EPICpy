@@ -148,5 +148,5 @@ class PartialOrderSolver(Solver):
                 else:
                     raise NotImplementedError
 
-        search_model.add_operation(subtask.task, subtask.given_params)
+        search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
         self.search_models.add(search_model)
