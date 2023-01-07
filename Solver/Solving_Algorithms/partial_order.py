@@ -31,6 +31,7 @@ class PartialOrderSolver(Solver):
                 # Check if the given parameters satisfy preconditions that only use the given parameters
                 if self.task_expansion_given_param_check and not method.evaluate_preconditions_conditions_given_params(
                         parameters, search_model, self.problem):
+                    # Method not compatible with parameters given from task
                     continue
 
                 param_options = self.parameter_selector.get_potential_parameters(method, parameters, search_model)
@@ -98,7 +99,10 @@ class PartialOrderSolver(Solver):
         # Check if all the required parameters are given
         comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params)
 
-        assert comparison_result[0] == True
+        if not comparison_result[0] == True:
+            # raise ValueError('Invalid Parameters Passed to Action')
+            return
+        # assert comparison_result[0] == True
 
         # Check preconditions
         if not subtask.evaluate_preconditions(search_model, subtask.given_params, self.problem):
