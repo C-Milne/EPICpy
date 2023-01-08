@@ -35,10 +35,7 @@ class PandaVerifyFormatTracker(ProgressTracker):
         super().__init__()
 
     def add_operation(self, operation: ActionTracker):
-        assert type(operation) == ActionTracker
-        if type(operation.mod) == Action:
-            self.actions_taken.append((self.ID_counter, operation))
-        self.operations_taken.append((self.ID_counter, operation))
+        raise NotImplementedError
 
     def add_task(self, task, parameters_used, ID, root):
         self.operations_taken.append(DecompositionTracker(task, parameters_used, ID, root))
@@ -64,7 +61,7 @@ class PandaVerifyFormatTracker(ProgressTracker):
             new_tracker.operations_taken = new_operations_list
         new_actions_list = []
         for ac in self.actions_taken:
-            new_actions_list.append((ac[0], ActionTracker(ac[1].mod, ac[1].parameters_used, ac[1].root_task)))
+            new_actions_list.append((ac[0], ActionTracker(ac[1].mod, ac[1].parameters_used, ac[1].root_task), ac[2]))
         new_tracker.actions_taken = new_actions_list
         return new_tracker
 
