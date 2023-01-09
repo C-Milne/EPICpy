@@ -1,4 +1,4 @@
-from Solver.Models.default_model import DefaultModel, State
+from Solver.Models.model import Model, State
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Internal_Representation.task import Task
 from Internal_Representation.method import Method
@@ -6,7 +6,7 @@ from Internal_Representation.action import Action
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 
-class PandaVerifyDefaultModel(DefaultModel):
+class PandaVerifyDefaultModel(Model):
 
     class PandaVerifyTaskNetworkNode:
         def __init__(self, subtask, id):
