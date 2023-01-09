@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 """The idea here is that this class will contain all information regarding the current state of the environment"""
 
 
-class Model(ABC):
+class DefaultModel(ABC):
 
     model_counter = 0
     PROGRESS_TRACKER = None
@@ -29,9 +29,9 @@ class Model(ABC):
 
         if 'progress_tracker_class' in kwargs:
             assert type(kwargs['progress_tracker_class']) == type(SequentialTracker)
-            Model.PROGRESS_TRACKER = kwargs['progress_tracker_class']
+            DefaultModel.PROGRESS_TRACKER = kwargs['progress_tracker_class']
 
-        self.progress_tracker = Model.PROGRESS_TRACKER()
+        self.progress_tracker = DefaultModel.PROGRESS_TRACKER()
 
         if 'initial_model' in kwargs and kwargs['initial_model']:
             # Mark all tasks as roots
@@ -43,7 +43,7 @@ class Model(ABC):
         self.ranking = None
         self.num_models_used = None
         self.model_number = self.model_counter
-        Model.model_counter += 1
+        DefaultModel.model_counter += 1
         self.parent_model_number = None
 
         if "parent_num" in kwargs:
@@ -99,11 +99,11 @@ class Model(ABC):
 
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
-            new_model = Model(State.reproduce(self.current_state),
-                                          self.search_modifiers, problem, [])
+            new_model = DefaultModel(State.reproduce(self.current_state),
+                                     self.search_modifiers, problem, [])
         else:
-            new_model = Model(State.reproduce(self.current_state),
-                                          search_mods, problem, [])
+            new_model = DefaultModel(State.reproduce(self.current_state),
+                                     search_mods, problem, [])
 
         i = 0
         for i in self.waiting_subtasks:

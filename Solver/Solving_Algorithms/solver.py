@@ -1,6 +1,6 @@
 import sys
 from abc import ABC, abstractmethod, ABCMeta
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Search_Queues.search_queue import SearchQueue
 from Internal_Representation.method import Method
 from Internal_Representation.action import Action, Effects
@@ -30,7 +30,7 @@ ForallCondition = sys.modules['Internal_Representation.conditions'].ForAllCondit
 
 
 class Solver(ABC):
-    ModelClass = Model
+    ModelClass = DefaultModel
 
     def __init__(self, domain, problem):
         self.domain = domain
@@ -150,12 +150,12 @@ class Solver(ABC):
                 for m in self.search_models.get_completed_models():
                     eval = self.problem.evaluate_goal(m)
                     if eval is None or eval == True:
-                        m.num_models_used = Model.model_counter
+                        m.num_models_used = DefaultModel.model_counter
                         return m
                 self.search_models.clear_completed_models()
 
     @abstractmethod
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the task being expanded
         :param search_model: Model object the task is being applied to
@@ -164,7 +164,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_method(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the method being expanded
         :param search_model: Model object the method is being applied to
@@ -173,7 +173,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_action(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the action being expanded
         :param search_model: Model object the action is being applied to
@@ -211,7 +211,7 @@ class Solver(ABC):
                 i += 1
         return param_dict
 
-    def compute_derived_predicates(self, search_model: Model):
+    def compute_derived_predicates(self, search_model: DefaultModel):
         # Remove derived predicates from search model state
 
         # Check derived predicates
@@ -281,8 +281,8 @@ class Solver(ABC):
         return model.reproduce(self.problem, search_mods)
 
     @staticmethod
-    def output(resulting_model: Model):
-        assert isinstance(resulting_model, Model) or resulting_model is None
+    def output(resulting_model: DefaultModel):
+        assert isinstance(resulting_model, DefaultModel) or resulting_model is None
 
         if not resulting_model is None:
             print(resulting_model.get_progress_tracker())

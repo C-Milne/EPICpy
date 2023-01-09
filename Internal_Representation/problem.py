@@ -2,7 +2,7 @@ from Internal_Representation.Object import Object
 from Internal_Representation.state import State
 from Internal_Representation.Type import Type
 from Internal_Representation.precondition import Precondition
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Internal_Representation.subtasks import Subtasks
 from Internal_Representation.problem_predicate import ProblemPredicate
 
@@ -71,7 +71,7 @@ class Problem:
         assert type(cons) == Precondition
         self.goal_conditions = cons
 
-    def evaluate_goal(self, model: Model):
+    def evaluate_goal(self, model: DefaultModel):
         if self.goal_conditions is None:
             return None
         return self.goal_conditions.evaluate(self.objects, model, self)

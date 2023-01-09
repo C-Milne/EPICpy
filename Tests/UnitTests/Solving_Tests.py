@@ -1,5 +1,5 @@
 import unittest
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
@@ -148,14 +148,14 @@ class SolvingTests(unittest.TestCase):
     def test_action_execution_5(self):
         # Test Carrying out on action with one model and check the state of the others - Also check model state and _index
         domain, problem, solver = RovEx.setup()
-        solver.search_models._Q = [Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem) for i in range(7)]
+        solver.search_models._Q = [DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem) for i in range(7)]
         for m in solver.search_models._Q:
             m.ranking = 0
 
         # Execute action on model[7]
         subT = Subtasks.Subtask(domain.actions['visit'], [RegParameter('?from')])
         subT.add_given_parameters({'?waypoint': problem.objects['waypoint3']})
-        solver._expand_action(subT, Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
+        solver._expand_action(subT, DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
 
         search_models = solver.search_models._Q
         self.assertEqual(8, len(search_models))
@@ -199,7 +199,7 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem)
         solver.search_models.add(initial_model)
 
         # Execute Step 1
@@ -440,7 +440,7 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem)
         solver.search_models.add(initial_model)
 
         # Expand

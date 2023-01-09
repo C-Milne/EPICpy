@@ -1,5 +1,5 @@
 import unittest
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Internal_Representation.state import State
@@ -19,7 +19,7 @@ class SolverTests(unittest.TestCase):
         old_progress_tracker = SequentialTracker()
         old_progress_tracker.add_operation(ActionTracker(domain.get_task('Task1'), {}))
 
-        old_model = Model(State(), [], None, [], progress_tracker_class=SequentialTracker)
+        old_model = DefaultModel(State(), [], None, [], progress_tracker_class=SequentialTracker)
         old_model.set_progress_tracker(old_progress_tracker)
 
         new_model = solver.reproduce_model(old_model)
@@ -37,7 +37,7 @@ class SolverTests(unittest.TestCase):
         old_progress_tracker = SequentialTracker()
         old_progress_tracker.add_operation(ActionTracker(domain.get_task('Task1'), {}))
 
-        old_model = Model(State(), [], None, [], progress_tracker_class=SequentialTracker)
+        old_model = DefaultModel(State(), [], None, [], progress_tracker_class=SequentialTracker)
         old_model.set_progress_tracker(old_progress_tracker)
 
         new_model = solver.reproduce_model(old_model)

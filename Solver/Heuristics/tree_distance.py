@@ -4,7 +4,7 @@ Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
 Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
-Model = sys.modules['Solver.Models.model'].Model
+Model = sys.modules['Solver.Models.default_model'].DefaultModel
 
 
 class Tree:

@@ -12,7 +12,7 @@ from Solver.Search_Queues.search_queue import SearchQueue
 from runner import Runner
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 os.chdir(working_dir)
 
 """Methods for Operation"""
@@ -103,7 +103,7 @@ def test_runner(test, heuristic, early_precon, partial_order, search, search_que
 
     controller.set_heuristic(heuristic.class_reference)
     controller.solver.task_expansion_given_param_check = early_precon
-    Model.model_counter = 0   # This needs to be reset for each test
+    DefaultModel.model_counter = 0   # This needs to be reset for each test
 
     start_time = time.time()
     res = controller.solve()

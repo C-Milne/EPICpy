@@ -1,5 +1,5 @@
 import unittest
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
@@ -63,7 +63,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
 
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car, "?a": ob_bike, "?b": ob_popcorn,
                       "?c": ob_crisps, "?d": ob_dark}
 
@@ -73,7 +73,7 @@ class HDDLGroundingTests(unittest.TestCase):
         # Set up next model - {'have': ['ham', 'irn-bru', 'car', 'popcorn'], 'hate': ['dark']}
         state.add_element(ProblemPredicate(have_pred, [ob_popcorn]))
         state.add_element(ProblemPredicate(hate_pred, [ob_dark]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
@@ -105,7 +105,7 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "Blocksworld/Blocksworld_test_domain_1.hddl")
         parser.parse_problem(self.test_tools_path + "Blocksworld/Blocksworld_test_problem_1.hddl")
         method = domain.methods['setdone']
-        model = Model(problem.initial_state, [], problem)
+        model = DefaultModel(problem.initial_state, [], problem)
         result = method.evaluate_preconditions(model, {}, problem)
         self.assertEqual(False, result)
 
@@ -119,7 +119,7 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "Blocksworld/Blocksworld_test_domain_1.hddl")
         parser.parse_problem(self.test_tools_path + "Blocksworld/Blocksworld_test_problem_1_1.hddl")
         method = domain.methods['setdone']
-        model = Model(problem.initial_state, [], problem)
+        model = DefaultModel(problem.initial_state, [], problem)
         result = method.evaluate_preconditions(model, {}, problem)
         self.assertEqual(True, result)
 
@@ -158,7 +158,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for True
@@ -169,7 +169,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(False, result)
 
@@ -192,7 +192,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for True
@@ -203,20 +203,20 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
         # {'have': ['irn-bru']}
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
         # {'have': []}
         state = State()
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(False, result)
 
@@ -239,7 +239,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for False
@@ -250,7 +250,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 

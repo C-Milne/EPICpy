@@ -13,7 +13,7 @@ from Solver.Heuristics.Heuristic import Heuristic
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Search_Queues.search_queue import SearchQueue
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
@@ -96,20 +96,20 @@ class Runner:
     def set_model_from_file(self, model_mod_name: str, model_file: str):
         self.set_model(self._get_module_from_file(model_mod_name, model_file))
 
-    def set_model(self, model_class: type(Model)):
+    def set_model(self, model_class: type(DefaultModel)):
         self.solver.set_model_class(model_class)
 
     def set_early_task_precon_checker(self, v: bool) -> None:
         self.solver.task_expansion_given_param_check = v
 
-    def solve(self) -> Model:
+    def solve(self) -> DefaultModel:
         return self.solver.solve()
 
-    def output_result(self, search_result: Model) -> None:
+    def output_result(self, search_result: DefaultModel) -> None:
         self.solver.output(search_result)
 
     @staticmethod
-    def output_result_file(result: Model, write_file: str) -> None:
+    def output_result_file(result: DefaultModel, write_file: str) -> None:
         # Check output folder exists
         if not os.path.isdir("output"):
             os.mkdir("output")
