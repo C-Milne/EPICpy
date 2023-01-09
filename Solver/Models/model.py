@@ -4,7 +4,7 @@ from Internal_Representation.task import Task
 from Internal_Representation.state import State
 from Internal_Representation.subtasks import Subtasks
 from Solver.Progress_Tracking.action_tracker import ActionTracker   # TODO : Remove this
-from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from abc import ABC, abstractmethod
 
 """The idea here is that this class will contain all information regarding the current state of the environment"""
@@ -28,7 +28,7 @@ class Model(ABC):
         self.waiting_subtasks = waiting_subtasks
 
         if 'progress_tracker_class' in kwargs:
-            assert type(kwargs['progress_tracker_class']) == type(ProgressTracker)
+            assert type(kwargs['progress_tracker_class']) == type(SequentialTracker)
             Model.PROGRESS_TRACKER = kwargs['progress_tracker_class']
 
         self.progress_tracker = Model.PROGRESS_TRACKER()

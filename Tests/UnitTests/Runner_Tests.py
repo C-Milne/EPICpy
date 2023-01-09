@@ -416,7 +416,7 @@ optional arguments:
         try:
             res = subprocess.check_output(
                 "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
-                "-progressTrackerName PandaVerifyFormatTracker -progressTrackerPath Solver/Progress_Tracking/panda_verify_format.py",
+                "-progressTrackerName SequentialTracker -progressTrackerPath Solver/Progress_Tracking/sequential_progress_tracker.py",
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
@@ -424,3 +424,9 @@ optional arguments:
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
         os.chdir(original_dir)
+
+    def test_runner_setting_model_from_path(self):
+        self.assertEqual(1, 2)
+
+    def test_runner_setting_model_from_command_line(self):
+        self.assertEqual(1, 2)

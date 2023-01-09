@@ -1,4 +1,4 @@
-from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Internal_Representation.action import Action
 from Internal_Representation.task import Task
@@ -29,7 +29,7 @@ class DecompositionTracker:
         return new_decomp_tracker
 
 
-class PandaVerifyFormatTracker(ProgressTracker):
+class PandaVerifyFormatTracker(SequentialTracker):
 
     def __init__(self):
         super().__init__()

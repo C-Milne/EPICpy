@@ -15,7 +15,7 @@ from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Solver.Models.model import Model
 from Solver.Search_Queues.search_queue import SearchQueue
-from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 
 class Runner:
@@ -87,7 +87,7 @@ class Runner:
     def set_search_queue_from_file(self, module_name: str, file_path: str) -> None:
         self.set_search_queue(self._get_module_from_file(module_name, file_path))
 
-    def set_progress_tracker(self, progress_tracker: type(ProgressTracker)):
+    def set_progress_tracker(self, progress_tracker: type(SequentialTracker)):
         self.solver.set_progress_tracker(progress_tracker)
 
     def set_progress_tracker_from_file(self, module_name: str, file_path: str):

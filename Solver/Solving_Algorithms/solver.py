@@ -22,6 +22,7 @@ from Solver.Parameter_Selection.Requirement_Selection import RequirementSelectio
 
 """Space for importing progress_tracker classes"""
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 """Importing from sys modules"""
 Precondition = sys.modules['Internal_Representation.precondition'].Precondition
@@ -41,7 +42,7 @@ class Solver(ABC):
 
         self.parameter_selector = RequirementSelection(self)
         self._requirement_parameter_selector = RequirementSelection(self)
-        self.progress_tracker = ProgressTracker
+        self.progress_tracker = SequentialTracker
         self.task_expansion_given_param_check = True
 
     def set_heuristic(self, heuristic):
@@ -65,9 +66,11 @@ class Solver(ABC):
         self.search_models.add_heuristic(heu)
 
     def set_model_class(self, model_class):
+        # TODO : Assert type here
         Solver.ModelClass = model_class
 
     def set_progress_tracker(self, progress_tracker):
+        assert issubclass(progress_tracker, ProgressTracker)
         self.progress_tracker = progress_tracker
 
     def solve(self, **kwargs):
