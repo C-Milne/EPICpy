@@ -89,9 +89,9 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Add some assertions for this - seems too work (perhaps not for 'forall' methods)
         self.assertEqual(2, len(domain.methods['pickup-ready-block'].requirements))
-        self.assertEqual({'type': domain.types['block'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}},
+        self.assertEqual({'type': domain.types['BLOCK'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}},
                          domain.methods['pickup-ready-block'].requirements['?b'])
-        self.assertEqual({'type': domain.types['block'],
+        self.assertEqual({'type': domain.types['BLOCK'],
                           'predicates': {'and': {'goal_on': 2, 'done': 1, 'clear': 1}}},
                          domain.methods['pickup-ready-block'].requirements['?d'])
 
@@ -373,16 +373,16 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Test for True
         param_dict = {
-            "?take_image_instance_4_argument_6": problem.objects['phenomenon4'],
+            "?take_image_instance_4_argument_6": problem.objects['Phenomenon4'],
             "?take_image_instance_4_argument_7": problem.objects['instrument0'],
             "?take_image_instance_4_argument_8": problem.objects['thermograph0'],
             "?turn_to_instance_3_argument_2": problem.objects['satellite0'],
-            "?turn_to_instance_3_argument_4": problem.objects['phenomenon6']
+            "?turn_to_instance_3_argument_4": problem.objects['Phenomenon6']
         }
         self.assertEqual(True, method._evaluate_constraints(param_dict, None, problem))
 
         # Test for False
-        param_dict['?turn_to_instance_3_argument_4'] = problem.objects['phenomenon4']
+        param_dict['?turn_to_instance_3_argument_4'] = problem.objects['Phenomenon4']
         self.assertEqual(False, method._evaluate_constraints(param_dict, None, problem))
 
     def test_type_satisfaction(self):
@@ -391,18 +391,18 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_problem(self.IPC_Tests_path + "um-translog01/problem.hddl")
 
         # Check that type 'regular_package' satisfies both 'package' and 'regular'
-        reg_pack_ob = Object('test_package', domain.types['regular_package'])
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['package'], reg_pack_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular'], reg_pack_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular_package'], reg_pack_ob))
+        reg_pack_ob = Object('test_package', domain.types['Regular_Package'])
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Package'], reg_pack_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular'], reg_pack_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular_Package'], reg_pack_ob))
 
         # Check a child of regular_package also satisfies them both
-        food_ob = Object('test_food', domain.types['food'])
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['package'], food_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular'], food_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['food'], food_ob))
+        food_ob = Object('test_food', domain.types['Food'])
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Package'], food_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular'], food_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Food'], food_ob))
 
         # Test for false
-        self.assertEqual(False, solver.parameter_selector.check_satisfies_type(domain.types['airport'], reg_pack_ob))
+        self.assertEqual(False, solver.parameter_selector.check_satisfies_type(domain.types['Airport'], reg_pack_ob))
 
     # Ground objects to types? - would make for quicker look-ups in problem.get_objects_of_type()

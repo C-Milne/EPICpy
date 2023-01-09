@@ -1,3 +1,4 @@
+import re
 from Parsers.parser import Parser
 from Internal_Representation.task import Task
 from Internal_Representation.method import Method
@@ -517,3 +518,31 @@ class JSHOPParser(Parser):
 
     def _parse_constant(self, *args):
         pass
+
+    def _scan_tokens(self, file_path):
+        """ Taken with permission from:
+        https://github.com/pucrs-automated-planning/heuristic-planning/blob/master/pddl/pddl_parser.py"""
+        with open(file_path, 'r') as f:
+            # Remove single line comments
+            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
+        # Tokenize
+        stack = []
+        sections = []
+        for t in re.findall(r'[()]|[^\s()]+', str):
+            if t == '(':
+                stack.append(sections)
+                sections = []
+            elif t == ')':
+                if stack:
+                    l = sections
+                    sections = stack.pop()
+                    sections.append(l)
+                else:
+                    raise Exception('Missing open parentheses')
+            else:
+                sections.append(t)
+        if stack:
+            raise Exception('Missing close parentheses')
+        if len(sections) != 1:
+            raise Exception('Malformed expression')
+        return sections[0]

@@ -31,6 +31,18 @@ class RunnerTests(unittest.TestCase):
         self.IPC_Tests_path = "../Examples/IPC_Tests/"
         os.chdir(self.original_dir)
 
+        self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
+                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
+                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
+                 [-paramSelectPath PARAMSELECTPATH]\r
+                 [-searchQueueName SEARCHQUEUENAME]\r
+                 [-searchQueuePath SEARCHQUEUEPATH]\r
+                 [-progressTrackerName PROGRESSTRACKERNAME]\r
+                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH]\r
+                 [D] [P]\r
+runner.py: error: Incorrect Usage."""
+
     def test_load_unknown_domain(self):
         # Test loading unknown domain file
         with self.assertRaises(FileNotFoundError) as error:
@@ -129,17 +141,7 @@ Search Models Created During Search: 3
         except Exception as e:
             msg = e.stderr.decode("utf-8")
             # msg = msg[434:]   # This is for debugger inspection only
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Correct usage 'python runner.py <domain.suffix> <problem.suffix>'\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Correct usage 'python runner.py <domain.suffix> <problem.suffix>'\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
         os.chdir(original_dir)
@@ -156,6 +158,7 @@ runner.py: error: Incorrect Usage. Correct usage 'python runner.py <domain.suffi
                  [-searchQueuePath SEARCHQUEUEPATH]
                  [-progressTrackerName PROGRESSTRACKERNAME]
                  [-progressTrackerPath PROGRESSTRACKERPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH]
                  [D] [P]
 
 positional arguments:
@@ -184,6 +187,9 @@ optional arguments:
                         Name of Progress Tracker Class
   -progressTrackerPath PROGRESSTRACKERPATH
                         File path to Progress Tracker File
+  -modelModName MODELMODNAME
+                        Name of Model Class
+  -modelPath MODELPATH  File path to Model File
 """, output)
 
     def test_runner_command_line_heupath_or_heuname_only(self):
@@ -196,17 +202,7 @@ optional arguments:
                                           stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -216,17 +212,7 @@ runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need
                                           stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -291,17 +277,7 @@ runner.py: error: Incorrect Usage. Either both '-heuModName' and '-heuPath' need
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -312,17 +288,7 @@ runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSel
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -337,17 +303,7 @@ runner.py: error: Incorrect Usage. Either both '-paramSelectName' and '-paramSel
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -358,17 +314,7 @@ runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -383,17 +329,7 @@ runner.py: error: Incorrect Usage. Either both '-solverModName' and '-solverPath
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -404,17 +340,7 @@ runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQu
                 stderr=subprocess.PIPE)
         except Exception as e:
             msg = e.stderr.decode("utf-8")
-            self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [D] [P]\r
-runner.py: error: Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r
-""", msg)
+            self.assertEqual(self.expected_error_message + " Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 

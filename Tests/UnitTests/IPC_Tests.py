@@ -82,7 +82,7 @@ class IPCTests(unittest.TestCase):
 
         self.assertEqual(2, len(domain.actions['noop'].parameters))
         for p in domain.actions['noop'].parameters:
-            self.assertEqual(domain.types['a'], p.type)
+            self.assertEqual(domain.types['A'], p.type)
 
         plan = solver.solve()
         solver.output(plan)
@@ -109,27 +109,27 @@ class IPCTests(unittest.TestCase):
 
         self.assertEqual(domain.actions['turn_to'], plan.get_progress_tracker().actions_taken[1].mod)
         self.assertEqual(3, len(plan.get_progress_tracker().actions_taken[1].parameters_used))
-        self.assertEqual(problem.objects['groundstation2'], plan.get_progress_tracker().actions_taken[1].parameters_used['?t_d_new'])
+        self.assertEqual(problem.objects['GroundStation2'], plan.get_progress_tracker().actions_taken[1].parameters_used['?t_d_new'])
         self.assertEqual(problem.objects['satellite0'], plan.get_progress_tracker().actions_taken[1].parameters_used['?t_s'])
-        self.assertEqual(problem.objects['phenomenon6'], plan.get_progress_tracker().actions_taken[1].parameters_used['?t_d_prev'])
+        self.assertEqual(problem.objects['Phenomenon6'], plan.get_progress_tracker().actions_taken[1].parameters_used['?t_d_prev'])
 
         self.assertEqual(domain.actions['calibrate'], plan.get_progress_tracker().actions_taken[2].mod)
         self.assertEqual(3, len(plan.get_progress_tracker().actions_taken[2].parameters_used))
-        self.assertEqual(problem.objects['groundstation2'], plan.get_progress_tracker().actions_taken[2].parameters_used['?c_d'])
+        self.assertEqual(problem.objects['GroundStation2'], plan.get_progress_tracker().actions_taken[2].parameters_used['?c_d'])
         self.assertEqual(problem.objects['satellite0'], plan.get_progress_tracker().actions_taken[2].parameters_used['?c_s'])
         self.assertEqual(problem.objects['instrument0'], plan.get_progress_tracker().actions_taken[2].parameters_used['?c_i'])
 
         self.assertEqual(domain.actions['turn_to'], plan.get_progress_tracker().actions_taken[3].mod)
         self.assertEqual(3, len(plan.get_progress_tracker().actions_taken[3].parameters_used))
-        self.assertEqual(problem.objects['groundstation2'], plan.get_progress_tracker().actions_taken[3].parameters_used['?t_d_prev'])
+        self.assertEqual(problem.objects['GroundStation2'], plan.get_progress_tracker().actions_taken[3].parameters_used['?t_d_prev'])
         self.assertEqual(problem.objects['satellite0'], plan.get_progress_tracker().actions_taken[3].parameters_used['?t_s'])
-        self.assertEqual(problem.objects['phenomenon4'], plan.get_progress_tracker().actions_taken[3].parameters_used['?t_d_new'])
+        self.assertEqual(problem.objects['Phenomenon4'], plan.get_progress_tracker().actions_taken[3].parameters_used['?t_d_new'])
 
         self.assertEqual(domain.actions['take_image'], plan.get_progress_tracker().actions_taken[4].mod)
         self.assertEqual(4, len(plan.get_progress_tracker().actions_taken[4].parameters_used))
         self.assertEqual(problem.objects['instrument0'], plan.get_progress_tracker().actions_taken[4].parameters_used['?ti_i'])
         self.assertEqual(problem.objects['satellite0'], plan.get_progress_tracker().actions_taken[4].parameters_used['?ti_s'])
-        self.assertEqual(problem.objects['phenomenon4'], plan.get_progress_tracker().actions_taken[4].parameters_used['?ti_d'])
+        self.assertEqual(problem.objects['Phenomenon4'], plan.get_progress_tracker().actions_taken[4].parameters_used['?ti_d'])
         self.assertEqual(problem.objects['thermograph0'], plan.get_progress_tracker().actions_taken[4].parameters_used['?ti_m'])
 
     @unittest.skip

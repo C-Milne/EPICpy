@@ -83,28 +83,28 @@ class HDDLParsingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_Tests_path + "um-translog01/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "um-translog01/problem.hddl")
-        self.assertIn(domain.types['city_location'], domain.types['tcenter'].parents)
+        self.assertIn(domain.types['City_Location'], domain.types['TCenter'].parents)
 
-        ob = problem.objects['flughafenstuttgart']
-        self.assertEqual(domain.types['airport'], ob.type)
-        self.assertIn(domain.types['tcenter'], ob.type.parents)
-        self.assertIn(domain.types['city_location'], domain.types['tcenter'].parents)
-        self.assertIn(domain.types['location'], domain.types['city_location'].parents)
+        ob = problem.objects['FlughafenStuttgart']
+        self.assertEqual(domain.types['Airport'], ob.type)
+        self.assertIn(domain.types['TCenter'], ob.type.parents)
+        self.assertIn(domain.types['City_Location'], domain.types['TCenter'].parents)
+        self.assertIn(domain.types['Location'], domain.types['City_Location'].parents)
 
     def test_parsing_types_4(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_Tests_path + "um-translog01/domain.hddl")
 
         # Check that objects with multiple parents have them both defined
-        t = domain.types['regular_package']
+        t = domain.types['Regular_Package']
         self.assertEqual(2, len(t.parents))
-        self.assertIn(domain.types['package'], t.parents)
-        self.assertIn(domain.types['regular'], t.parents)
+        self.assertIn(domain.types['Package'], t.parents)
+        self.assertIn(domain.types['Regular'], t.parents)
 
-        t = domain.types['food']
+        t = domain.types['Food']
         self.assertEqual(2, len(t.parents))
-        self.assertIn(domain.types['regular_package'], t.parents)
-        self.assertIn(domain.types['perishable'], t.parents)
+        self.assertIn(domain.types['Regular_Package'], t.parents)
+        self.assertIn(domain.types['Perishable'], t.parents)
 
     def test_parsing_predicates(self):
         # Rover Domain
@@ -143,9 +143,9 @@ class HDDLParsingTests(unittest.TestCase):
 
         self.assertEqual('goal_on', domain.predicates['goal_on'].name)
         self.assertEqual('?t', domain.predicates['goal_on'].parameters[0].name)
-        self.assertEqual(domain.types['block'], domain.predicates['goal_on'].parameters[0].type)
+        self.assertEqual(domain.types['BLOCK'], domain.predicates['goal_on'].parameters[0].type)
         self.assertEqual('?b', domain.predicates['goal_on'].parameters[1].name)
-        self.assertEqual(domain.types['block'], domain.predicates['goal_on'].parameters[1].type)
+        self.assertEqual(domain.types['BLOCK'], domain.predicates['goal_on'].parameters[1].type)
 
         self.assertEqual(9, len(domain.predicates))
 
@@ -255,15 +255,15 @@ class HDDLParsingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "parameter_testing/domain1.hddl")
         self.assertEqual(2, len(domain.methods['donothing'].parameters))
         self.assertEqual("?a", domain.methods['donothing'].parameters[0].name)
-        self.assertEqual(domain.types['a'], domain.methods['donothing'].parameters[0].type)
+        self.assertEqual(domain.types['A'], domain.methods['donothing'].parameters[0].type)
         self.assertEqual("?b", domain.methods['donothing'].parameters[1].name)
-        self.assertEqual(domain.types['a'], domain.methods['donothing'].parameters[1].type)
+        self.assertEqual(domain.types['A'], domain.methods['donothing'].parameters[1].type)
 
         self.assertEqual(2, len(domain.actions['noop'].parameters))
         self.assertEqual("?a", domain.actions['noop'].parameters[0].name)
-        self.assertEqual(domain.types['a'], domain.actions['noop'].parameters[0].type)
+        self.assertEqual(domain.types['A'], domain.actions['noop'].parameters[0].type)
         self.assertEqual("?b", domain.actions['noop'].parameters[1].name)
-        self.assertEqual(domain.types['a'], domain.actions['noop'].parameters[1].type)
+        self.assertEqual(domain.types['A'], domain.actions['noop'].parameters[1].type)
 
     def test_parameter_parsing_2(self):
         # Create a domain with parameters of differing types (a - A b - B) (a - A b c - B)
@@ -271,17 +271,17 @@ class HDDLParsingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "parameter_testing/domain2.hddl")
         self.assertEqual(2, len(domain.methods['donothing'].parameters))
         self.assertEqual("?a", domain.methods['donothing'].parameters[0].name)
-        self.assertEqual(domain.types['a'], domain.methods['donothing'].parameters[0].type)
+        self.assertEqual(domain.types['A'], domain.methods['donothing'].parameters[0].type)
         self.assertEqual("?b", domain.methods['donothing'].parameters[1].name)
-        self.assertEqual(domain.types['b'], domain.methods['donothing'].parameters[1].type)
+        self.assertEqual(domain.types['B'], domain.methods['donothing'].parameters[1].type)
 
         self.assertEqual(3, len(domain.actions['noop'].parameters))
         self.assertEqual("?a", domain.actions['noop'].parameters[0].name)
-        self.assertEqual(domain.types['a'], domain.actions['noop'].parameters[0].type)
+        self.assertEqual(domain.types['A'], domain.actions['noop'].parameters[0].type)
         self.assertEqual("?b", domain.actions['noop'].parameters[1].name)
-        self.assertEqual(domain.types['b'], domain.actions['noop'].parameters[1].type)
+        self.assertEqual(domain.types['B'], domain.actions['noop'].parameters[1].type)
         self.assertEqual("?c", domain.actions['noop'].parameters[2].name)
-        self.assertEqual(domain.types['b'], domain.actions['noop'].parameters[2].type)
+        self.assertEqual(domain.types['B'], domain.actions['noop'].parameters[2].type)
 
     def test_parsing_tasks(self):
         domain = Domain(None)
@@ -702,38 +702,38 @@ class HDDLParsingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_Tests_path + "test05_constants_in_domain/domain.hddl")
         self.assertEqual(1, len(problem.objects))
-        self.assertEqual(domain.types['a'], problem.objects['a'].type)
+        self.assertEqual(domain.types['A'], problem.objects['a'].type)
 
     def test_parsing_constants_2(self):
         # Create a domain with 2 constants ( a b - A)
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.test_tools_path + "constant_testing/constant_test_domain_1.hddl")
         self.assertEqual(2, len(problem.objects))
-        self.assertEqual(domain.types['a'], problem.objects['a'].type)
-        self.assertEqual(domain.types['a'], problem.objects['b'].type)
+        self.assertEqual(domain.types['A'], problem.objects['a'].type)
+        self.assertEqual(domain.types['A'], problem.objects['b'].type)
 
         # (a - A b - A)
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.test_tools_path + "constant_testing/constant_test_domain_2.hddl")
         self.assertEqual(2, len(problem.objects))
-        self.assertEqual(domain.types['a'], problem.objects['a'].type)
-        self.assertEqual(domain.types['a'], problem.objects['b'].type)
+        self.assertEqual(domain.types['A'], problem.objects['a'].type)
+        self.assertEqual(domain.types['A'], problem.objects['b'].type)
 
     def test_parsing_constants_3(self):
         # Create a domain with constants of differing types (a - A b - B)
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.test_tools_path + "constant_testing/constant_test_domain_3.hddl")
         self.assertEqual(2, len(problem.objects))
-        self.assertEqual(domain.types['a'], problem.objects['a'].type)
-        self.assertEqual(domain.types['b'], problem.objects['b'].type)
+        self.assertEqual(domain.types['A'], problem.objects['a'].type)
+        self.assertEqual(domain.types['B'], problem.objects['b'].type)
 
         # (a - A b c - B)
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.test_tools_path + "constant_testing/constant_test_domain_4.hddl")
         self.assertEqual(3, len(problem.objects))
-        self.assertEqual(domain.types['a'], problem.objects['a'].type)
-        self.assertEqual(domain.types['b'], problem.objects['b'].type)
-        self.assertEqual(domain.types['b'], problem.objects['c'].type)
+        self.assertEqual(domain.types['A'], problem.objects['a'].type)
+        self.assertEqual(domain.types['B'], problem.objects['b'].type)
+        self.assertEqual(domain.types['B'], problem.objects['c'].type)
 
     def test_parsing_constraint(self):
         domain, problem, parser, solver = env_setup(True)
