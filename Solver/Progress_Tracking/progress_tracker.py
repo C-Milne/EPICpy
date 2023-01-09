@@ -19,9 +19,9 @@ class ProgressTracker(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         raise NotImplementedError
