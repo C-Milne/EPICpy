@@ -6,7 +6,7 @@ from Internal_Representation.action import Action
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 
-class PandaVerifyDefaultModel(Model):
+class PandaVerifyModel(Model):
 
     class PandaVerifyTaskNetworkNode:
         def __init__(self, subtask, id):
@@ -71,11 +71,11 @@ class PandaVerifyDefaultModel(Model):
 
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
-            new_model = PandaVerifyDefaultModel(State.reproduce(self.current_state),
-                                                self.search_modifiers, problem, [])
+            new_model = PandaVerifyModel(State.reproduce(self.current_state),
+                                         self.search_modifiers, problem, [])
         else:
-            new_model = PandaVerifyDefaultModel(State.reproduce(self.current_state),
-                                                search_mods, problem, [])
+            new_model = PandaVerifyModel(State.reproduce(self.current_state),
+                                         search_mods, problem, [])
 
         for i in self.waiting_subtasks:
             new_model.waiting_subtasks.append(i)
