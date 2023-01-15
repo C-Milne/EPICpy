@@ -38,7 +38,7 @@ class POGreedyCostEvaluation(unittest.TestCase):
         strats = [Strat("Breadth_First_Operations_PO_Pruning_GCost", PartialOrderPruning)]
         run_tests(tests, strats, "Rover_Partial_Order", partial_order=True, SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_02_PO_Rover_Hamming(self):
         """Test Hamming Distance (Partial Order) - DONE"""
         tests = [("../../../../Examples/Partial_Order/Rover/domain.hddl",
@@ -105,7 +105,7 @@ class POGreedyCostEvaluation(unittest.TestCase):
         strats = [Strat("Breadth_First_Operations_PO_Pruning_GCost", PartialOrderPruning)]
         run_tests(tests, strats, "Barman_Partial_Order", partial_order=True, SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_07_PO_Barman_Hamming(self):
         """Test Barman Partial Order - Hamming Distance -> DONE"""
         tests = [("../../../../Examples/Partial_Order/Barman/domain.hddl",

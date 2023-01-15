@@ -35,12 +35,12 @@ except:
 
 def suite():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(unittest.makeSuite(HDDLSearchQEvaluation))
-    test_suite.addTest(unittest.makeSuite(GBFSEvaluation))
-    test_suite.addTest(unittest.makeSuite(GreedyCostEvaluation))
-    test_suite.addTest(unittest.makeSuite(POSearchQEvaluation))
-    test_suite.addTest(unittest.makeSuite(POGBFSEvaluation))
-    test_suite.addTest(unittest.makeSuite(POGreedyCostEvaluation))
+    # test_suite.addTest(unittest.makeSuite(HDDLSearchQEvaluation))
+    # test_suite.addTest(unittest.makeSuite(GBFSEvaluation))
+    # test_suite.addTest(unittest.makeSuite(GreedyCostEvaluation))
+    # test_suite.addTest(unittest.makeSuite(POSearchQEvaluation))
+    # test_suite.addTest(unittest.makeSuite(POGBFSEvaluation))
+    # test_suite.addTest(unittest.makeSuite(POGreedyCostEvaluation))
     test_suite.addTest(unittest.makeSuite(JSHOPSearchQEvaluation))
     test_suite.addTest(unittest.makeSuite(JSHOPGBFSEvaluation))
     test_suite.addTest(unittest.makeSuite(JSHOPGreedyCostEvaluation))

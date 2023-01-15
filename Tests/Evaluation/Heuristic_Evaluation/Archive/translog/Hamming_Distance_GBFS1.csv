@@ -1,2 +1,0 @@
-example_name,time_taken,search_models_created,serialised_actions_taken,serialised_state
-um-translog01/problem.hddl,0.10366415977478027,1289,serialised_objects\um-translog01_problemhddl_Hamming_Distance_GBFS_actions1.pickle,serialised_objects\um-translog01_problemhddl_Hamming_Distance_GBFS_state1.pickle

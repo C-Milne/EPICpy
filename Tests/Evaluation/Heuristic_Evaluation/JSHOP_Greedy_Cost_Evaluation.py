@@ -58,7 +58,7 @@ class JSHOPGreedyCostEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "JSHOP_Rover", SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_04_Rover_Solve_Time_JSHOP_Hamming(self):
         tests = [("../../../../Examples/JShop/rover/rover.jshop", "../../../../Examples/JShop/rover/pb1.jshop")
             , ("../../../../Examples/JShop/rover/rover.jshop", "../../../../Examples/JShop/rover/pb2.jshop")

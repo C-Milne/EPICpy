@@ -3,7 +3,7 @@ from heuristic_evaluation import *
 
 class HDDLSearchQEvaluation(unittest.TestCase):
 
-    @unittest.skip
+    # @unittest.skip
     def test_00_Rover_1_4_BF_No_Pruning(self):
         """Test Rover p01 -> p04 with breadth first search without pruning - DONE"""
         tests = [("../../../../Examples/Rover/domain.hddl", "../../../../Examples/Rover/p01.hddl"),
@@ -56,7 +56,7 @@ class HDDLSearchQEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Rover")
 
-    @unittest.skip
+    # @unittest.skip
     def test_04_Rover_1_4_Hamming(self):
         """Test rover with Hamming Distance heuristic -> DONE"""
         tests = [("../../../../Examples/Rover/domain.hddl", "../../../../Examples/Rover/p01.hddl"),
@@ -80,7 +80,7 @@ class HDDLSearchQEvaluation(unittest.TestCase):
                   Strat("Hamming_Distance", HammingDistance), Strat("Tree_Distance", TreeDistance)]
         run_tests(tests, strats, "translog", True)
 
-    @unittest.skip
+    # @unittest.skip
     def test_055_translog_Hamming(self):
         """Test translog1 -> DONE"""
         tests = [("../../../../Examples/IPC_Tests/um-translog01/domain.hddl",
@@ -134,7 +134,7 @@ class HDDLSearchQEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Depot")
 
-    @unittest.skip
+    # @unittest.skip
     def test_10_depots_hamming(self):
         """Test depot p1 -> p3 with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p01.hddl"),
@@ -188,7 +188,7 @@ class HDDLSearchQEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance", TreeDistance)]
         run_tests(tests, strats, "Barman")
 
-    @unittest.skip
+    # @unittest.skip
     def test_16_barman_hamming(self):
         """Test Barman with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Barman/domain.hddl", "../../../../Examples/Barman/pfile01.hddl")]
@@ -217,7 +217,7 @@ class HDDLSearchQEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance", TreeDistance)]
         run_tests(tests, strats, "Factories")
 
-    @unittest.skip
+    # @unittest.skip
     def test_20_factories_hamming(self):
         """Test Factories with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Factories/domain.hddl", "../../../../Examples/Factories/pfile01.hddl")]

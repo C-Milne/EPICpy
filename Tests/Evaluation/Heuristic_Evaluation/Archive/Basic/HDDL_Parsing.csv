@@ -1,2 +1,6 @@
 example_name,time_taken,search_models_created,serialised_actions_taken,serialised_state
-Basic/pb1.hddl,0.05505633354187012,0,NONE,NONE
+Basic/pb1.hddl,0.010912656784057617,0,NONE,NONE
+Basic/pb1.hddl,0.0009913444519042969,0,NONE,NONE
+Basic/pb1.hddl,0.0004961490631103516,0,NONE,NONE
+Basic/pb1.hddl,0.0004961490631103516,0,NONE,NONE
+Basic/pb1.hddl,0.0009918212890625,0,NONE,NONE

@@ -70,7 +70,7 @@ class GreedyCostEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Rover", SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_04_Rover_1_4_Hamming(self):
         """Test rover with Hamming Distance heuristic -> DONE"""
         tests = [("../../../../Examples/Rover/domain.hddl", "../../../../Examples/Rover/p01.hddl"),
@@ -96,7 +96,7 @@ class GreedyCostEvaluation(unittest.TestCase):
                   Strat("Tree_Distance_GCost", TreeDistance)]
         run_tests(tests, strats, "translog", False, SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_055_translog_Hamming(self):
         """Test translog1 -> DONE"""
         tests = [("../../../../Examples/IPC_Tests/um-translog01/domain.hddl",
@@ -149,7 +149,7 @@ class GreedyCostEvaluation(unittest.TestCase):
 
         run_tests(tests, strats, "Depot", SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_10_depots_hamming(self):
         """Test depot p1 -> p3 with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Depots/domain.hddl", "../../../../Examples/Depots/p01.hddl"),
@@ -214,7 +214,7 @@ class GreedyCostEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance_GCost", TreeDistance)]
         run_tests(tests, strats, "Barman", SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_16_barman_hamming(self):
         """Test Barman with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Barman/domain.hddl", "../../../../Examples/Barman/pfile01.hddl")]
@@ -251,7 +251,7 @@ class GreedyCostEvaluation(unittest.TestCase):
         strats = [Strat("Tree_Distance_GCost", TreeDistance)]
         run_tests(tests, strats, "Factories", SearchQueue=GreedyCostSearchQueue)
 
-    @unittest.skip
+    # @unittest.skip
     def test_21_factories_hamming(self):
         """Test Factories with Hamming Distance - DONE"""
         tests = [("../../../../Examples/Factories/domain.hddl", "../../../../Examples/Factories/pfile01.hddl")]
