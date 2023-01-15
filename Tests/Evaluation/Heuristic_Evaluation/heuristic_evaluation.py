@@ -46,7 +46,7 @@ def save_to_file(test_name, strat, time, result):
     pickle_test_name = test_name.replace("/", "_") + "_" + strat.name
 
     if result is not None:
-        actions_taken_pickle_file = save_pickle_object(result.operations_taken, pickle_test_name + "_" + "actions")
+        actions_taken_pickle_file = save_pickle_object(result.actions_taken, pickle_test_name + "_" + "actions")
         state_pickle_file = save_pickle_object(result.current_state, pickle_test_name + "_" + "state")
         num_models = result.num_models_used
     else:
@@ -149,7 +149,7 @@ def run_tests(tests, strats, sub_folder, clear_folder=False, **kwargs):
         create_file(s)
     for t in tests:
         for s in strats:
-            for i in range(1):
+            for i in range(5):
                 if 'partial_order' in kwargs:
                     partial_order = kwargs['partial_order']
                 else:
