@@ -1,5 +1,5 @@
 from Solver.Solving_Algorithms.solver import Solver
-from Solver.Solving_Algorithms.solver import Model
+from Solver.Solving_Algorithms.solver import DefaultModel
 from Solver.Solving_Algorithms.solver import State
 from Solver.Solving_Algorithms.solver import Subtasks
 from Solver.Solving_Algorithms.solver import ProblemPredicate
@@ -13,7 +13,7 @@ class TotalOrderSolver(Solver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         if len(subtask.task.tasks) != 0:
             for new_task in subtask.task.tasks:
                 self._expand_task(Subtasks.Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
@@ -41,10 +41,10 @@ class TotalOrderSolver(Solver):
                     # Create new model and add to search_models
                     new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
                     new_model.set_parent_model_number(search_model.get_model_number())
-                    new_model.add_operation(subtask.task, subtask.given_params)
+                    new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
                     self.search_models.add(new_model)
 
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_method(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
         i = 0
         if subtask.task.subtasks is None:
@@ -92,7 +92,7 @@ class TotalOrderSolver(Solver):
         search_mod.add_operation(subtask.task, subtask.given_params)
         self.search_models.add(search_mod)
 
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_action(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtasks.Subtask and type(subtask.task) == Action
 
         # Check if all the required parameters are given

@@ -220,7 +220,7 @@ class Parser(ABC):
         https://github.com/pucrs-automated-planning/heuristic-planning/blob/master/pddl/pddl_parser.py"""
         with open(file_path, 'r') as f:
             # Remove single line comments
-            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
+            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE)
         # Tokenize
         stack = []
         sections = []

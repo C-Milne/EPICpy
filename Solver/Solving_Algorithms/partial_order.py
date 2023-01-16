@@ -1,5 +1,5 @@
 from Solver.Solving_Algorithms.solver import Solver, Task
-from Solver.Solving_Algorithms.solver import Model
+from Solver.Solving_Algorithms.solver import DefaultModel
 from Solver.Solving_Algorithms.solver import State
 from Solver.Solving_Algorithms.solver import Subtasks
 from Solver.Solving_Algorithms.solver import ProblemPredicate
@@ -12,7 +12,7 @@ class PartialOrderSolver(Solver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         if len(subtask.task.tasks) != 0:
             for new_task in subtask.task.tasks:
                 self._expand_task(Subtasks.Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
@@ -31,6 +31,7 @@ class PartialOrderSolver(Solver):
                 # Check if the given parameters satisfy preconditions that only use the given parameters
                 if self.task_expansion_given_param_check and not method.evaluate_preconditions_conditions_given_params(
                         parameters, search_model, self.problem):
+                    # Method not compatible with parameters given from task
                     continue
 
                 param_options = self.parameter_selector.get_potential_parameters(method, parameters, search_model)
@@ -41,10 +42,10 @@ class PartialOrderSolver(Solver):
                     # Create new model and add to search_models
                     new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
                     new_model.set_parent_model_number(search_model.get_model_number())
-                    new_model.add_operation(subtask.task, subtask.given_params)
+                    new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
                     self.search_models.add(new_model)
 
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_method(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
         i = 0
         if subtask.task.subtasks is None:
@@ -92,13 +93,16 @@ class PartialOrderSolver(Solver):
             search_mod.add_operation(subtask.task, subtask.given_params)
             self.search_models.add(search_mod)
 
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_action(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtasks.Subtask and type(subtask.task) == Action
 
         # Check if all the required parameters are given
         comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params)
 
-        assert comparison_result[0] == True
+        if not comparison_result[0] == True:
+            # raise ValueError('Invalid Parameters Passed to Action')
+            return
+        # assert comparison_result[0] == True
 
         # Check preconditions
         if not subtask.evaluate_preconditions(search_model, subtask.given_params, self.problem):
@@ -144,5 +148,5 @@ class PartialOrderSolver(Solver):
                 else:
                     raise NotImplementedError
 
-        search_model.add_operation(subtask.task, subtask.given_params)
+        search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
         self.search_models.add(search_model)

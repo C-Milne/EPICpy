@@ -2,7 +2,7 @@ from __future__ import annotations
 import sys
 from abc import ABC, abstractmethod
 """Import already imported modules from sys.modules"""
-from Solver.model import Model
+from Solver.Models.default_model import DefaultModel
 # Model = sys.modules["Solver.model"].Model
 # Method = sys.modules["Solver.model"].Method
 # Action = sys.modules["Solver.model"].Action
@@ -17,7 +17,7 @@ class ParameterSelector(ABC):
         self.solver = solver
 
     @abstractmethod
-    def get_potential_parameters(self, modifier, parameters: dict, search_model: Model) -> list:
+    def get_potential_parameters(self, modifier, parameters: dict, search_model: DefaultModel) -> list:
         """
         :param modifier: Task / Method / Action that is being executed
         :param parameters: The parameters that are already selected - {'param1': Object ...}
@@ -84,7 +84,7 @@ class ParameterSelector(ABC):
             k = list(remaining_params.keys())[0]
             popped = remaining_params.pop(k)
             for po in popped:
-                __create_combinations(self.solver.reproduce_dict(remaining_params), Model.merge_dictionaries(selected_params, {k: po}))
+                __create_combinations(self.solver.reproduce_dict(remaining_params), DefaultModel.merge_dictionaries(selected_params, {k: po}))
 
         # Check input format
         for p in param_dict:

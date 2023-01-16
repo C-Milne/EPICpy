@@ -13,8 +13,9 @@ from Solver.Heuristics.Heuristic import Heuristic
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Solver.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Search_Queues.search_queue import SearchQueue
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 
 class Runner:
@@ -86,25 +87,45 @@ class Runner:
     def set_search_queue_from_file(self, module_name: str, file_path: str) -> None:
         self.set_search_queue(self._get_module_from_file(module_name, file_path))
 
+    def set_progress_tracker(self, progress_tracker: type(SequentialTracker)):
+        self.solver.set_progress_tracker(progress_tracker)
+
+    def set_progress_tracker_from_file(self, module_name: str, file_path: str):
+        self.set_progress_tracker(self._get_module_from_file(module_name, file_path))
+
+    def set_model_from_file(self, model_mod_name: str, model_file: str):
+        self.set_model(self._get_module_from_file(model_mod_name, model_file))
+
+    def set_model(self, model_class: type(DefaultModel)):
+        self.solver.set_model_class(model_class)
+
     def set_early_task_precon_checker(self, v: bool) -> None:
         self.solver.task_expansion_given_param_check = v
 
-    def solve(self) -> Model:
+    def solve(self) -> DefaultModel:
         return self.solver.solve()
 
-    def output_result(self, search_result: Model) -> None:
+    def output_result(self, search_result: DefaultModel) -> None:
         self.solver.output(search_result)
 
     @staticmethod
-    def output_result_file(result: Model, write_file: str) -> None:
+    def output_result_file(result: DefaultModel, write_file: str) -> None:
         # Check output folder exists
         if not os.path.isdir("output"):
             os.mkdir("output")
 
-        # Pickle output and write to file
-        file = open("output/" + write_file, "wb")
-        file.write(pickle.dumps(result))
-        file.close()
+        file_suffix = Runner.__get_suffix(write_file)
+        if file_suffix == 'txt':
+            file = open("output/" + write_file, "w")
+            file.write(str(result.progress_tracker))
+            file.close()
+        elif file_suffix is None or file_suffix.lower() == 'pickle':
+            # Pickle output and write to file
+            file = open("output/" + write_file, "wb")
+            file.write(pickle.dumps(result))
+            file.close()
+        else:
+            raise ValueError('Output Suffix {} not recognised'.format(file_suffix))
 
     @staticmethod
     def __check_file_exists(file_path: str, file_purpose: str = None) -> None:
@@ -135,6 +156,10 @@ if __name__ == "__main__":
     argparser.add_argument("-paramSelectPath", type=str, help='File path to Parameter Selector File', default=None)
     argparser.add_argument("-searchQueueName", type=str, help='Name of SearchQueue Class', default=None)
     argparser.add_argument("-searchQueuePath", type=str, help='File path to SearchQueue File', default=None)
+    argparser.add_argument("-progressTrackerName", type=str, help='Name of Progress Tracker Class', default=None)
+    argparser.add_argument("-progressTrackerPath", type=str, help='File path to Progress Tracker File', default=None)
+    argparser.add_argument("-modelModName", type=str, help='Name of Model Class', default=None)
+    argparser.add_argument("-modelPath", type=str, help='File path to Model File', default=None)
     argparser.format_help()
     args = argparser.parse_args()
 
@@ -149,6 +174,10 @@ if __name__ == "__main__":
     param_file = args.paramSelectPath
     searchQueue_mod_name = args.searchQueueName
     searchQueue_file = args.searchQueuePath
+    progressTracker_mod_name = args.progressTrackerName
+    progressTracker_file = args.progressTrackerPath
+    model_mod_name = args.modelModName
+    model_file = args.modelPath
 
     if solver_mod_name is not None and solver_file is None or \
             solver_mod_name is None and solver_file is not None:
@@ -165,6 +194,13 @@ if __name__ == "__main__":
             searchQueue_mod_name is None and searchQueue_file is not None:
         argparser.error(
             "Incorrect Usage. Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty")
+    elif progressTracker_mod_name is not None and progressTracker_file is None or \
+            progressTracker_mod_name is None and progressTracker_file is not None:
+        argparser.error(
+            "Incorrect Usage. Either both '-progressTrackerName' and '-progressTrackerPath' need to be set or both need to be empty")
+    elif model_mod_name is not None and model_file is None or model_mod_name is None and model_file is not None:
+        argparser.error(
+            "Incorrect Usage. Either both '-modelModName' and '-modelPath' need to be set or both need to be empty")
 
     if domain_file is not None and problem_file is not None:
         # Setup runner object
@@ -189,6 +225,14 @@ if __name__ == "__main__":
         # SearchQueue Selection
         if searchQueue_mod_name is not None and searchQueue_file is not None:
             controller.set_search_queue_from_file(searchQueue_mod_name, searchQueue_file)
+
+        # Model Selection
+        if model_mod_name is not None and model_file is not None:
+            controller.set_model_from_file(model_mod_name, model_file)
+
+        # Progress Tracker Selection
+        if progressTracker_mod_name is not None and progressTracker_file is not None:
+            controller.set_progress_tracker_from_file(progressTracker_mod_name, progressTracker_file)
 
         # Initiate solving
         result = controller.solve()

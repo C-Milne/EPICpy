@@ -5,19 +5,19 @@ import pickle
 
 original_path = os.getcwd()
 try:
-    from Solver.model import Model
+    from Solver.Models.default_model import DefaultModel
     from Solver.Solving_Algorithms.solver import Solver
 except:
     os.chdir("../..")
     sys.path.insert(1, os.getcwd())
-    from Solver.model import Model
+    from Solver.Models.default_model import DefaultModel
     from Solver.Solving_Algorithms.solver import Solver
     os.chdir(original_path)
 
 """Plans can be output and stored as pickle objects. This file opens the file and prints the contents"""
 
 
-def read_plan(result_file_path: str) -> Model:
+def read_plan(result_file_path: str) -> DefaultModel:
     # Check file exists
     if not os.path.exists(result_file_path):
         raise IOError("File {} could not be found".format(result_file_path))

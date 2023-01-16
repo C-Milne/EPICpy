@@ -1,7 +1,5 @@
 import unittest
-from Internal_Representation.precondition import Precondition
-from Solver.model import Model
-from Solver.Solving_Algorithms.solver import Solver
+from Solver.Models.default_model import DefaultModel
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
@@ -10,7 +8,7 @@ from Internal_Representation.problem import Problem
 from Internal_Representation.subtasks import Subtasks
 from Internal_Representation.state import State
 from Internal_Representation.reg_parameter import RegParameter
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
@@ -150,14 +148,14 @@ class SolvingTests(unittest.TestCase):
     def test_action_execution_5(self):
         # Test Carrying out on action with one model and check the state of the others - Also check model state and _index
         domain, problem, solver = RovEx.setup()
-        solver.search_models._Q = [Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem) for i in range(7)]
+        solver.search_models._Q = [DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem) for i in range(7)]
         for m in solver.search_models._Q:
             m.ranking = 0
 
         # Execute action on model[7]
         subT = Subtasks.Subtask(domain.actions['visit'], [RegParameter('?from')])
         subT.add_given_parameters({'?waypoint': problem.objects['waypoint3']})
-        solver._expand_action(subT, Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
+        solver._expand_action(subT, DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
 
         search_models = solver.search_models._Q
         self.assertEqual(8, len(search_models))
@@ -201,7 +199,7 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem)
         solver.search_models.add(initial_model)
 
         # Execute Step 1
@@ -268,14 +266,14 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_basic_execution_to(self):
         domain, problem, parser, solver = env_setup(True, False)
@@ -284,14 +282,14 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_compare_parameters(self):
         domain, problem, solver = RovEx.setup()
@@ -367,7 +365,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -386,7 +384,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -442,7 +440,7 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem)
         solver.search_models.add(initial_model)
 
         # Expand
@@ -481,7 +479,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break

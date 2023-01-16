@@ -5,7 +5,7 @@ import copy
 from typing import List
 from runner import Runner
 from Internal_Representation.action import Action
-from Solver.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed
 from Internal_Representation.state import State
@@ -41,7 +41,7 @@ class DeleteRelaxedTotalPredicates(DeleteRelaxed):
     def __init__(self, domain, problem, solver, search_models):
         super().__init__(domain, problem, solver, search_models)
 
-    def _calculate_distance(self, model: Model, alt_state: State) -> int:
+    def _calculate_distance(self, model: DefaultModel, alt_state: State) -> int:
         all_actions = [self.alt_domain.actions[a] for a in self.alt_domain.actions]
         prev_num_preds = 0
         applied_actions = []
@@ -85,7 +85,7 @@ def _calculate_predicate_state_size(controller: Runner) -> int:
     size_calculator = DeleteRelaxedTotalPredicates(controller.domain, controller.problem, controller.solver, [])
     size_calculator.presolving_processing()
 
-    model = Model(controller.problem.initial_state, [])
+    model = DefaultModel(controller.problem.initial_state, [])
     res = size_calculator._calculate_distance(model, State.reproduce(model.current_state))
     return res
 

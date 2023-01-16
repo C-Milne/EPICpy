@@ -30,8 +30,8 @@ class PartialOrderPruning(Heuristic):
                 return False
 
     def _concat_remaining_tasks(self, model):
-        task_names = model.search_modifiers[0].task.name
-        for p in model.search_modifiers[0].parameters:
+        task_names = model.get_search_modifier(0).task.name
+        for p in model.get_search_modifier(0).parameters:
             task_names += p.name
 
         for w in model.waiting_subtasks:

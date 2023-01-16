@@ -1,10 +1,9 @@
 import unittest
-from Solver.model import Model
+from Solver.Models.default_model import DefaultModel
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Internal_Representation.modifier import Modifier
-from Solver.Solving_Algorithms.solver import Solver
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.state import State
@@ -64,7 +63,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
 
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car, "?a": ob_bike, "?b": ob_popcorn,
                       "?c": ob_crisps, "?d": ob_dark}
 
@@ -74,7 +73,7 @@ class HDDLGroundingTests(unittest.TestCase):
         # Set up next model - {'have': ['ham', 'irn-bru', 'car', 'popcorn'], 'hate': ['dark']}
         state.add_element(ProblemPredicate(have_pred, [ob_popcorn]))
         state.add_element(ProblemPredicate(hate_pred, [ob_dark]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
@@ -90,9 +89,9 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Add some assertions for this - seems too work (perhaps not for 'forall' methods)
         self.assertEqual(2, len(domain.methods['pickup-ready-block'].requirements))
-        self.assertEqual({'type': domain.types['block'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}},
+        self.assertEqual({'type': domain.types['BLOCK'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}},
                          domain.methods['pickup-ready-block'].requirements['?b'])
-        self.assertEqual({'type': domain.types['block'],
+        self.assertEqual({'type': domain.types['BLOCK'],
                           'predicates': {'and': {'goal_on': 2, 'done': 1, 'clear': 1}}},
                          domain.methods['pickup-ready-block'].requirements['?d'])
 
@@ -106,7 +105,7 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "Blocksworld/Blocksworld_test_domain_1.hddl")
         parser.parse_problem(self.test_tools_path + "Blocksworld/Blocksworld_test_problem_1.hddl")
         method = domain.methods['setdone']
-        model = Model(problem.initial_state, [], problem)
+        model = DefaultModel(problem.initial_state, [], problem)
         result = method.evaluate_preconditions(model, {}, problem)
         self.assertEqual(False, result)
 
@@ -120,7 +119,7 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_domain(self.test_tools_path + "Blocksworld/Blocksworld_test_domain_1.hddl")
         parser.parse_problem(self.test_tools_path + "Blocksworld/Blocksworld_test_problem_1_1.hddl")
         method = domain.methods['setdone']
-        model = Model(problem.initial_state, [], problem)
+        model = DefaultModel(problem.initial_state, [], problem)
         result = method.evaluate_preconditions(model, {}, problem)
         self.assertEqual(True, result)
 
@@ -131,7 +130,7 @@ class HDDLGroundingTests(unittest.TestCase):
         plan = solver.solve()
         solver.output(plan)
         self.assertIsNotNone(plan)
-        self.assertEqual(1, len(plan.actions_taken))
+        self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
 
         problem.initial_state.remove_element(domain.predicates['foo'], [problem.objects['a']])
         solver = PartialOrderSolver(domain, problem)
@@ -159,7 +158,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for True
@@ -170,7 +169,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(False, result)
 
@@ -193,7 +192,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for True
@@ -204,20 +203,20 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
         # {'have': ['irn-bru']}
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
         # {'have': []}
         state = State()
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(False, result)
 
@@ -240,7 +239,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_irnbru]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         param_dict = {"?z": ob_ham, "?x": ob_irnbru, "?y": ob_car}
 
         # Testing for False
@@ -251,7 +250,7 @@ class HDDLGroundingTests(unittest.TestCase):
         state = State()
         state.add_element(ProblemPredicate(have_pred, [ob_ham]))
         state.add_element(ProblemPredicate(have_pred, [ob_car]))
-        model = Model(state, [])
+        model = DefaultModel(state, [])
         result = precons.evaluate(param_dict, model, None)
         self.assertEqual(True, result)
 
@@ -374,16 +373,16 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Test for True
         param_dict = {
-            "?take_image_instance_4_argument_6": problem.objects['phenomenon4'],
+            "?take_image_instance_4_argument_6": problem.objects['Phenomenon4'],
             "?take_image_instance_4_argument_7": problem.objects['instrument0'],
             "?take_image_instance_4_argument_8": problem.objects['thermograph0'],
             "?turn_to_instance_3_argument_2": problem.objects['satellite0'],
-            "?turn_to_instance_3_argument_4": problem.objects['phenomenon6']
+            "?turn_to_instance_3_argument_4": problem.objects['Phenomenon6']
         }
         self.assertEqual(True, method._evaluate_constraints(param_dict, None, problem))
 
         # Test for False
-        param_dict['?turn_to_instance_3_argument_4'] = problem.objects['phenomenon4']
+        param_dict['?turn_to_instance_3_argument_4'] = problem.objects['Phenomenon4']
         self.assertEqual(False, method._evaluate_constraints(param_dict, None, problem))
 
     def test_type_satisfaction(self):
@@ -392,18 +391,18 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_problem(self.IPC_Tests_path + "um-translog01/problem.hddl")
 
         # Check that type 'regular_package' satisfies both 'package' and 'regular'
-        reg_pack_ob = Object('test_package', domain.types['regular_package'])
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['package'], reg_pack_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular'], reg_pack_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular_package'], reg_pack_ob))
+        reg_pack_ob = Object('test_package', domain.types['Regular_Package'])
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Package'], reg_pack_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular'], reg_pack_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular_Package'], reg_pack_ob))
 
         # Check a child of regular_package also satisfies them both
-        food_ob = Object('test_food', domain.types['food'])
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['package'], food_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['regular'], food_ob))
-        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['food'], food_ob))
+        food_ob = Object('test_food', domain.types['Food'])
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Package'], food_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Regular'], food_ob))
+        self.assertEqual(True, solver.parameter_selector.check_satisfies_type(domain.types['Food'], food_ob))
 
         # Test for false
-        self.assertEqual(False, solver.parameter_selector.check_satisfies_type(domain.types['airport'], reg_pack_ob))
+        self.assertEqual(False, solver.parameter_selector.check_satisfies_type(domain.types['Airport'], reg_pack_ob))
 
     # Ground objects to types? - would make for quicker look-ups in problem.get_objects_of_type()

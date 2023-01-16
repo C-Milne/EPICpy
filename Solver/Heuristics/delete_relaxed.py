@@ -10,9 +10,9 @@ Subtasks = sys.modules['Internal_Representation.subtasks'].Subtasks
 Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
 
 if 'Solver.Model' in sys.modules:
-    Model = sys.modules['Solver.model'].Model
+    Model = sys.modules['Solver.Models.model'].Model
 else:
-    from Solver.model import Model
+    from Solver.Models.default_model import DefaultModel
 
 if 'Internal_Representation.domain' in sys.modules:
     Domain = sys.modules['Internal_Representation.domain'].Domain
@@ -151,11 +151,11 @@ class DeleteRelaxed(Pruning):
         self.parameter_selector = AllParameters(self.solver)
         self.model_stores = {}
 
-    def ranking(self, model: Model) -> float:
+    def ranking(self, model: DefaultModel) -> float:
         # Create duplicate state
         alt_state = State.reproduce(model.current_state)
 
-        if len(model.operations_taken) == 0 or type(model.operations_taken[-1].mod) == Action:
+        if len(model.get_progress_tracker().operations_taken) == 0 or type(model.get_progress_tracker().operations_taken[-1].mod) == Action:
             prev_action = True
         else:
             prev_action = False
@@ -191,11 +191,11 @@ class DeleteRelaxed(Pruning):
         next_mod = model.search_modifiers[0].task
         if type(next_mod) != Task:
             i = -1
-            op = model.operations_taken[i]
+            op = model.get_progress_tracker().operations_taken[i]
             op_task = op.mod
             while type(op_task) != Task:
                 i -= 1
-                op = model.operations_taken[i]
+                op = model.get_progress_tracker().operations_taken[i]
                 op_task = op.mod
             assert type(op_task) == Task
             targets.append("U-" + op_task.name +
@@ -244,7 +244,7 @@ class DeleteRelaxed(Pruning):
                 obs.append(name[start:end])
         return obs
 
-    def _calculate_distance(self, model: Model, model_store: ModelStore, alt_state: State, targets: list) -> int:
+    def _calculate_distance(self, model: DefaultModel, model_store: ModelStore, alt_state: State, targets: list) -> int:
         model.current_state = alt_state
         iteration = 0
         modifiers = [x for x in model_store.previous_modifiers]
