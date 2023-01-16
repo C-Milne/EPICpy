@@ -15,6 +15,7 @@ from Solver.Parameter_Selection.Requirement_Selection import RequirementSelectio
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
+from Solver.Models.PandaVerifyModel import PandaVerifyModel
 
 
 class RunnerTests(unittest.TestCase):
@@ -425,8 +426,29 @@ optional arguments:
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
         os.chdir(original_dir)
 
+    @unittest.skip
     def test_runner_setting_model_from_path(self):
-        self.assertEqual(1, 2)
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_model_from_file('PandaVerifyModel',
+                                       '../../Solver/Models/PandaVerifyModel.py')
+        self.assertEqual(PandaVerifyModel.__name__, controller.solver.ModelClass.__name__)
 
+
+    @unittest.skip
     def test_runner_setting_model_from_command_line(self):
-        self.assertEqual(1, 2)
+        original_dir = os.getcwd()
+        os.chdir("../..")
+        error_raised = False
+        try:
+            res = subprocess.check_output(
+                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
+                "-modelModName PandaVerifyModel -modelPath Solver/Models/PandaVerifyModel.py",
+                stderr=subprocess.PIPE)
+        except Exception as e:
+            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            print(msg)
+            error_raised = True
+        self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
+        os.chdir(original_dir)

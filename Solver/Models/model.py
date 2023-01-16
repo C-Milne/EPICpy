@@ -74,7 +74,7 @@ class Model(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_next_modifier(self):
+    def get_next_modifier(self) -> Subtasks.Subtask:
         raise NotImplementedError
 
     @abstractmethod
@@ -86,7 +86,7 @@ class Model(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_search_modifier(self, index: int):
+    def get_search_modifier(self, index: int) -> Subtasks.Subtask:
         raise NotImplementedError
 
     @abstractmethod
