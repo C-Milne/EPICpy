@@ -7,6 +7,7 @@ This SearchQueue ranks models using the A* principle (Cost thus far + estimated 
 
 
 class SearchQueue:
+    # TODO: Turn this into a ABC class
     def __init__(self):
         self._Q = []
         self._completed_models = []
