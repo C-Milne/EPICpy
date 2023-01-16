@@ -9,10 +9,10 @@ class State:
         self.elements = []
 
     def add_element(self, element: ProblemPredicate):
-        # TODO: When adding an element check that it does not already exist
         assert type(element) == ProblemPredicate
-        self.elements.append(element)
-        self.__add_element_to_index(element)
+        if element not in self:
+            self.elements.append(element)
+            self.__add_element_to_index(element)
 
     def __add_element_to_index(self, element: ProblemPredicate):
         name = element.predicate.name
@@ -135,6 +135,9 @@ class State:
 
     def __len__(self):
         return len(self.elements)
+
+    def __contains__(self, item) -> bool:
+        return item in self.elements
 
     def __str__(self):
         if len(self.elements) > 0:
