@@ -28,6 +28,23 @@ class StateTests(unittest.TestCase):
         self.assertEqual([prob_pred1], state.elements)
         self.assertEqual({'test-pred': [0]}, state._index)
 
+    def test_add_same_predicate_to_state_2(self):
+        state = State()
+        predicate1 = Predicate('test-pred', [RegParameter('?a')])
+        object1 = Object('ob1')
+        prob_pred1 = ProblemPredicate(predicate1, [object1])
+        prob_pred3 = ProblemPredicate(predicate1, [object1])
+        object2 = Object('ob2')
+        prob_pred2 = ProblemPredicate(predicate1, [object2])
+
+        state.add_element(prob_pred1)
+        state.add_element(prob_pred2)
+        state.add_element(prob_pred3)
+
+        self.assertEqual(2, len(state))
+        self.assertEqual([prob_pred1, prob_pred2], state.elements)
+        self.assertEqual({'test-pred': [0, 1]}, state._index)
+
     def test_final_state_rover1_ham_gbfs_duplicates(self):
         # Run the rover 1 problem and check for available predicates (rover1 should only occur once)
         domain, problem, parser, solver = env_setup(True, True)
