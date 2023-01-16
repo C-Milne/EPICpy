@@ -144,8 +144,6 @@ class Solver(ABC):
             # Loop exit conditions
             if self.search_models.get_num_search_models() == 0 and self.search_models.get_num_completed_models() == 0:
                 return None
-            elif step_control:
-                break
             elif self.search_models.get_num_completed_models() > 0:
                 for m in self.search_models.get_completed_models():
                     eval = self.problem.evaluate_goal(m)
@@ -153,6 +151,8 @@ class Solver(ABC):
                         m.num_models_used = DefaultModel.model_counter
                         return m
                 self.search_models.clear_completed_models()
+            elif step_control:
+                break
 
     @abstractmethod
     def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):

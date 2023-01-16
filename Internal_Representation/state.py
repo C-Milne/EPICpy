@@ -9,6 +9,7 @@ class State:
         self.elements = []
 
     def add_element(self, element: ProblemPredicate):
+        # TODO: When adding an element check that it does not already exist
         assert type(element) == ProblemPredicate
         self.elements.append(element)
         self.__add_element_to_index(element)
