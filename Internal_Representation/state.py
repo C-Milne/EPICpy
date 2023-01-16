@@ -136,8 +136,14 @@ class State:
     def __len__(self):
         return len(self.elements)
 
-    def __contains__(self, item) -> bool:
-        return item in self.elements
+    def __contains__(self, item: ProblemPredicate) -> bool:
+        indexes = self.get_indexes(item.predicate.name)
+        if not indexes:
+            return False
+        for i in indexes:
+            if self.elements[i] == item:
+                return True
+        return False
 
     def __str__(self):
         if len(self.elements) > 0:
