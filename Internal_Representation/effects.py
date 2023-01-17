@@ -28,7 +28,7 @@ class Effects:
     def __init__(self):
         self.effects = []
 
-    def add_effect(self, predicate: str, parameters: list = [], negated: bool = False):
+    def add_effect(self, predicate: Predicate, parameters: list = [], negated: bool = False):
         """Params:  - predicate : name of predicate to be modified
                     - parameters : list of parameters belonging to predicate
                     - negated : True if 'not' statement encapsulates effect
