@@ -26,6 +26,7 @@ class SolvingTests(unittest.TestCase):
         self.rover_path = "../Examples/IPC_Tests/Rover/"
         self.rover_col_path = "../Examples/Rover/"
         self.IPC_Tests_path = "../Examples/IPC_Tests/"
+        self.barman_path = "../Examples/Barman/"
 
     # def test_action_execution(self):
     #     domain = Domain(None)
@@ -500,3 +501,11 @@ class SolvingTests(unittest.TestCase):
 
         res = solver.solve()
         self.assertNotEqual(None, res)
+
+    def test_barman_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.barman_path + "domain.hddl")
+        parser.parse_problem(self.barman_path + "pfile01.hddl")
+
+        res = solver.solve()
+        self.assertIsNotNone(res)

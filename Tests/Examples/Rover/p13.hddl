@@ -1,5 +1,5 @@
 (define (problem htn_rover_pb_01)
-(:domain rover)
+(:domain ROVER)
 
 ;---------------- facts -----------------------
 (:objects

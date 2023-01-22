@@ -53,7 +53,8 @@ class ParameterSelector(ABC):
             return [True]
         return [False, missing_params]
 
-    def check_satisfies_type(self, required_type: Type, object_to_check: Object) -> bool:
+    @staticmethod
+    def check_satisfies_type(required_type: Type, object_to_check: Object) -> bool:
         def __check_type(req_t, t) -> bool:
             if t == req_t:
                 return True

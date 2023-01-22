@@ -9,6 +9,7 @@ class ProblemPredicate:
                                 [object[waypoint1], object[waypoint0]]"""
         assert isinstance(predicate, Predicate)
         assert type(objects) == list
+
         for o in objects:
             try:
                 assert type(o) == Object
