@@ -14,6 +14,7 @@ class SearchQueue:
         self._completed_models = []
         self.heuristic = None
         self.__queue_size = 0
+        self.__total_added_models = 0
 
     def add_heuristic(self, heuristic):
         assert isinstance(heuristic, Heuristic)
@@ -38,14 +39,19 @@ class SearchQueue:
 
     def _add_model(self, model):
         res = self.heuristic.ranking(model)
-        ranking = model.get_progress_tracker().get_num_operations_taken() + res
+        ranking = self._calc_ranking(model, res)
 
         if type(res) != int and (res is None or res == False):
             return  # Do not add to search queue
         model.set_ranking(ranking)
+        model.set_queue_location(self.__total_added_models)
 
         self._Q.put(model)
+        self.__total_added_models += 1
         self.__queue_size += 1
+
+    def _calc_ranking(self, model, heuristic_estimate):
+        return model.get_progress_tracker().get_num_operations_taken() + heuristic_estimate
 
     def clear_completed_models(self):
         self._completed_models = []
@@ -57,7 +63,7 @@ class SearchQueue:
         return self._Q.get()
 
     def clear(self):
-        self._Q = []
+        self._Q = PriorityQueue()
         self._completed_models = []
 
     def get_num_search_models(self):

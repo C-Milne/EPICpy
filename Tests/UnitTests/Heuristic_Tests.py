@@ -194,9 +194,9 @@ class HeuristicTests(unittest.TestCase):
         parser.parse_problem(self.basic_path + "pb1.hddl")
         solver.set_heuristic(DeleteRelaxed)
         solver.solve(search=False)
-        search_models = solver.search_models._Q
+        search_models = solver.search_models
         self.assertEqual(1, len(search_models))
-        self.assertEqual(2, search_models[0].ranking)
+        self.assertEqual(2, search_models._Q.queue[0].ranking)
 
     def test_delete_relaxed_choose_targets(self):
         domain, problem, parser, solver = env_setup(True)
