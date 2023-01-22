@@ -102,3 +102,10 @@ class Model(ABC):
         c = a.copy()
         c.update(b)
         return c
+
+    def __repr__(self):
+        return "Model(" + str((self.ranking, self.model_number)) + ")"
+
+    def __lt__(self, other):
+        return (self.ranking, self.model_number) < (other.ranking, other.model_number)
+
