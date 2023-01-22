@@ -109,6 +109,7 @@ class PartialOrderSolver(Solver):
             return
 
         if not subtask.task.effects is None:
+            added_predicates = []
             for eff in subtask.task.effects.effects:
 
                 if type(eff) == Effects.Effect:
@@ -118,10 +119,13 @@ class PartialOrderSolver(Solver):
 
                     if eff.negated:
                         # Predicate needs to be removed
-                        search_model.current_state.remove_element(eff.predicate, param_list)
+                        if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
+                            # If an action tries to add and remove the same predicate we don't delete anything
+                            search_model.current_state.remove_element(eff.predicate, param_list)
                     else:
                         # Predicate needs to be added
                         new_predicate = ProblemPredicate(eff.predicate, param_list)
+                        added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
                         search_model.current_state.add_element(new_predicate)
                 elif type(eff) == Effects.ForAllEffect:
                     # Get parameters

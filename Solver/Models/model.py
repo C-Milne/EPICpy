@@ -69,6 +69,9 @@ class Model(ABC):
     def get_num_operations_taken(self):
         return self.progress_tracker.get_num_operations_taken()
 
+    def get_state(self) -> State:
+        return self.current_state
+
     @abstractmethod
     def insert_modifier(self, modifier, index=0):
         raise NotImplementedError
