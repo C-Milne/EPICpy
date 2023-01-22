@@ -1,3 +1,4 @@
+from queue import PriorityQueue
 from Solver.Models.model import Model
 from Solver.Heuristics.Heuristic import Heuristic
 
@@ -9,9 +10,11 @@ This SearchQueue ranks models using the A* principle (Cost thus far + estimated 
 class SearchQueue:
     # TODO: Turn this into a ABC class
     def __init__(self):
-        self._Q = []
+        self._Q = PriorityQueue()
         self._completed_models = []
         self.heuristic = None
+        self.__queue_size = 0
+        self.__total_added_models = 0
 
     def add_heuristic(self, heuristic):
         assert isinstance(heuristic, Heuristic)
@@ -36,37 +39,36 @@ class SearchQueue:
 
     def _add_model(self, model):
         res = self.heuristic.ranking(model)
-        ranking = model.get_progress_tracker().get_num_operations_taken() + res
+        ranking = self._calc_ranking(model, res)
 
         if type(res) != int and (res is None or res == False):
             return  # Do not add to search queue
         model.set_ranking(ranking)
+        model.set_queue_location(self.__total_added_models)
 
-        added = False
-        i = 0
-        while i < len(self._Q):
-            if ranking < self._Q[i].get_ranking():
-                self._Q.insert(i, model)
-                added = True
-                break
-            i += 1
-        if not added:
-            self._Q.append(model)
+        self._Q.put(model)
+        self.__total_added_models += 1
+        self.__queue_size += 1
+
+    def _calc_ranking(self, model, heuristic_estimate):
+        return model.get_progress_tracker().get_num_operations_taken() + heuristic_estimate
 
     def clear_completed_models(self):
         self._completed_models = []
 
     def pop(self):
-        if len(self._Q) == 0:
+        if self.__queue_size == 0:
             return None
-        return self._Q.pop(0)
+        self.__queue_size -= 1
+        return self._Q.get()
 
     def clear(self):
-        self._Q = []
+        self._Q = PriorityQueue()
         self._completed_models = []
 
     def get_num_search_models(self):
-        return len(self._Q)
+        # TODO : Remove this function (use len instead)
+        return len(self)
 
     def get_num_completed_models(self):
         return len(self._completed_models)
@@ -75,4 +77,4 @@ class SearchQueue:
         return self._completed_models
 
     def __len__(self):
-        return len(self._Q)
+        return self.__queue_size

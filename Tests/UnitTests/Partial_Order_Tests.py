@@ -23,7 +23,7 @@ class PartialOrderTests(unittest.TestCase):
         parser.parse_domain(self.rover_path + "domain.hddl")
         parser.parse_problem(self.rover_path + "pfile01.hddl")
         execution_prep(problem, solver)
-        search_models = solver.search_models._Q
+        search_models = solver.search_models
         self.assertEqual(6, len(search_models))
 
     def test_ordering_total_ordered_problem(self):
