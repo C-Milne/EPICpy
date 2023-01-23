@@ -2,10 +2,13 @@ import unittest
 from queue import PriorityQueue
 from Tests.UnitTests.TestTools.env_setup import env_setup
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
+from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_partial_order import TreeDistancePartialOrder
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, AltPrecondition, AltOperatorCondition
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
+from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Internal_Representation.conditions import PredicateCondition
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.subtasks import Subtask
@@ -360,3 +363,21 @@ class HeuristicTests(unittest.TestCase):
         solver.search_models.heuristic.ranking(model2)
         seen_states = list(solver.search_models.heuristic._seen_states)
         self.assertEqual(1, len(seen_states))
+
+    def test_seen_states_hamming_distance(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(HammingDistanceSeenStatesPruning)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+
+    def test_seen_states_tree_distance(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(TreeDistanceSeenStatesPruning)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
