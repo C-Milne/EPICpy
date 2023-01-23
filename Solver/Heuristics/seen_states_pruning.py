@@ -11,9 +11,9 @@ class SeenStatesPruning(Heuristic):
         if model_hash in self._seen_states:
             return None
         self._seen_states.add(model_hash)
-        return self._inner_ranking()
+        return self._inner_ranking(model)
 
-    def _inner_ranking(self):
+    def _inner_ranking(self, model):
         return 0
 
     def presolving_processing(self) -> None:
