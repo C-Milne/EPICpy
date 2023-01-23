@@ -18,6 +18,10 @@ class ProblemPredicate:
 
         self.predicate = predicate
         self.objects = objects
+        self.ob_names = [o.name for o in objects]
+
+    def __hash__(self):
+        return hash((self.predicate.name, *self.ob_names))
 
     def __eq__(self, other):
         if type(self) != type(other):

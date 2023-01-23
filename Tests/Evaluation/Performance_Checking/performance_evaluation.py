@@ -14,6 +14,12 @@ from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.no_pruning import NoPruning
+from Solver.Heuristics.pruning import Pruning
+from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
+from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
+from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
+from Solver.Heuristics.tree_distance import TreeDistance
 
 
 def run_test(domain_file_path, problem_file_path):
@@ -21,7 +27,7 @@ def run_test(domain_file_path, problem_file_path):
     print(problem_file_path)
     controller = Runner(domain_file_path, problem_file_path)
     controller.set_search_queue(GBFSSearchQueue)
-    controller.set_heuristic(HammingDistancePartialOrder)
+    controller.set_heuristic(TreeDistanceSeenStatesPruning)
     controller.parse_domain()
     controller.parse_problem()
 

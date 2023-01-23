@@ -1,11 +1,20 @@
 import unittest
+from queue import PriorityQueue
 from Tests.UnitTests.TestTools.env_setup import env_setup
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
+from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_partial_order import TreeDistancePartialOrder
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, AltPrecondition, AltOperatorCondition
 from Solver.Heuristics.hamming_distance import HammingDistance
+from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
+from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Internal_Representation.conditions import PredicateCondition
+from Internal_Representation.problem_predicate import ProblemPredicate
+from Internal_Representation.subtasks import Subtask
 from Solver.Models.default_model import DefaultModel
+from Solver.Models.model import Model
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Internal_Representation.state import State
 
 
@@ -16,6 +25,7 @@ class HeuristicTests(unittest.TestCase):
         self.basic_path = "../Examples/Basic/"
         self.depot_path = "../Examples/Depots/"
         self.rover_PO_path = "../Examples/Partial_Order/Rover/"
+        Model.model_counter = 0
 
     def test_tree_distance_preprocessing(self):
         domain, problem, parser, solver = env_setup(True)
@@ -270,3 +280,104 @@ class HeuristicTests(unittest.TestCase):
         solver.set_heuristic(HammingDistance)
         res = solver.solve()
         self.assertNotEqual(None, res)
+
+    def test_seen_states_pruning_rover(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(SeenStatesPruning)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+        self.assertEqual(271, res.model_counter)
+
+    def test_seen_states_pruning(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(SeenStatesPruning)
+
+        models = []
+        for i in range(2):
+            # Create a model
+            state1 = State()
+            state1.add_element(ProblemPredicate(domain.get_predicate('at'), [problem.get_object('rover0'), problem.get_object('waypoint0')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'), [problem.get_object('objective0'), problem.get_object('waypoint0')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'), [problem.get_object('objective0'), problem.get_object('waypoint1')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'), [problem.get_object('objective0'), problem.get_object('waypoint2')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'), [problem.get_object('objective0'), problem.get_object('waypoint3')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'), [problem.get_object('rover0'), problem.get_object('waypoint0'), problem.get_object('waypoint1')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'), [problem.get_object('rover0'), problem.get_object('waypoint0'), problem.get_object('waypoint3')]))
+            state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'), [problem.get_object('rover0'), problem.get_object('waypoint2'), problem.get_object('waypoint3')]))
+
+            search_modifiers1 = []
+            task = domain.get_task('do_calibrate')
+            subt = Subtask(task, task.get_parameters())
+            subt_given_params = {}
+            for p in zip(task.get_parameters(), [problem.get_object('rover0'), problem.get_object('camera0')]):
+                subt_given_params[p[0].name] = p[1]
+            subt.add_given_parameters(subt_given_params)
+            search_modifiers1.append(subt)
+
+            task = domain.get_method('m2_do_navigate2')
+            subt = Subtask(task, task.get_parameters())
+            subt_given_params = {}
+            for p in zip(task.get_parameters(), [problem.get_object('rover0'), problem.get_object('waypoint0'), problem.get_object('waypoint1')]):
+                subt_given_params[p[0].name] = p[1]
+            subt.add_given_parameters(subt_given_params)
+            search_modifiers1.append(subt)
+
+            task = domain.get_action('take_image')
+            subt = Subtask(task, task.get_parameters())
+            subt_given_params = {}
+            for p in zip(task.get_parameters(),
+                         [problem.get_object('rover0'),
+                          problem.get_object('waypoint2'),
+                          problem.get_object('objective1'), problem.get_object('camera0'), problem.get_object('high_res')]):
+                subt_given_params[p[0].name] = p[1]
+            subt.add_given_parameters(subt_given_params)
+            search_modifiers1.append(subt)
+
+            waiting_subtasks1 = []
+            task = domain.get_task('get_soil_data')
+            subt = Subtask(task, task.get_parameters())
+            subt_given_params = {}
+            for p in zip(task.get_parameters(),
+                         [problem.get_object('waypoint2')]):
+                subt_given_params[p[0].name] = p[1]
+            subt.add_given_parameters(subt_given_params)
+            waiting_subtasks1.append(subt)
+
+            task = domain.get_task('get_rock_data')
+            subt = Subtask(task, task.get_parameters())
+            subt_given_params = {}
+            for p in zip(task.get_parameters(),
+                         [problem.get_object('waypoint1')]):
+                subt_given_params[p[0].name] = p[1]
+            subt.add_given_parameters(subt_given_params)
+            waiting_subtasks1.append(subt)
+            models.append(DefaultModel(state1, search_modifiers1, problem, waiting_subtasks1, progress_tracker_class=SequentialTracker))
+
+        # Add model to search queue
+        model1, model2 = models
+        solver.search_models.heuristic.ranking(model1)
+        solver.search_models.heuristic.ranking(model2)
+        seen_states = list(solver.search_models.heuristic._seen_states)
+        self.assertEqual(1, len(seen_states))
+
+    def test_seen_states_hamming_distance(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(HammingDistanceSeenStatesPruning)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+
+    def test_seen_states_tree_distance(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(TreeDistanceSeenStatesPruning)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)

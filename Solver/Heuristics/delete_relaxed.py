@@ -7,7 +7,7 @@ Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
 Subtasks = sys.modules['Internal_Representation.subtasks'].Subtasks
-Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
+Subtask = sys.modules['Internal_Representation.subtasks'].Subtask
 
 if 'Solver.Model' in sys.modules:
     Model = sys.modules['Solver.Models.model'].Model

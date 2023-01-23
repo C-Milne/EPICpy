@@ -1,5 +1,6 @@
 import sys
-from Solver.Heuristics.pruning import Pruning
+from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
+from Solver.Heuristics.tree_distance import Tree
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
@@ -7,60 +8,12 @@ Subtask = sys.modules['Internal_Representation.subtasks'].Subtask
 Model = sys.modules['Solver.Models.default_model'].DefaultModel
 
 
-class Tree:
-    class Node:
-        def __init__(self, name, task: bool):
-            self.name = name
-            self.operator = None
-            self.type = None
-            self.parents = []
-            self.children = []
-            self.distance = None
-            self.task = task
-
-        def add_parent(self, node):
-            # Check is not already in parent list
-            if all([x.name != node.name for x in self.parents]):
-                self.parents.append(node)
-
-        def add_child(self, node):
-            self.children.append(node)
-
-        def set_operator(self, operator: str):
-            assert operator == "AND" or operator == "OR"
-            self.operator = operator
-
-        def set_type(self, t):
-            assert t == Task or t == Method or t == Action
-            self.type = t
-
-        def set_distance(self, v: int):
-            assert type(v) == int
-            self.distance = v
-
-    def __init__(self):
-        self.root = None
-        self.nodes = {}
-
-    def add_node(self, name, task=False) -> Node:
-        if name in self.nodes:
-            return self.nodes[name]
-        node = self.Node(name, task)
-        self.nodes[name] = node
-        return node
-
-    def __getitem__(self, item):
-        if item in self.nodes:
-            return self.nodes[item]
-        return None
-
-
-class TreeDistance(Pruning):
+class TreeDistanceSeenStatesPruning(SeenStatesPruning):
     def __init__(self, domain, problem, solver, search_models):
         super().__init__(domain, problem, solver, search_models)
         self.tree = Tree()
 
-    def ranking(self, model: Model) -> float:
+    def _inner_ranking(self, model: Model) -> float:
         res = sum(self.tree[x].distance for x in model.get_names_of_task_network_modifiers())
         return res + sum(self.tree[x.task.name].distance for x in model.waiting_subtasks)
 

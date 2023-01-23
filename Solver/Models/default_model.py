@@ -2,7 +2,7 @@ from Internal_Representation.method import Method
 from Internal_Representation.action import Action
 from Internal_Representation.task import Task
 from Internal_Representation.state import State
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtask
 from Solver.Progress_Tracking.action_tracker import ActionTracker   # TODO : Remove this
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Solver.Models.model import Model
@@ -21,8 +21,8 @@ class DefaultModel(Model):
 
     def insert_modifier(self, modifier, index=0):
         assert type(modifier) == Task or type(modifier) == Method or type(modifier) == Action or \
-               (type(modifier) == Subtasks.Subtask and type(modifier.task) == Action) or \
-               (type(modifier) == Subtasks.Subtask and type(modifier.task) == Task)
+               (type(modifier) == Subtask and type(modifier.task) == Action) or \
+               (type(modifier) == Subtask and type(modifier.task) == Task)
         self.search_modifiers.insert(index, modifier)
 
     def add_operation(self, mod, parameters_used, root=False):

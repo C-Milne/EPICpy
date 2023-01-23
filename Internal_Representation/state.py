@@ -154,3 +154,6 @@ class State:
         else:
             print_string = "State is empty."
         return print_string
+
+    def __hash__(self):
+        return hash(frozenset(self.elements))

@@ -75,6 +75,94 @@ class StateTests(unittest.TestCase):
         self.assertEqual(1, len(res_state.get_indexes('shakerLevel')))
         self.assertIn(ProblemPredicate(domain.get_predicate('shakerLevel'), [problem.get_object('shaker1'), problem.get_object('level1')]), res_state.elements)
 
+    def test_hashing_frozenset_state(self):
+        predicate1 = Predicate('test-pred', [RegParameter('?a')])
+        predicate2 = Predicate('test-pred-b', [RegParameter('?a')])
+        object1 = Object('ob1')
+        object2 = Object('ob2')
+
+        state1 = State()
+        prob_pred1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2 = ProblemPredicate(predicate1, [object2])
+        prob_pred3 = ProblemPredicate(predicate2, [object1])
+        state1.add_element(prob_pred1)
+        state1.add_element(prob_pred2)
+        state1.add_element(prob_pred3)
+
+        state2 = State()
+        prob_pred2_1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2_2 = ProblemPredicate(predicate1, [object2])
+        prob_pred2_3 = ProblemPredicate(predicate2, [object1])
+
+        state2.add_element(prob_pred2_3)
+        state2.add_element(prob_pred2_1)
+        state2.add_element(prob_pred2_2)
+
+        state1_hash = hash(frozenset(state1.elements))
+        state2_hash = hash(frozenset(state2.elements))
+        self.assertEqual(state1_hash, state2_hash)
+
+    def test_hashing_frozenset_state_1(self):
+        predicate1 = Predicate('test-pred', [RegParameter('?a')])
+        predicate2 = Predicate('test-pred-b', [RegParameter('?a')])
+        object1 = Object('ob1')
+        object2 = Object('ob2')
+
+        state1 = State()
+        prob_pred1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2 = ProblemPredicate(predicate1, [object2])
+        prob_pred3 = ProblemPredicate(predicate2, [object1])
+        state1.add_element(prob_pred1)
+        state1.add_element(prob_pred2)
+        state1.add_element(prob_pred3)
+
+        state2 = State()
+        prob_pred2_1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2_2 = ProblemPredicate(predicate1, [object2])
+        prob_pred2_3 = ProblemPredicate(predicate2, [object1])
+        prob_pred2_4 = ProblemPredicate(predicate2, [object2])
+
+        state2.add_element(prob_pred2_3)
+        state2.add_element(prob_pred2_4)
+        state2.add_element(prob_pred2_1)
+        state2.add_element(prob_pred2_2)
+
+        state1_hash = hash(frozenset(state1.elements))
+        state2_hash = hash(frozenset(state2.elements))
+        self.assertNotEqual(state1_hash, state2_hash)
+
+    def test_hashing_frozenset_state_2(self):
+        predicate1 = Predicate('test-pred', [RegParameter('?a')])
+        predicate2 = Predicate('test-pred-b', [RegParameter('?a')])
+        predicate3 = Predicate('test-pred-c', [RegParameter('?a')])
+        object1 = Object('ob1')
+        object2 = Object('ob2')
+
+        state1 = State()
+        prob_pred1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2 = ProblemPredicate(predicate1, [object2])
+        prob_pred3 = ProblemPredicate(predicate2, [object1])
+        prob_pred4 = ProblemPredicate(predicate3, [object2])
+        state1.add_element(prob_pred1)
+        state1.add_element(prob_pred2)
+        state1.add_element(prob_pred3)
+        state1.add_element(prob_pred4)
+
+        state2 = State()
+        prob_pred2_1 = ProblemPredicate(predicate1, [object1])
+        prob_pred2_2 = ProblemPredicate(predicate1, [object2])
+        prob_pred2_3 = ProblemPredicate(predicate2, [object1])
+        prob_pred2_4 = ProblemPredicate(predicate2, [object2])
+
+        state2.add_element(prob_pred2_3)
+        state2.add_element(prob_pred2_4)
+        state2.add_element(prob_pred2_1)
+        state2.add_element(prob_pred2_2)
+
+        state1_hash = hash(frozenset(state1.elements))
+        state2_hash = hash(frozenset(state2.elements))
+        self.assertNotEqual(state1_hash, state2_hash)
+
     # def test_expanding_action_which_adds_and_removes_same_predicate(self):
     #     domain, problem, parser, solver = env_setup(True, True)
     #

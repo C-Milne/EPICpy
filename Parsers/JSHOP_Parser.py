@@ -9,7 +9,7 @@ from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.Object import Object
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.list_parameter import ListParameter
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.derived_predicate import DerivedPredicate
 from Internal_Representation.parameter import Parameter
 from Solver.Solving_Algorithms.solver import Requirements
@@ -90,7 +90,7 @@ class JSHOPParser(Parser):
 
     def _post_domain_parsing_grounding(self):
         for item in self._requires_grounding:
-            if type(item) == Subtasks.Subtask:
+            if type(item) == Subtask:
                 if type(item.task) == str:
                     new_task = self.domain.get_modifier(item.task)
                     if new_task is None:
@@ -98,7 +98,7 @@ class JSHOPParser(Parser):
                     item.task = new_task
                 else:
                     continue
-            elif type(item) == tuple and len(item) == 2 and type(item[0]) == Subtasks.Subtask and type(item[1]) == list \
+            elif type(item) == tuple and len(item) == 2 and type(item[0]) == Subtask and type(item[1]) == list \
                     and all([isinstance(x, Parameter) for x in item[1]]):
                 subT = item[0]
                 params = item[1]

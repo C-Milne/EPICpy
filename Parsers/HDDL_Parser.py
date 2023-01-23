@@ -9,7 +9,7 @@ from Internal_Representation.Object import Object
 from Parsers.parser import Parser
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.effects import Effects
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtask
 from Internal_Representation.problem_predicate import ProblemPredicate
 
 
@@ -361,7 +361,7 @@ class HDDLParser(Parser):
 
     def _post_domain_parsing_grounding(self):
         for item in self._requires_grounding:
-            if type(item) == Subtasks.Subtask:
+            if type(item) == Subtask:
                 # Make sure item.task is a modifier and not a string
                 if type(item.task) != Modifier and type(item.task) == str:
                     retrieved = self.domain.get_modifier(item.task)

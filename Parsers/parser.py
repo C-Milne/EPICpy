@@ -5,7 +5,7 @@ from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.precondition import Precondition
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.task import Task
 from Internal_Representation.Object import Object
 from Internal_Representation.list_parameter import ListParameter
@@ -262,7 +262,7 @@ class Parser(ABC):
                         else:
                             raise AttributeError("Grounding process for subtask with type {} unknown".format(type(t.parameters[i])))
                         i += 1
-            elif type(item) == Subtasks.Subtask:
+            elif type(item) == Subtask:
                 # Parameters must be objects
                 i = 0
                 l = len(item.parameters)
