@@ -3,7 +3,7 @@ from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
-Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
+Subtask = sys.modules['Internal_Representation.subtasks'].Subtask
 Model = sys.modules["Solver.Models.default_model"].DefaultModel
 
 

@@ -5,7 +5,7 @@ from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.state import State
 from Internal_Representation.reg_parameter import RegParameter
 from Solver.Progress_Tracking.action_tracker import ActionTracker
@@ -156,7 +156,7 @@ class SolvingTests(unittest.TestCase):
             m.ranking = 0
 
         # Execute action on model[7]
-        subT = Subtasks.Subtask(domain.actions['visit'], [RegParameter('?from')])
+        subT = Subtask(domain.actions['visit'], [RegParameter('?from')])
         subT.add_given_parameters({'?waypoint': problem.objects['waypoint3']})
         solver._expand_action(subT, DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
 
@@ -335,7 +335,7 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(1, len(solver.search_models))
         model = solver.search_models._Q.queue[0]
         self.assertEqual(3, len(model.search_modifiers) + len(model.waiting_subtasks))
-        self.assertEqual(Subtasks.Subtask, type(model.search_modifiers[0]))
+        self.assertEqual(Subtask, type(model.search_modifiers[0]))
         self.assertEqual(domain.tasks['get_image_data'], model.search_modifiers[0].task)
         self.assertEqual(2, len(model.search_modifiers[0].given_params))
         self.assertEqual(problem.objects['objective1'], model.search_modifiers[0].given_params['?objective'])
@@ -351,7 +351,7 @@ class SolvingTests(unittest.TestCase):
         for i in range(4):
             model = solver.search_models._Q.queue[i]
             self.assertEqual(3, len(model.search_modifiers) + len(model.waiting_subtasks))
-            self.assertEqual(Subtasks.Subtask, type(model.search_modifiers[0]))
+            self.assertEqual(Subtask, type(model.search_modifiers[0]))
             self.assertEqual(domain.methods['m_get_image_data_ordering_0'], model.search_modifiers[0].task)
             self.assertEqual(problem.objects["waypoint" + str(i)], model.search_modifiers[0].given_params['?waypoint'])
 

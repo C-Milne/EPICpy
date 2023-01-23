@@ -6,7 +6,7 @@ from Internal_Representation.method import Method
 from Internal_Representation.action import Action, Effects
 from Internal_Representation.task import Task
 from Internal_Representation.reg_parameter import RegParameter
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.state import State
 from Internal_Representation.list_parameter import ListParameter
@@ -130,7 +130,7 @@ class Solver(ABC):
 
             # Check what needs to be done to this model
             next_modifier = search_model.get_next_modifier()
-            assert type(next_modifier) == Subtasks.Subtask
+            assert type(next_modifier) == Subtask
 
             if type(next_modifier.task) == Task:
                 self._expand_task(next_modifier, search_model)
@@ -155,7 +155,7 @@ class Solver(ABC):
                 break
 
     @abstractmethod
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
+    def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the task being expanded
         :param search_model: Model object the task is being applied to
@@ -164,7 +164,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
+    def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the method being expanded
         :param search_model: Model object the method is being applied to
@@ -173,7 +173,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
+    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the action being expanded
         :param search_model: Model object the action is being applied to

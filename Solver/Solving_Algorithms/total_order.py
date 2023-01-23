@@ -1,7 +1,7 @@
 from Solver.Solving_Algorithms.solver import Solver
 from Solver.Solving_Algorithms.solver import DefaultModel
 from Solver.Solving_Algorithms.solver import State
-from Solver.Solving_Algorithms.solver import Subtasks
+from Solver.Solving_Algorithms.solver import Subtasks, Subtask
 from Solver.Solving_Algorithms.solver import ProblemPredicate
 from Solver.Solving_Algorithms.solver import ForallCondition
 from Solver.Solving_Algorithms.solver import Action
@@ -13,10 +13,10 @@ class TotalOrderSolver(Solver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
+    def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
         if len(subtask.task.tasks) != 0:
             for new_task in subtask.task.tasks:
-                self._expand_task(Subtasks.Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
+                self._expand_task(Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
                                   self.reproduce_model(search_model))
         else:
             # For each method, create a new search model
@@ -36,7 +36,7 @@ class TotalOrderSolver(Solver):
                 param_options = self.parameter_selector.get_potential_parameters(method, parameters, search_model)
 
                 for param_option in param_options:
-                    subT = Subtasks.Subtask(method, method.parameters)
+                    subT = Subtask(method, method.parameters)
                     subT.add_given_parameters(param_option)
                     # Create new model and add to search_models
                     new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
@@ -44,7 +44,7 @@ class TotalOrderSolver(Solver):
                     new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
                     self.search_models.add(new_model)
 
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
+    def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
         i = 0
         if subtask.task.subtasks is None:
@@ -63,7 +63,7 @@ class TotalOrderSolver(Solver):
                 if mod.task is None:
                     continue
 
-            mod = Subtasks.Subtask(mod.task, mod.parameters)
+            mod = Subtask(mod.task, mod.parameters)
 
             # Check parameter count
             parameters = {}
@@ -92,8 +92,8 @@ class TotalOrderSolver(Solver):
         search_mod.add_operation(subtask.task, subtask.given_params)
         self.search_models.add(search_mod)
 
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: DefaultModel):
-        assert type(subtask) == Subtasks.Subtask and type(subtask.task) == Action
+    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
+        assert type(subtask) == Subtask and type(subtask.task) == Action
 
         # Check if all the required parameters are given
         comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params)

@@ -3,7 +3,7 @@ from Internal_Representation.method import Method
 from Internal_Representation.action import Action
 from Internal_Representation.task import Task
 from Internal_Representation.state import State
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 
@@ -76,12 +76,15 @@ class Model(ABC):
     def get_state(self) -> State:
         return self.current_state
 
+    def get_task_network(self):
+        return self.search_modifiers + self.waiting_subtasks
+
     @abstractmethod
     def insert_modifier(self, modifier, index=0):
         raise NotImplementedError
 
     @abstractmethod
-    def get_next_modifier(self) -> Subtasks.Subtask:
+    def get_next_modifier(self) -> Subtask:
         raise NotImplementedError
 
     @abstractmethod
@@ -93,7 +96,7 @@ class Model(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_search_modifier(self, index: int) -> Subtasks.Subtask:
+    def get_search_modifier(self, index: int) -> Subtask:
         raise NotImplementedError
 
     @abstractmethod

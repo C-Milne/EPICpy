@@ -5,37 +5,43 @@ from Internal_Representation.list_parameter import ListParameter
 from Internal_Representation.parameter import Parameter
 
 
+class Subtask:
+    def __init__(self, task, parameters=[]):
+        assert isinstance(task, Modifier) or type(task) == str
+        self.task = task
+        assert type(parameters) == list or type(parameters) == ListParameter
+        if type(parameters) == list:
+            for p in parameters:
+                assert isinstance(p, Parameter)
+        self.parameters = parameters
+        self.given_params = {}
+        self.root_task = False
+
+    def get_name(self) -> str:
+        return self.task.name
+
+    def add_given_parameters(self, params: dict):
+        assert type(params) == dict
+        if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
+            for i in params:
+                assert type(params[i]) == Object or type(params[i]) == ListParameter
+        self.given_params = params
+
+    def evaluate_preconditions(self, model, params, problem) -> bool:
+        if self.task.preconditions is None:
+            return True
+        else:
+            return self.task.preconditions.evaluate(params, model, problem)
+
+    def set_root_task(self, v: bool):
+        self.root_task = v
+
+    def __hash__(self):
+        given_params_values = list(self.given_params.values())   # TODO: Remove this
+        return hash((self.task.name, frozenset(given_params_values)))
+
+
 class Subtasks:
-    class Subtask:
-        def __init__(self, task, parameters=[]):
-            assert isinstance(task, Modifier) or type(task) == str
-            self.task = task
-            assert type(parameters) == list or type(parameters) == ListParameter
-            if type(parameters) == list:
-                for p in parameters:
-                    assert isinstance(p, Parameter)
-            self.parameters = parameters
-            self.given_params = {}
-            self.root_task = False
-
-        def get_name(self) -> str:
-            return self.task.name
-
-        def add_given_parameters(self, params: dict):
-            assert type(params) == dict
-            if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
-                for i in params:
-                    assert type(params[i]) == Object or type(params[i]) == ListParameter
-            self.given_params = params
-
-        def evaluate_preconditions(self, model, params, problem) -> bool:
-            if self.task.preconditions is None:
-                return True
-            else:
-                return self.task.preconditions.evaluate(params, model, problem)
-
-        def set_root_task(self, v: bool):
-            self.root_task = v
 
     def __init__(self, ordered: bool):
         self.tasks = []
@@ -53,7 +59,7 @@ class Subtasks:
             for p in parameters:
                 assert isinstance(p, Parameter)
 
-        subtask_to_add = self.Subtask(modifier, parameters)
+        subtask_to_add = Subtask(modifier, parameters)
         if label is not None:
             self.labelled_tasks[label] = subtask_to_add
         self.tasks.append(subtask_to_add)
@@ -181,7 +187,7 @@ class Subtasks:
         for o in orderings:
             r_o = []
             for label in o:
-                if type(label) != Subtasks.Subtask:
+                if type(label) != Subtask:
                     r_o.append(self.labelled_tasks[label.name])
                 else:
                     r_o.append(label)
