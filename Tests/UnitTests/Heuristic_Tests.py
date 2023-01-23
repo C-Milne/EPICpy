@@ -10,6 +10,7 @@ from Internal_Representation.conditions import PredicateCondition
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.subtasks import Subtask
 from Solver.Models.default_model import DefaultModel
+from Solver.Models.model import Model
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Internal_Representation.state import State
 
@@ -21,6 +22,7 @@ class HeuristicTests(unittest.TestCase):
         self.basic_path = "../Examples/Basic/"
         self.depot_path = "../Examples/Depots/"
         self.rover_PO_path = "../Examples/Partial_Order/Rover/"
+        Model.model_counter = 0
 
     def test_tree_distance_preprocessing(self):
         domain, problem, parser, solver = env_setup(True)
@@ -276,33 +278,14 @@ class HeuristicTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
 
-    def test_seen_states_pruning_rover_step_through(self):
+    def test_seen_states_pruning_rover(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + "domain.hddl")
         parser.parse_problem(self.rover_path + "p01.hddl")
         solver.set_heuristic(SeenStatesPruning)
-        solver.solve(search=False)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        solver._search(True)
-        req_model = solver.search_models._Q.queue[3]
-        solver.search_models._Q = PriorityQueue()
-        solver.search_models._Q.put(req_model)
-        solver._search(True)
-        solver._search(True)
-        models = solver.search_models._Q.queue
-        self.assertEqual(1, 2)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+        self.assertEqual(271, res.model_counter)
 
     def test_seen_states_pruning(self):
         domain, problem, parser, solver = env_setup(True)
