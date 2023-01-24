@@ -37,8 +37,8 @@ class Subtask:
         self.root_task = v
 
     def __hash__(self):
-        given_params_values = list(self.given_params.values())   # TODO: Remove this
-        return hash((self.task.name, frozenset(given_params_values)))
+        given_params_values = tuple(self.given_params.values())
+        return hash((self.task.name, given_params_values))
 
 
 class Subtasks:
