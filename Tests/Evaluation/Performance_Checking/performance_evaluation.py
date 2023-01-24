@@ -20,14 +20,16 @@ from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 
 
 def run_test(domain_file_path, problem_file_path):
     print(domain_file_path)
     print(problem_file_path)
     controller = Runner(domain_file_path, problem_file_path)
-    controller.set_search_queue(GBFSSearchQueue)
-    controller.set_heuristic(TreeDistanceSeenStatesPruning)
+    controller.set_solver(PartialOrderNoveltySolver)
+    # controller.set_search_queue(GBFSSearchQueue)
+    # controller.set_heuristic(TreeDistanceSeenStatesPruning)
     controller.parse_domain()
     controller.parse_problem()
 
@@ -60,17 +62,17 @@ def write_to_file(problem_name, solve_time, models_created):
 
 if __name__ == "__main__":
     """Rover Problems"""
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p01.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p02.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p03.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p04.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p05.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p06.hddl")
-    run_test("../Examples/Rover/domain.hddl", "../Examples/Rover/p07.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p05.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p06.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p07.hddl")
     """Barman Problems"""
-    run_test("../Examples/Barman/domain.hddl", "../Examples/Barman/pfile01.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl")
     """Depots Problems"""
-    run_test("../Examples/Depots/domain.hddl", "../Examples/Depots/p01.hddl")
+    run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p01.hddl")
     """Factories Problems"""
-    run_test("../Examples/Factories/domain.hddl", "../Examples/Factories/pfile01.hddl")
+    run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile01.hddl")
 

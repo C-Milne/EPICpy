@@ -74,6 +74,7 @@ class Solver(ABC):
         self.progress_tracker = progress_tracker
 
     def solve(self, **kwargs):
+        DefaultModel.model_counter = 0
         self.parameter_selector.presolving_processing(self.domain, self.problem)
         self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
@@ -107,8 +108,7 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = self.ModelClass(State.reproduce(self.problem.initial_state), list_subT, self.problem,
-                                       waiting_subT, progress_tracker_class=self.progress_tracker, initial_model=True)
+            initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT, self.progress_tracker)
 
             self.search_models.add(initial_model)
 
@@ -119,6 +119,10 @@ class Solver(ABC):
 
         if search != False:
             return self._search()
+
+    def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
+        return self.ModelClass(initial_state, subtasks, self.problem, waiting_subtasks,
+                               progress_tracker_class=progress_tracker_class, initial_model=True)
 
     def _search(self, step_control=False):
         """:parameter   - step_control  - If True, then loop will only execute once"""
@@ -270,7 +274,7 @@ class Solver(ABC):
 
     @staticmethod
     def reproduce_state(state):
-        return State.reproduce(state)
+        return state.reproduce()
 
     def reproduce_model(self, model, search_mods=None):
         """

@@ -86,7 +86,7 @@ def _calculate_predicate_state_size(controller: Runner) -> int:
     size_calculator.presolving_processing()
 
     model = DefaultModel(controller.problem.initial_state, [])
-    res = size_calculator._calculate_distance(model, State.reproduce(model.current_state))
+    res = size_calculator._calculate_distance(model, model.current_state.reproduce())
     return res
 
 

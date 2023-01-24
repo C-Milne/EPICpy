@@ -14,7 +14,7 @@ class Model(ABC):
 
     def __init__(self, state: State, search_modifiers: list, problem=None,
                  waiting_subtasks: list = [], **kwargs):
-        assert type(state) == State
+        assert isinstance(state, State)
         self.current_state = state
         assert type(search_modifiers) == list
         # for m in search_modifiers:

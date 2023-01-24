@@ -234,7 +234,7 @@ class HeuristicTests(unittest.TestCase):
             list_subT.append(subT)
             task_counter += 1
 
-        model = DefaultModel(State.reproduce(problem.initial_state), list_subT, problem, [])
+        model = DefaultModel(problem.initial_state.reproduce(), list_subT, problem, [])
         targets = heu._get_target_tasks(model)
         self.assertNotEqual([], targets)
         self.assertEqual(['U-swap-banjo-kiwi'], targets)

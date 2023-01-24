@@ -151,14 +151,14 @@ class SolvingTests(unittest.TestCase):
         # Test Carrying out on action with one model and check the state of the others - Also check model state and _index
         domain, problem, solver = RovEx.setup()
         for i in range(7):
-            solver.search_models._Q.put(DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem, progress_tracker_class=SequentialTracker))
+            solver.search_models._Q.put(DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem, progress_tracker_class=SequentialTracker))
         for m in solver.search_models._Q.queue:
             m.ranking = 0
 
         # Execute action on model[7]
         subT = Subtask(domain.actions['visit'], [RegParameter('?from')])
         subT.add_given_parameters({'?waypoint': problem.objects['waypoint3']})
-        solver._expand_action(subT, DefaultModel(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
+        solver._expand_action(subT, DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem))
 
         search_models = solver.search_models._Q.queue
         self.assertEqual(8, len(search_models))
