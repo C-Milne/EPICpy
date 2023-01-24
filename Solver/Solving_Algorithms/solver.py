@@ -74,7 +74,6 @@ class Solver(ABC):
         self.progress_tracker = progress_tracker
 
     def solve(self, **kwargs):
-        DefaultModel.model_counter = 0
         self.parameter_selector.presolving_processing(self.domain, self.problem)
         self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()

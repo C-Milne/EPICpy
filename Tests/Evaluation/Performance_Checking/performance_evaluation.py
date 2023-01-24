@@ -9,6 +9,7 @@ os.chdir("../../..")
 sys.path.append(os.getcwd())
 os.chdir(working_dir)
 from runner import Runner
+from Solver.Models.model import Model
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
@@ -24,18 +25,18 @@ from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltyS
 
 
 def run_test(domain_file_path, problem_file_path):
+    Model.model_counter = 0
     print(domain_file_path)
     print(problem_file_path)
     controller = Runner(domain_file_path, problem_file_path)
-    controller.set_solver(PartialOrderNoveltySolver)
-    # controller.set_search_queue(GBFSSearchQueue)
-    # controller.set_heuristic(TreeDistanceSeenStatesPruning)
+    # controller.set_solver(PartialOrderNoveltySolver)
+    controller.set_search_queue(GBFSSearchQueue)
+    controller.set_heuristic(TreeDistance)
     controller.parse_domain()
     controller.parse_problem()
 
     # Start Search
     controller.solver.solve(search=False)
-    res = None
     start_time = time.time()
     res = controller.solver._search()
     end_time = time.time()
