@@ -10,13 +10,13 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
         super().set_search_queue(NoveltyGBFSQueue)
-        super().set_heuristic(SeenStatesPruning)
-
-    def set_heuristic(self, heuristic):
-        warnings.warn("This solver forces the use of Novelty, as such heuristic cannot be selected", RuntimeWarning)
+        self.set_heuristic(SeenStatesPruning)
 
     def set_search_queue(self, search_queue):
-        warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected", RuntimeWarning)
+        if issubclass(search_queue, NoveltyGBFSQueue):
+            super().set_search_queue(search_queue)
+        else:
+            warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected", RuntimeWarning)
 
     def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
         # TODO: We need to convert the initial state to a state_novelty object

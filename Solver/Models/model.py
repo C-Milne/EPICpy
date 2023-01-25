@@ -61,8 +61,8 @@ class Model(ABC):
     def get_ranking(self):
         return self.ranking
 
-    def set_queue_location(self, queue_locaiton):
-        self.queue_location = queue_locaiton
+    def set_queue_location(self, queue_location):
+        self.queue_location = queue_location
 
     def set_progress_tracker(self, pt):
         self.progress_tracker = pt
