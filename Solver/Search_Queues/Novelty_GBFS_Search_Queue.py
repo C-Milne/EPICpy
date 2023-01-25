@@ -33,5 +33,5 @@ class NoveltyGBFSQueue(SearchQueue):
         model.set_queue_location(self._total_added_models)
 
         self._Q.put(model)
-        self._total_added_models += 1
+        self._total_added_models -= 1
         self._queue_size += 1

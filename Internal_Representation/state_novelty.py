@@ -22,11 +22,20 @@ class StateNovelty(State):
                 novel = True
                 self._seen_elements.add(element_hash)
 
-            for h in self._element_hashes:
-                pair_hash = hash(frozenset([element_hash, h]))
-                if pair_hash not in self._seen_element_pairs:
-                    self._seen_element_pairs.add(pair_hash)
-                    novel = True
+            def _create_hash_list(number):
+                return hash(frozenset([element_hash, number]))
+
+            pair_hash_set = set(map(_create_hash_list, self._element_hashes))
+            initial_size = len(self._seen_element_pairs)
+            self._seen_element_pairs = self._seen_element_pairs.union(pair_hash_set)
+            if initial_size < len(self._seen_element_pairs):
+                novel = True
+
+            # for h in self._element_hashes:
+            #     pair_hash = hash(frozenset([element_hash, h]))
+            #     if pair_hash not in self._seen_element_pairs:
+            #         self._seen_element_pairs.add(pair_hash)
+            #         novel = True
         return novel
 
     def _remove_element_objects(self, predicate: Predicate, predicate_objects):
