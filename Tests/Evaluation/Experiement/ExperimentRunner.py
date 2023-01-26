@@ -15,6 +15,7 @@ from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.no_pruning import NoPruning
+from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 
@@ -29,6 +30,7 @@ def run_test(domain_file_path, problem_file_path):
     # controller.set_search_queue(GBFSSearchQueue)
 
     # controller.set_heuristic(HammingDistancePartialOrder)
+    controller.set_heuristic(HammingDistanceSeenStatesPruning)
     controller.set_heuristic(SeenStatesPruning)
 
     controller.parse_domain()
@@ -107,7 +109,7 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, solved):
-    file_name = 'seen-state-breadth-first-results.csv'
+    file_name = 'Hamming-Distance-seen-states-results.csv'
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
@@ -199,12 +201,12 @@ if __name__ == "__main__":
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p22.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p23.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p24.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p25.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p26.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p27.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p28.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p29.hddl")
-    # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p30.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p25.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p26.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p27.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p28.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p29.hddl")
+    ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p30.hddl")
     """Factories Problems"""
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile01.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile02.hddl")
