@@ -27,11 +27,11 @@ def run_test(domain_file_path, problem_file_path):
 
     # controller.set_solver(PartialOrderNoveltySolver)
 
-    # controller.set_search_queue(GBFSSearchQueue)
+    controller.set_search_queue(GBFSSearchQueue)
 
     # controller.set_heuristic(HammingDistancePartialOrder)
     controller.set_heuristic(HammingDistanceSeenStatesPruning)
-    controller.set_heuristic(SeenStatesPruning)
+    # controller.set_heuristic(SeenStatesPruning)
 
     controller.parse_domain()
     controller.parse_problem()
