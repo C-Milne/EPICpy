@@ -76,5 +76,8 @@ class SearchQueue:
     def get_completed_models(self):
         return self._completed_models
 
+    def get_model_list(self):
+        return self._Q.queue
+
     def __len__(self):
         return self._queue_size
