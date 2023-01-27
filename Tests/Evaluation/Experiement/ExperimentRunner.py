@@ -4,6 +4,7 @@ import time
 import os
 import sys
 from math import comb
+
 working_dir = os.getcwd()
 os.chdir("../../..")
 sys.path.append(os.getcwd())
@@ -12,6 +13,7 @@ from runner import Runner
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
+from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.no_pruning import NoPruning
@@ -25,13 +27,14 @@ def run_test(domain_file_path, problem_file_path):
     print(problem_file_path)
     controller = Runner(domain_file_path, problem_file_path)
 
-    # controller.set_solver(PartialOrderNoveltySolver)
+    controller.set_solver(PartialOrderNoveltySolver)
 
-    controller.set_search_queue(GBFSSearchQueue)
+    # controller.set_search_queue(GBFSSearchQueue)
+    controller.set_search_queue(NoveltyGBFSQueue)
 
     # controller.set_heuristic(HammingDistancePartialOrder)
     # controller.set_heuristic(HammingDistanceSeenStatesPruning)
-    controller.set_heuristic(TreeDistanceSeenStatesPruning)
+    # controller.set_heuristic(TreeDistanceSeenStatesPruning)
     # controller.set_heuristic(SeenStatesPruning)
 
     controller.parse_domain()
@@ -42,7 +45,7 @@ def run_test(domain_file_path, problem_file_path):
     num_expansions = 0
     res = None
     start_time = time.time()
-    while time.time() - start_time < 300 and not res:    # while time.time() - start_time < 305
+    while time.time() - start_time < 300 and not res:  # while time.time() - start_time < 305
         res = controller.solver._search(True)
         num_expansions += 1
     end_time = time.time()
@@ -64,12 +67,22 @@ def run_test(domain_file_path, problem_file_path):
     percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
     percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
 
+    # Find percentage of novel states
+    if isinstance(controller.solver, PartialOrderNoveltySolver):
+        num_novel_states = controller.solver.search_models.num_novel_states
+        num_not_novel_states = controller.solver.search_models.num_not_novel_states
+        percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
+    else:
+        num_novel_states = 'N/A'
+        num_not_novel_states = 'N/A'
+        percentage_novel_states = 'N/A'
+
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
                   len(all_possible_facts), len(res.current_state.elements), percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, solved)
-
+                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
+                  percentage_novel_states, solved)
 
 
 def calculate_all_possible_facts_and_pairings(domain, problem, model):
@@ -109,18 +122,25 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 
 def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, solved):
-    file_name = 'Tree-Distance-seen-states-results.csv'
+                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
+                  percentage_novel_states, solved):
+    file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-results.csv'
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
     else:
         # If file does not exist make one
         write_file = open(file_name, 'w')
-        write_file.write('Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,actual_pairs,percentage pairs,Solved')
-    write_file.write("\n{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                  all_possible_facts, actual_facts, percentage_facts,
-                                                  total_possible_pairs, total_actual_pairs, percentage_pairs, solved))
+        write_file.write(
+            'Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,' +
+            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Solved')
+    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
+                                                                       all_possible_facts, actual_facts,
+                                                                       percentage_facts,
+                                                                       total_possible_pairs, total_actual_pairs,
+                                                                       percentage_pairs,
+                                                                       num_novel_states, num_not_novel_states,
+                                                                       percentage_novel_states, solved))
     write_file.close()
 
 
