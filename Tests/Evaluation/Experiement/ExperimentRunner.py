@@ -16,7 +16,7 @@ from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePart
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
-from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 
 
@@ -30,7 +30,8 @@ def run_test(domain_file_path, problem_file_path):
     controller.set_search_queue(GBFSSearchQueue)
 
     # controller.set_heuristic(HammingDistancePartialOrder)
-    controller.set_heuristic(HammingDistanceSeenStatesPruning)
+    # controller.set_heuristic(HammingDistanceSeenStatesPruning)
+    controller.set_heuristic(TreeDistanceSeenStatesPruning)
     # controller.set_heuristic(SeenStatesPruning)
 
     controller.parse_domain()
@@ -109,7 +110,7 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, solved):
-    file_name = 'Hamming-Distance-seen-states-results.csv'
+    file_name = 'Tree-Distance-seen-states-results.csv'
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
@@ -125,43 +126,43 @@ def write_to_file(problem_name, number_expansions, solve_time, all_possible_fact
 
 if __name__ == "__main__":
     """Rover Problems"""
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p05.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p06.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p07.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p08.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p09.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p10.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p11.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p12.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p13.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p14.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p15.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p16.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p17.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p18.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p19.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p20.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p21.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p22.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p23.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p24.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p25.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p26.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p27.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p28.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p29.hddl")
-    #run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p30.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p05.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p06.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p07.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p08.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p09.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p10.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p11.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p12.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p13.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p14.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p15.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p16.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p17.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p18.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p19.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p20.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p21.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p22.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p23.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p24.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p25.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p26.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p27.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p28.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p29.hddl")
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p30.hddl")
     """Barman Problems"""
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl")
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile02.hddl")
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile03.hddl")
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile04.hddl")
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile05.hddl")
-    #run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile06.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile02.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile03.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile04.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile05.hddl")
+    run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile06.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile07.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile08.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile09.hddl")
