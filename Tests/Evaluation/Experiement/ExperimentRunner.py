@@ -146,6 +146,7 @@ def write_to_file(problem_name, number_expansions, solve_time, all_possible_fact
 
 if __name__ == "__main__":
     """Rover Problems"""
+    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl")
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl")
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl")
@@ -176,7 +177,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p28.hddl")
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p29.hddl")
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p30.hddl")
+    """
     """Barman Problems"""
+    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile02.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile03.hddl")
@@ -197,7 +200,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile18.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile19.hddl")
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile20.hddl")
+    """
     """Depots Problems"""
+    """
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p01.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p02.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p03.hddl")
@@ -222,6 +227,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p22.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p23.hddl")
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p24.hddl")
+    """
     ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p25.hddl")
     ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p26.hddl")
     ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p27.hddl")
@@ -229,6 +235,7 @@ if __name__ == "__main__":
     ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p29.hddl")
     ## run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p30.hddl")
     """Factories Problems"""
+    """
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile01.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile02.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile03.hddl")
@@ -242,6 +249,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile11.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile12.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile13.hddl")
+    """
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile14.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile15.hddl")
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile16.hddl")
