@@ -61,7 +61,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
     num_expansions = 0
     res = None
     start_time = time.time()
-    while time.time() - start_time < 300 and not res:  # while time.time() - start_time < 305
+    while time.time() - start_time < 1800 and not res:  # while time.time() - start_time < 305
         res = controller.solver._search(True)
         num_expansions += 1
     end_time = time.time()
