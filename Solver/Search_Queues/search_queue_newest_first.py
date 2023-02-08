@@ -3,7 +3,7 @@ from Solver.Search_Queues.search_queue import SearchQueue
 
 class SearchQueueNewestFirst(SearchQueue):
     def __init__(self, **kwargs):
-        super().__init__(kwargs)
+        super().__init__(**kwargs)
 
     def _add_model(self, model):
         res = self.heuristic.ranking(model)
