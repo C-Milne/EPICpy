@@ -11,8 +11,10 @@ class NoveltyTreeDistanceGBFSSearchQueue(NoveltyGBFSQueue):
             return  # Do not add to search queue
 
         if novelty:
+            self.num_novel_states += 1
             ranking = -1
         else:
+            self.num_not_novel_states += 1
             ranking = 0
 
         model.set_ranking(ranking)
