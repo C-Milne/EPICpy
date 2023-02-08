@@ -2,8 +2,8 @@ from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 
 
 class NoveltyTreeDistanceGBFSSearchQueue(NoveltyGBFSQueue):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def _add_model_novelty(self, model, novelty):
         res = self.heuristic.ranking(model)
