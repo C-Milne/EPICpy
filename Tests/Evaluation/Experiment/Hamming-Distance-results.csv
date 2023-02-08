@@ -1,3 +1,4 @@
+Total_Problems: 94,Solved_Problems: 28, Percentage_Solved: 29.78723404255319
 Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,actual_pairs,percentage pairs,Solved
 Rover/p01.hddl,270,0.045632124,110,45,40.90909091,5995,990,16.51376147,TRUE
 Rover/p02.hddl,520,0.096720219,103,49,47.57281553,5253,1176,22.38720731,TRUE

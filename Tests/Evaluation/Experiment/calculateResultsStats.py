@@ -22,3 +22,7 @@ def calculate_stats(results_file_name):
 if __name__ == "__main__":
     # calculate_stats('Hamming-Distance-seen-states-results.csv')
     calculate_stats('Hamming-Distance-results.csv')
+    calculate_stats('Novelty_Facts_Only_Task-Method-Expand-0-results.csv')
+    calculate_stats('Novelty-results.csv')
+    calculate_stats('seen-state-breadth-first-results.csv')
+    calculate_stats('Tree-Distance-seen-states-results.csv')
