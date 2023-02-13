@@ -22,7 +22,7 @@ class HammingDistancePartialOrder(PartialOrderPruning):
             for i in self.problem.goal_conditions.conditions:
                 if type(i) == list:
                     if len(i) == 1:
-                        self.goal_cons.append(ProblemPredicate(self.domain.get_predicate(i[0], [])))
+                        self.goal_cons.append(ProblemPredicate(self.domain.get_predicate(i[0]), []))
                     else:
                         obs = [self.problem.get_object(x) for x in i[1:]]
                         self.goal_cons.append(ProblemPredicate(self.domain.get_predicate(i[0]), obs))
