@@ -102,16 +102,23 @@ def run_test(domain_file_path, problem_file_path, strategy):
         # Find the model with the most operations
         solved = False
         models = controller.solver.search_models.get_model_list()
-        res = models[0]
-        for m in models[1:]:
-            if m.get_num_operations_taken() > res.get_num_operations_taken():
-                res = m
+        if len(models) > 0:
+            res = models[0]
+            for m in models[1:]:
+                if m.get_num_operations_taken() > res.get_num_operations_taken():
+                    res = m
+        else:
+            res = None
 
     # Find the percentage of facts in the final state
     all_possible_facts, total_possible_pairs, total_actual_pairs = \
         calculate_all_possible_facts_and_pairings(controller.domain, controller.problem, res)
-    percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
-    percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
+    if res is not None:
+        percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
+        percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
+    else:
+        percentage_facts = 'N/A'
+        percentage_pairs = 'N/A'
 
     # Find percentage of novel states
     if isinstance(controller.solver, PartialOrderNoveltySolver):
@@ -164,7 +171,10 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
     # Now calculate all possible pairs
     total_possible_pairs = comb(len(possible_facts), 2)
-    total_actual_pairs = comb(len(model.current_state.elements), 2)
+    if model is not None:
+        total_actual_pairs = comb(len(model.current_state.elements), 2)
+    else:
+        total_actual_pairs = 'N/A'
 
     # Return all possible facts
     return possible_facts, total_possible_pairs, total_actual_pairs
@@ -548,7 +558,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-2.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-3.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-4.hddl", strategy)
-    """
     # Entertainment Problems
     run_test("../../Examples/Entertainment/pfile01-domain.hddl", "../../Examples/Entertainment/pfile01.hddl", strategy)
     run_test("../../Examples/Entertainment/pfile02-domain.hddl", "../../Examples/Entertainment/pfile02.hddl", strategy)
@@ -737,6 +746,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
     # Minecraft Player Problems
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-003-003.hddl", strategy)
+    """
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-003-004.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-004-004.hddl", strategy)
