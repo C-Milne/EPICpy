@@ -45,7 +45,6 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
 
         novelty = False
         if not subtask.task.effects is None:
-            novelty = False
             added_predicates = []
             for eff in subtask.task.effects.effects:
 
