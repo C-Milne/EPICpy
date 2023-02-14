@@ -1,7 +1,7 @@
-from Solver.Search_Queues.search_queue import SearchQueue
+from Solver.Search_Queues.search_queue_newest_first import SearchQueueNewestFirst
 
 
-class GBFSSearchQueue(SearchQueue):
+class GBFSSearchQueueNewestFirst(SearchQueueNewestFirst):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

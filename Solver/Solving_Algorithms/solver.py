@@ -36,7 +36,7 @@ class Solver(ABC):
         self.domain = domain
         self.problem = problem
 
-        self.search_models = SearchQueue()
+        self.search_models = SearchQueue(domain=self.domain, problem=self.problem, solver=self)
         heuristic = Pruning(self.domain, self.problem, self, self.search_models)
         self.search_models.add_heuristic(heuristic)
 
@@ -59,7 +59,7 @@ class Solver(ABC):
 
     def set_search_queue(self, search_queue):
         if type(search_queue) == type or type(search_queue) == ABCMeta:
-            search_queue = search_queue()
+            search_queue = search_queue(domain=self.domain, problem=self.problem, solver=self)
         assert isinstance(search_queue, SearchQueue) or isinstance(type(search_queue), type(SearchQueue))
         heu = self.search_models.heuristic
         self.search_models = search_queue
@@ -78,7 +78,7 @@ class Solver(ABC):
         self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
 
-        printed_subtasks = False
+        printed_subtasks = True  # Change this to False if we want to print the subtasks of the problem before searching
 
         for subtasks in subtasks_orderings:
             list_subT = []

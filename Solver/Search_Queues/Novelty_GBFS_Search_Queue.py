@@ -2,8 +2,8 @@ from Solver.Search_Queues.search_queue import SearchQueue, Model
 
 
 class NoveltyGBFSQueue(SearchQueue):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.num_novel_states = 0
         self.num_not_novel_states = 0
 

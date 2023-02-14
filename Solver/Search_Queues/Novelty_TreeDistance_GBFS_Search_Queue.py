@@ -2,8 +2,8 @@ from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 
 
 class NoveltyTreeDistanceGBFSSearchQueue(NoveltyGBFSQueue):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def _add_model_novelty(self, model, novelty):
         res = self.heuristic.ranking(model)
@@ -11,8 +11,10 @@ class NoveltyTreeDistanceGBFSSearchQueue(NoveltyGBFSQueue):
             return  # Do not add to search queue
 
         if novelty:
+            self.num_novel_states += 1
             ranking = -1
         else:
+            self.num_not_novel_states += 1
             ranking = 0
 
         model.set_ranking(ranking)
