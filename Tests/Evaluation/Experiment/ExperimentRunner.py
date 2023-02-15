@@ -130,10 +130,15 @@ def run_test(domain_file_path, problem_file_path, strategy):
         num_not_novel_states = 'N/A'
         percentage_novel_states = 'N/A'
 
+    if res is not None:
+        model_elements = len(res.current_state.elements)
+    else:
+        model_elements = 'N/A'
+
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
-                  len(all_possible_facts), len(res.current_state.elements), percentage_facts,
+                  len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
                   percentage_novel_states, solved, file_name)
 
