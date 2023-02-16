@@ -27,6 +27,7 @@ from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPr
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
+from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -85,6 +86,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'Novelty_Facts_Only_Task-results.csv'
+    elif strategy == 11:
+        """Novelty - Level 2 - Reset after task or method expansion"""
+        controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_level2_Task-Method-Expand-0-TreeDis-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
