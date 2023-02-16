@@ -7,4 +7,4 @@ class PartialOrderNoveltyNoResetSolver(PartialOrderNoveltySolver):
 
     def _add_model_to_search_queue(self, model):
         """This is where models are added to the queue after expanding an abstract task or method"""
-        self.search_models.novelty_add(model, bool(model.ranking))
+        self.search_models.novelty_add(model, model.ranking)

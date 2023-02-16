@@ -11,6 +11,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         super().__init__(domain, problem)
         super().set_search_queue(NoveltyGBFSQueue)
         self.set_heuristic(SeenStatesPruning)
+        self.max_novelty_level = 1
 
     def set_search_queue(self, search_queue):
         if issubclass(search_queue, NoveltyGBFSQueue):
@@ -19,15 +20,15 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
             warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected", RuntimeWarning)
 
     def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
-        # TODO: We could set novelty level here
         new_state = StateNovelty()
+        new_state.set_max_novelty_level(self.max_novelty_level)
         new_state.load_from_default_state(initial_state)
         return self.ModelClass(new_state, subtasks, self.problem, waiting_subtasks,
                                progress_tracker_class=progress_tracker_class, initial_model=True)
 
     def _add_model_to_search_queue(self, model):
         """This is where models are added to the queue after expanding an abstract task or method"""
-        self.search_models.novelty_add(model, False)
+        self.search_models.novelty_add(model, 0)
 
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action
@@ -44,7 +45,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         if not subtask.evaluate_preconditions(search_model, subtask.given_params, self.problem):
             return
 
-        novelty = False
+        novelty = 0
         if not subtask.task.effects is None:
             added_predicates = []
             for eff in subtask.task.effects.effects:
@@ -63,8 +64,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                         # Predicate needs to be added
                         new_predicate = ProblemPredicate(eff.predicate, param_list)
                         added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
-                        if search_model.current_state.add_element(new_predicate):
-                            novelty = True
+
+                        add_novel_score = search_model.current_state.add_element(new_predicate)
+                        if add_novel_score and add_novel_score > novelty:
+                            novelty = add_novel_score
                 elif type(eff) == Effects.ForAllEffect:
                     # Get parameters
                     assert type(eff.precondition.head) == ForallCondition
@@ -86,8 +89,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                             else:
                                 # Predicate needs to be added
                                 new_predicate = ProblemPredicate(e.predicate, param_list)
-                                if search_model.current_state.add_element(new_predicate):
-                                    novelty = True
+
+                                add_novel_score = search_model.current_state.add_element(new_predicate)
+                                if add_novel_score and add_novel_score > novelty:
+                                    novelty = add_novel_score
                 else:
                     raise NotImplementedError
 
