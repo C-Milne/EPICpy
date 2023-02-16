@@ -6,11 +6,11 @@
 #SBATCH -o slurm.%j.out
 #SBATCH -e slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --time=00:15:00
+#SBATCH --time=24:00:00
 #SBATCH --partition=compute
 
 date
 hostname
 module load python-3.9.1
 
-python ./ER7
+python ./ER7.py
