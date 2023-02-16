@@ -26,6 +26,8 @@ from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenSt
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
+from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
+from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -79,6 +81,16 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
+    elif strategy == 10:
+        """Novelty - Level 1 - No reset after task or method expansion"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_Facts_Only_Task-results.csv'
+    elif strategy == 11:
+        """Novelty - Level 2 - Reset after task or method expansion"""
+        controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_level2_Task-Method-Expand-0-TreeDis-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
@@ -102,16 +114,23 @@ def run_test(domain_file_path, problem_file_path, strategy):
         # Find the model with the most operations
         solved = False
         models = controller.solver.search_models.get_model_list()
-        res = models[0]
-        for m in models[1:]:
-            if m.get_num_operations_taken() > res.get_num_operations_taken():
-                res = m
+        if len(models) > 0:
+            res = models[0]
+            for m in models[1:]:
+                if m.get_num_operations_taken() > res.get_num_operations_taken():
+                    res = m
+        else:
+            res = None
 
     # Find the percentage of facts in the final state
     all_possible_facts, total_possible_pairs, total_actual_pairs = \
         calculate_all_possible_facts_and_pairings(controller.domain, controller.problem, res)
-    percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
-    percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
+    if res is not None:
+        percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
+        percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
+    else:
+        percentage_facts = 'N/A'
+        percentage_pairs = 'N/A'
 
     # Find percentage of novel states
     if isinstance(controller.solver, PartialOrderNoveltySolver):
@@ -123,10 +142,15 @@ def run_test(domain_file_path, problem_file_path, strategy):
         num_not_novel_states = 'N/A'
         percentage_novel_states = 'N/A'
 
+    if res is not None:
+        model_elements = len(res.current_state.elements)
+    else:
+        model_elements = 'N/A'
+
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
-                  len(all_possible_facts), len(res.current_state.elements), percentage_facts,
+                  len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
                   percentage_novel_states, solved, file_name)
 
@@ -164,7 +188,10 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
     # Now calculate all possible pairs
     total_possible_pairs = comb(len(possible_facts), 2)
-    total_actual_pairs = comb(len(model.current_state.elements), 2)
+    if model is not None:
+        total_actual_pairs = comb(len(model.current_state.elements), 2)
+    else:
+        total_actual_pairs = 'N/A'
 
     # Return all possible facts
     return possible_facts, total_possible_pairs, total_actual_pairs
@@ -202,7 +229,6 @@ if __name__ == "__main__":
     if strategy is None:
         argparser.error("Incorrect Usage. Strategy MUST be set!")
 
-    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)

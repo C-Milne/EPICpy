@@ -78,7 +78,7 @@ class Solver(ABC):
         self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
 
-        printed_subtasks = False
+        printed_subtasks = True  # Change this to False if we want to print the subtasks of the problem before searching
 
         for subtasks in subtasks_orderings:
             list_subT = []
