@@ -13,4 +13,4 @@ date
 hostname
 module load python-3.9.1
 
-python ./ER1
+python ./ER9
