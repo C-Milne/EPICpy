@@ -18,7 +18,7 @@ class NoveltyTreeDistanceGBFSSearchQueue(NoveltyGBFSQueue):
             ranking = 0
 
         model.set_ranking(ranking)
-        model.set_queue_location(res)
+        model.set_secondary_ranking(res)
 
         self._Q.put(model)
         self._queue_size += 1

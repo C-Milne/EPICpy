@@ -13,6 +13,7 @@ class SearchQueueGBFSDualHammingDistance(SearchQueue):
 
     def _add_model(self, model):
         if not self.hamming_setup:
+            # TODO: Can we move this somewhere else?
             self.HammingDistance.presolving_processing()
             self.hamming_setup = True
 
@@ -23,7 +24,7 @@ class SearchQueueGBFSDualHammingDistance(SearchQueue):
 
         ranking = self._calc_ranking(model, res)
         model.set_ranking(ranking)
-        model.set_queue_location(hamming_ranking)
+        model.set_secondary_ranking(hamming_ranking)
 
         self._Q.put(model)
         self._queue_size += 1
