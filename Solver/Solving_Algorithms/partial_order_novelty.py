@@ -19,6 +19,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
             warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected", RuntimeWarning)
 
     def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
+        # TODO: We could set novelty level here
         new_state = StateNovelty()
         new_state.load_from_default_state(initial_state)
         return self.ModelClass(new_state, subtasks, self.problem, waiting_subtasks,

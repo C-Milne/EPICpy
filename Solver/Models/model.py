@@ -38,7 +38,7 @@ class Model(ABC):
                 sub.set_root_task(True)
 
         self.ranking = None
-        self.queue_location = None
+        self.secondary_ranking = None
         self.num_models_used = None
         self.model_number = self.model_counter
         Model.model_counter += 1
@@ -61,8 +61,8 @@ class Model(ABC):
     def get_ranking(self):
         return self.ranking
 
-    def set_queue_location(self, queue_location):
-        self.queue_location = queue_location
+    def set_secondary_ranking(self, v):
+        self.secondary_ranking = v
 
     def set_progress_tracker(self, pt):
         self.progress_tracker = pt
@@ -117,5 +117,5 @@ class Model(ABC):
         return "Model(" + str((self.ranking, self.model_number)) + ")"
 
     def __lt__(self, other):
-        return (self.ranking, self.queue_location) < (other.ranking, other.queue_location)
+        return (self.ranking, self.secondary_ranking) < (other.ranking, other.secondary_ranking)
 

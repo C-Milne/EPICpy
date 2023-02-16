@@ -12,7 +12,7 @@ class SearchQueueNewestFirst(SearchQueue):
 
         ranking = self._calc_ranking(model, res)
         model.set_ranking(ranking)
-        model.set_queue_location(self._total_added_models)
+        model.set_secondary_ranking(self._total_added_models)
 
         self._Q.put(model)
         self._total_added_models -= 1

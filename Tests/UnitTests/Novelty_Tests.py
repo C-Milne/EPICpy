@@ -2,6 +2,7 @@ import unittest
 from Tests.UnitTests.TestTools.env_setup import env_setup
 from Internal_Representation.state_novelty import StateNovelty
 from Internal_Representation.problem_predicate import ProblemPredicate
+from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 
 
 class NoveltyTests(unittest.TestCase):
@@ -107,3 +108,17 @@ class NoveltyTests(unittest.TestCase):
         state.add_element(pred4)
         res = state.add_element(pred3)
         self.assertEqual(True, res)
+
+    def test_novelty_rover(self):
+        domain, problem, parser, solver = env_setup(True, solver=1)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        res = solver.solve()
+        self.assertNotEqual(None, res)
+
+    def test_novelty_no_reset_rover(self):
+        domain, problem, parser, solver = env_setup(True, solver=2)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        res = solver.solve()
+        self.assertNotEqual(None, res)
