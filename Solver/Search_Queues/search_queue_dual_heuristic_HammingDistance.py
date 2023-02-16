@@ -13,6 +13,7 @@ class SearchQueueGBFSDualHammingDistance(SearchQueue):
 
     def _add_model(self, model):
         if not self.hamming_setup:
+            # TODO: Can we move this somewhere else?
             self.HammingDistance.presolving_processing()
             self.hamming_setup = True
 

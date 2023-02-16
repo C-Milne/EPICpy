@@ -7,7 +7,7 @@ class StateNovelty(State):
         super().__init__()
         self._seen_elements = set()
         self._seen_element_pairs = set()
-        self._element_hashes = []
+        self._element_hashes = []   # stores hashes of elements in the state. For levels of novelty > 1
 
     def add_element(self, element: ProblemPredicate) -> bool:
         assert type(element) == ProblemPredicate
@@ -22,6 +22,7 @@ class StateNovelty(State):
                 novel = True
                 self._seen_elements.add(element_hash)
 
+            # TODO: When retying novelty level > 1 check all this code - refactor preferred
             # def _create_hash_list(number):
             #     return hash(frozenset([element_hash, number]))
             #

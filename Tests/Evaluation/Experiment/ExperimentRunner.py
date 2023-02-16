@@ -26,6 +26,7 @@ from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenSt
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
+from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -79,6 +80,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
+    elif strategy == 10:
+        """Novelty - Level 1 - No reset after task or method expansion"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_Facts_Only_Task-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
@@ -217,7 +223,6 @@ if __name__ == "__main__":
     if strategy is None:
         argparser.error("Incorrect Usage. Strategy MUST be set!")
 
-    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -751,7 +756,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
     # Minecraft Player Problems
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-003-003.hddl", strategy)
-    """
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-003-004.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-004-004.hddl", strategy)
