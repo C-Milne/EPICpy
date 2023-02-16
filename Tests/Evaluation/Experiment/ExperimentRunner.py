@@ -394,12 +394,13 @@ if __name__ == "__main__":
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p22.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p23.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p24.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p25.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p26.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p27.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p28.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p29.hddl", strategy)
-    run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p30.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p25.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p26.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p27.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p28.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p29.hddl", strategy)
+    # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p30.hddl", strategy)
+    """
     # Elevator Problems
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s01-0.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s01-1.hddl", strategy)
@@ -548,7 +549,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-2.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-3.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s30-4.hddl", strategy)
-    """
     # Entertainment Problems
     run_test("../../Examples/Entertainment/pfile01-domain.hddl", "../../Examples/Entertainment/pfile01.hddl", strategy)
     run_test("../../Examples/Entertainment/pfile02-domain.hddl", "../../Examples/Entertainment/pfile02.hddl", strategy)
