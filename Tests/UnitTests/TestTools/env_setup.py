@@ -9,6 +9,7 @@ from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
 
 
 def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Problem, Parser, PartialOrderSolver]:
@@ -33,6 +34,8 @@ def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Prob
             solver = PartialOrderNoveltyNoResetSolver(domain, problem)
         elif solver_code == 3:
             solver = PartialOrderNoveltyLevelTwoSolver(domain, problem)
+        elif solver_code == 4:
+            solver = PartialOrderNoveltyMethodsSolver(domain, problem)
         else:
             raise ValueError('Unknown solver code: {}'.format(solver_code))
 

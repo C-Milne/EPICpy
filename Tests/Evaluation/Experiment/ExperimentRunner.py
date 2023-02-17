@@ -28,6 +28,7 @@ from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -91,6 +92,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'Novelty_level2_Task-Method-Expand-0-TreeDis-results.csv'
+    elif strategy == 12:
+        """Novelty - Level 1 - Checking for Novel Method as well"""
+        controller.set_solver(PartialOrderNoveltyMethodsSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_Facts_Methods-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 

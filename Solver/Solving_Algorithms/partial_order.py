@@ -12,7 +12,11 @@ class PartialOrderSolver(Solver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
-    def _add_model_to_search_queue(self, model):
+    def _add_model_to_search_queue(self, model, addition):
+        """Params:
+        model: The model to be added to the queue
+        addition: The task or method that has been expanded
+        """
         self.search_models.add(model)
 
     def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
@@ -46,7 +50,7 @@ class PartialOrderSolver(Solver):
                     new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
                     new_model.set_parent_model_number(search_model.get_model_number())
                     new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-                    self._add_model_to_search_queue(new_model)
+                    self._add_model_to_search_queue(new_model, subT)
 
     def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
@@ -94,7 +98,7 @@ class PartialOrderSolver(Solver):
                 search_mod.insert_modifier(mod, i)
                 i += 1
             search_mod.add_operation(subtask.task, subtask.given_params)
-            self._add_model_to_search_queue(search_mod)
+            self._add_model_to_search_queue(search_mod, subtask)
 
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action

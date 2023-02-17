@@ -26,7 +26,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         return self.ModelClass(new_state, subtasks, self.problem, waiting_subtasks,
                                progress_tracker_class=progress_tracker_class, initial_model=True)
 
-    def _add_model_to_search_queue(self, model):
+    def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
         self.search_models.novelty_add(model, 0)
 
