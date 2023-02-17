@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=ExperimentRunner8
+#SBATCH --job-name=ExperimentRunner11
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH -o slurm.%j.out
@@ -13,4 +13,4 @@ date
 hostname
 module load python-3.9.1
 
-python ./ER8.py
+python ./ER12.py
