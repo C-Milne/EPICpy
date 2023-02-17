@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=ExperimentRunner11
+#SBATCH --job-name=ExperimentRunner12
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH -o slurm.%j.out
