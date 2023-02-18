@@ -551,8 +551,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-006-006-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-007-007-007-007.hddl", strategy)
-    """
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-008-008-008-008.hddl", strategy)
+    """
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-009-009-009-009.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-010-010-010-010.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-011-011-011-011.hddl", strategy)

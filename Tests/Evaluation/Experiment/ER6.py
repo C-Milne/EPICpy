@@ -513,7 +513,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-0.hddl", strategy)
-    """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-1.hddl", strategy)
@@ -545,6 +544,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-005-005-005.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-004-004.hddl", strategy)
+    """
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-004-005.hddl", strategy)
     run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-006-006.hddl", strategy)
