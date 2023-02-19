@@ -12,9 +12,9 @@ class State:
         assert type(element) == ProblemPredicate
         if element not in self:
             self.elements.append(element)
-            self.__add_element_to_index(element)
+            self._add_element_to_index(element)
 
-    def __add_element_to_index(self, element: ProblemPredicate):
+    def _add_element_to_index(self, element: ProblemPredicate):
         name = element.predicate.name
         if name in self._index.keys():
             self._index[name].append(len(self.elements) - 1)
@@ -38,11 +38,11 @@ class State:
     def remove_element(self, predicate: Predicate, predicate_objects=None):
         assert type(predicate) == Predicate
         if predicate_objects is None or len(predicate_objects) == 0:
-            self.__remove_element_no_objects(predicate)
+            self._remove_element_no_objects(predicate)
         else:
-            self.__remove_element_objects(predicate, predicate_objects)
+            self._remove_element_objects(predicate, predicate_objects)
 
-    def __remove_element_objects(self, predicate: Predicate, predicate_objects):
+    def _remove_element_objects(self, predicate: Predicate, predicate_objects):
         """Params:  - predicate : Predicate
                     - predicate_objects : [Object] - List of objects taken as parameters"""
         predicate_indexes = self.get_indexes(predicate.name)
@@ -57,9 +57,9 @@ class State:
                 break
         # Adjust self._index
         if deletion:
-            self.__adjust_index_remove_element(predicate.name, i)
+            self._adjust_index_remove_element(predicate.name, i)
 
-    def __remove_element_no_objects(self, predicate: Predicate):
+    def _remove_element_no_objects(self, predicate: Predicate):
         """Params:  - predicate : Predicate"""
         index = self.get_indexes(predicate.name)
         assert len(index) == 1
@@ -69,9 +69,9 @@ class State:
         del self.elements[index]
 
         # Adjust self._index
-        self.__adjust_index_remove_element(predicate.name, index)
+        self._adjust_index_remove_element(predicate.name, index)
 
-    def __adjust_index_remove_element(self, identifier: str, index_removed: int):
+    def _adjust_index_remove_element(self, identifier: str, index_removed: int):
         assert type(identifier) == str and type(index_removed) == int
         # Remove deleted element from self._index
         if len(self._index[identifier]) == 1:
@@ -97,10 +97,10 @@ class State:
                 return True
         return False
 
-    @staticmethod
-    def reproduce(state):
+    def reproduce(self):
+        # TODO: Improve this - We dont need to use the add_element function here
         returnState = State()
-        for e in state.elements:
+        for e in self.elements:
             returnState.add_element(e)
         return returnState
 

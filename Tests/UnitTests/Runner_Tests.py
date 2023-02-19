@@ -101,9 +101,7 @@ runner.py: error: Incorrect Usage."""
         os.chdir("../..")
         res = os.popen("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -w runner_test_basic_p1")
         output = res.read()
-        self.assertEqual("""Subtask: 0 - swap[\'banjo\', \'kiwi\']
-
-Actions Taken:
+        self.assertIn("""Actions Taken:
 drop - kiwi
 pickup - banjo
 

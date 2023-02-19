@@ -1,0 +1,11 @@
+Problem,solve time,models created
+Rover/p01.hddl,0.055057526,275
+Rover/p02.hddl,0.118047953,443
+Rover/p03.hddl,0.114575624,422
+Rover/p04.hddl,0.490046978,1529
+Rover/p05.hddl,1.045567751,1320
+Rover/p06.hddl,2.39419198,1981
+Rover/p07.hddl,28.02597857,13074
+Barman/pfile01.hddl,0.013391972,94
+Depots/p01.hddl,0.09076786,454
+Factories/pfile01.hddl,0.020335674,164

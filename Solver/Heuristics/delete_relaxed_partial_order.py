@@ -153,7 +153,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
 
     def ranking(self, model: DefaultModel) -> float:
         # Create duplicate state
-        alt_state = State.reproduce(model.current_state)
+        alt_state = model.current_state.reproduce()
 
         if len(model.operations_taken) == 0 or type(model.operations_taken[-1].mod) == Action:
             prev_action = True
@@ -525,7 +525,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
         return constraints
 
     def _generate_alt_problem(self):
-        self.alt_problem.initial_state = State.reproduce(self.problem.initial_state)
+        self.alt_problem.initial_state = self.problem.initial_state.reproduce()
 
         # Get objects
         obs = self.problem.get_all_objects()

@@ -43,15 +43,14 @@ class DefaultModel(Model):
 
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
-            new_model = DefaultModel(State.reproduce(self.current_state),
+            new_model = DefaultModel(self.current_state.reproduce(),
                                      self.search_modifiers, problem, [])
         else:
-            new_model = DefaultModel(State.reproduce(self.current_state),
+            new_model = DefaultModel(self.current_state.reproduce(),
                                      search_mods, problem, [])
 
-        i = 0
-        for i in self.waiting_subtasks:
-            new_model.waiting_subtasks.append(i)
+        new_model.waiting_subtasks = [*self.waiting_subtasks]
 
         new_model.set_progress_tracker(self.get_progress_tracker().reproduce())
+        new_model.ranking = self.ranking
         return new_model

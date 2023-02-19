@@ -21,7 +21,7 @@ class ProblemPredicate:
         self.ob_names = [o.name for o in objects]
 
     def __hash__(self):
-        return hash((self.predicate.name, *self.ob_names))
+        return hash((self.predicate.name, tuple(self.ob_names)))
 
     def __eq__(self, other):
         if type(self) != type(other):

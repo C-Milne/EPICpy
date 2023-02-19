@@ -71,18 +71,18 @@ class PandaVerifyModel(Model):
 
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
-            new_model = PandaVerifyModel(State.reproduce(self.current_state),
+            new_model = PandaVerifyModel(self.current_state.reproduce(),
                                          self.search_modifiers, problem, [])
         else:
-            new_model = PandaVerifyModel(State.reproduce(self.current_state),
+            new_model = PandaVerifyModel(self.current_state.reproduce(),
                                          search_mods, problem, [])
 
-        for i in self.waiting_subtasks:
-            new_model.waiting_subtasks.append(i)
+        new_model.waiting_subtasks = [*self.waiting_subtasks]
 
         new_model.set_progress_tracker(self.get_progress_tracker().reproduce())
         new_model.set_last_dispense(self.last_dispense)
         new_model.set_counter(self.id_counter)
+        new_model.ranking = self.ranking
         return new_model
 
     def set_counter(self, i):

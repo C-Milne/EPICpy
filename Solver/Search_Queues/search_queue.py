@@ -9,12 +9,12 @@ This SearchQueue ranks models using the A* principle (Cost thus far + estimated 
 
 class SearchQueue:
     # TODO: Turn this into a ABC class
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._Q = PriorityQueue()
         self._completed_models = []
         self.heuristic = None
-        self.__queue_size = 0
-        self.__total_added_models = 0
+        self._queue_size = 0
+        self._total_added_models = 0
 
     def add_heuristic(self, heuristic):
         assert isinstance(heuristic, Heuristic)
@@ -44,11 +44,11 @@ class SearchQueue:
 
         ranking = self._calc_ranking(model, res)
         model.set_ranking(ranking)
-        model.set_queue_location(self.__total_added_models)
+        model.set_secondary_ranking(self._total_added_models)
 
         self._Q.put(model)
-        self.__total_added_models += 1
-        self.__queue_size += 1
+        self._total_added_models += 1
+        self._queue_size += 1
 
     def _calc_ranking(self, model, heuristic_estimate):
         return model.get_progress_tracker().get_num_operations_taken() + heuristic_estimate
@@ -57,9 +57,9 @@ class SearchQueue:
         self._completed_models = []
 
     def pop(self):
-        if self.__queue_size == 0:
+        if self._queue_size == 0:
             return None
-        self.__queue_size -= 1
+        self._queue_size -= 1
         return self._Q.get()
 
     def clear(self):
@@ -76,5 +76,8 @@ class SearchQueue:
     def get_completed_models(self):
         return self._completed_models
 
+    def get_model_list(self):
+        return self._Q.queue
+
     def __len__(self):
-        return self.__queue_size
+        return self._queue_size

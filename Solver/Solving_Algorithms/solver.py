@@ -36,7 +36,7 @@ class Solver(ABC):
         self.domain = domain
         self.problem = problem
 
-        self.search_models = SearchQueue()
+        self.search_models = SearchQueue(domain=self.domain, problem=self.problem, solver=self)
         heuristic = Pruning(self.domain, self.problem, self, self.search_models)
         self.search_models.add_heuristic(heuristic)
 
@@ -59,7 +59,7 @@ class Solver(ABC):
 
     def set_search_queue(self, search_queue):
         if type(search_queue) == type or type(search_queue) == ABCMeta:
-            search_queue = search_queue()
+            search_queue = search_queue(domain=self.domain, problem=self.problem, solver=self)
         assert isinstance(search_queue, SearchQueue) or isinstance(type(search_queue), type(SearchQueue))
         heu = self.search_models.heuristic
         self.search_models = search_queue
@@ -78,7 +78,7 @@ class Solver(ABC):
         self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
 
-        printed_subtasks = False
+        printed_subtasks = True  # Change this to False if we want to print the subtasks of the problem before searching
 
         for subtasks in subtasks_orderings:
             list_subT = []
@@ -107,8 +107,7 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = self.ModelClass(State.reproduce(self.problem.initial_state), list_subT, self.problem,
-                                       waiting_subT, progress_tracker_class=self.progress_tracker, initial_model=True)
+            initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT, self.progress_tracker)
 
             self.search_models.add(initial_model)
 
@@ -119,6 +118,10 @@ class Solver(ABC):
 
         if search != False:
             return self._search()
+
+    def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
+        return self.ModelClass(initial_state, subtasks, self.problem, waiting_subtasks,
+                               progress_tracker_class=progress_tracker_class, initial_model=True)
 
     def _search(self, step_control=False):
         """:parameter   - step_control  - If True, then loop will only execute once"""
@@ -270,7 +273,7 @@ class Solver(ABC):
 
     @staticmethod
     def reproduce_state(state):
-        return State.reproduce(state)
+        return state.reproduce()
 
     def reproduce_model(self, model, search_mods=None):
         """
