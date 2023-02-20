@@ -10,6 +10,9 @@ class Node:
         self.name = name
         self.requires = []
         self.provides = []
+        self.provided_by = []
+        self._landmarks_calculated = False
+        self.landmarks = set()
 
     def add_to_requires(self, task_node):
         self.requires.append(task_node)
@@ -17,15 +20,46 @@ class Node:
     def add_to_provides(self, node):
         self.provides.append(node)
 
+    def add_to_provided_by(self, node):
+        self.provided_by.append(node)
+
+    def calculate_landmarks(self):
+        raise NotImplementedError
+
 
 class AndNode(Node):
     def __init__(self, name):
         super().__init__(name)
 
+    def calculate_landmarks(self):
+        """The landmarks of an AndNode is the union of its requirements plus itself"""
+        if not self._landmarks_calculated:
+            for r in self.requires:
+                r.calculate_landmarks()
+            self.landmarks = self.landmarks.union(*[s.landmarks for s in self.requires], {self.name})
+
+            if self.name.startswith('FACT--'):
+                for p in self.provided_by:
+                    p.calculate_landmarks()
+                self.landmarks = self.landmarks.union(*[s.landmarks for s in self.provided_by])
+            self._landmarks_calculated = True
+
 
 class OrNode(Node):
     def __init__(self, name):
         super().__init__(name)
+
+    def calculate_landmarks(self):
+        """The landmarks of an OrNode is the intersection of its requirements, union itself"""
+        if not self._landmarks_calculated:
+            for r in self.requires:
+                r.calculate_landmarks()
+            if len(self.requires) > 1:
+                self.landmarks = self.requires[0].landmarks.intersection(*[s.landmarks for s in self.requires[1:]])
+            elif len(self.landmarks) > 0:
+                self.landmarks = self.requires[0].landmarks
+            self.landmarks = self.landmarks.union({self.name})
+            self._landmarks_calculated = True
 
 
 class AndOrTree:
@@ -71,7 +105,15 @@ class Landmarks(SeenStatesPruning):
             self._add_to_node(i, root_node)
 
         # Landmark extraction from tree
+        self._extract_landmarks()
         raise NotImplementedError
+
+    def _extract_landmarks(self):
+        """Recursive strategy where we begin by calculting the landmarks for the children of the root
+        If the node needs the landmarks of some children to be computed we recur and calculate the children's landmarks
+        """
+        for r in self.tree.root.requires:
+            r.calculate_landmarks()
 
     def _add_to_node(self, task, parent_node):
         # Get / Create a node for the task
@@ -96,9 +138,10 @@ class Landmarks(SeenStatesPruning):
             self._expand_action(task, node)
 
     def _add_fact_to_node(self, fact: str, node, operation: str):
-        fact_node = self.tree.get_node(fact, 'OR')
+        fact_node = self.tree.get_node(fact, 'AND')
         if operation == "PROVIDES":
             node.add_to_provides(fact_node)
+            fact_node.add_to_provided_by(node)
         elif operation == "REQUIRES":
             node.add_to_requires(fact_node)
         else:
