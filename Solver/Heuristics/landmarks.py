@@ -14,6 +14,9 @@ class Node:
     def add_to_requires(self, task_node):
         self.requires.append(task_node)
 
+    def add_to_provides(self, node):
+        self.provides.append(node)
+
 
 class AndNode(Node):
     def __init__(self, name):
@@ -61,7 +64,13 @@ class Landmarks(SeenStatesPruning):
         self.tree.add_root_node(root_node)
         initial_tasks = self.problem.get_subtasks()
         for i in initial_tasks:
+            p_index = 0
+            for p in i.task.parameters:
+                i.given_params[p.name] = i.parameters[p_index]
+                p_index += 1
             self._add_to_node(i, root_node)
+
+        # Landmark extraction from tree
         raise NotImplementedError
 
     def _add_to_node(self, task, parent_node):
@@ -81,11 +90,19 @@ class Landmarks(SeenStatesPruning):
             self._expand_task(task, node)
         elif type(task.task) == Method:
             # Create new node for each subtask
-            raise NotImplementedError
+            self._expand_method(task, node)
         else:
             # Task is an action
-            raise NotImplementedError
-        print('here')   # TODO: Remove this
+            self._expand_action(task, node)
+
+    def _add_fact_to_node(self, fact: str, node, operation: str):
+        fact_node = self.tree.get_node(fact, 'OR')
+        if operation == "PROVIDES":
+            node.add_to_provides(fact_node)
+        elif operation == "REQUIRES":
+            node.add_to_requires(fact_node)
+        else:
+            raise ValueError("Unknown Fact Operation: {}".format(operation))
 
     def _expand_task(self, task, node):
         for method in task.task.methods:
@@ -101,3 +118,49 @@ class Landmarks(SeenStatesPruning):
                 subT = Subtask(method, method.parameters)
                 subT.add_given_parameters(param_option)
                 self._add_to_node(subT, node)
+
+    def _expand_method(self, task, node):
+        subtasks = task.task.get_subtasks().get_tasks()
+        for mod in subtasks:
+            mod = Subtask(mod.task, mod.parameters)
+
+            # Check parameter count
+            parameters = {}
+            param_keys = [p.name for p in mod.parameters]
+            action_keys = [p.name for p in mod.task.parameters]
+            if len(action_keys) > 0:
+                for j in range(len(action_keys)):
+                    try:
+                        parameters[action_keys[j]] = task.given_params[param_keys[j]]
+                    except IndexError:
+                        pass
+                    except KeyError as e:
+                        if param_keys[j][0] != "?" and param_keys[j] in self.problem.objects:
+                            parameters[action_keys[j]] = self.problem.get_object(param_keys[j])
+                        else:
+                            raise KeyError(e)
+            else:
+                for j in range(len(param_keys)):
+                    parameters[param_keys[j]] = task.given_params[param_keys[j]]
+
+            mod.add_given_parameters(parameters)
+
+            # Recur
+            self._add_to_node(mod, node)
+
+    def _expand_action(self, task, node):
+        # Facts which are added need to be represented as nodes
+        effects = task.task.effects.effects
+        for e in effects:
+            if not e.negated:
+                fact = "FACT--{}".format(e.predicate.name)
+                for p in e.parameters:
+                    fact += "-{}".format(task.given_params[p].name)
+                self._add_fact_to_node(fact, node, 'PROVIDES')
+
+        conditions = task.task.preconditions.get_positive_predicate_conditions()
+        for c in conditions:
+            fact = "FACT--{}".format(c.pred.name)
+            for p in c.parameter_name:
+                fact += "-{}".format(task.given_params[p].name)
+            self._add_fact_to_node(fact, node, 'REQUIRES')

@@ -43,7 +43,7 @@ class Subtask:
     def __str__(self):
         return_str = self.task.name
         if len(self.given_params) == len(self.parameters):
-            for p in self.parameters:
+            for p in self.task.parameters:
                 return_str += "-{}".format(self.given_params[p.name].name)
         elif all([type(p) == Object for p in self.parameters]):
             for o in self.parameters:
@@ -221,3 +221,9 @@ class Subtasks:
 
     def __len__(self):
         return len(self.tasks)
+
+    def __str__(self):
+        return_str = ""
+        for i in self.tasks:
+            return_str += str(i)
+        return return_str
