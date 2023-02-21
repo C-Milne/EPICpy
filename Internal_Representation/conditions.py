@@ -66,6 +66,19 @@ class VariableCondition(Condition):
     def evaluate(self, param_dict: dict, search_model, problem) -> Object:
         return param_dict[self.variable_name]
 
+class ConstantObjectCondition(Condition):
+    def __init__(self, object_name: str, problem):
+        super().__init__()
+        assert type(object_name) == str
+        self.object_name = object_name
+        self.object = None
+        self.problem = problem
+
+    def evaluate(self, param_dict: dict, search_model, problem) -> Object:
+        if not self.object:
+            self.object = self.problem.get_object(self.object_name)
+        return self.object
+
 
 class OperatorCondition(Condition):
     def __init__(self, operator: str):

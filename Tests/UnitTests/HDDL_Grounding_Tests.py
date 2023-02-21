@@ -46,7 +46,7 @@ class HDDLGroundingTests(unittest.TestCase):
         domain.add_predicate(have_pred)
         domain.add_predicate(hate_pred)
 
-        precons = parser._parse_precondition(precon_list)
+        precons = parser._parse_precondition(precon_list, [])
 
 
         ob_ham = Object("ham")
@@ -89,10 +89,10 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Add some assertions for this - seems too work (perhaps not for 'forall' methods)
         self.assertEqual(2, len(domain.methods['pickup-ready-block'].requirements))
-        self.assertEqual({'type': domain.types['BLOCK'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}},
+        self.assertEqual({'type': domain.types['BLOCK'], 'predicates': {'and': {'clear': 1, 'not': {'done': 1}, 'goal_on': 1}}, 'Object': None},
                          domain.methods['pickup-ready-block'].requirements['?b'])
         self.assertEqual({'type': domain.types['BLOCK'],
-                          'predicates': {'and': {'goal_on': 2, 'done': 1, 'clear': 1}}},
+                          'predicates': {'and': {'goal_on': 2, 'done': 1, 'clear': 1}}, 'Object': None},
                          domain.methods['pickup-ready-block'].requirements['?d'])
 
     def test_forall_preconditions(self):
@@ -151,7 +151,7 @@ class HDDLGroundingTests(unittest.TestCase):
 
         # Set up precondition object
         precon_list = ['and', ['have', '?x'], ['have', '?y'], ['have', '?z']]
-        precons = parser._parse_precondition(precon_list)
+        precons = parser._parse_precondition(precon_list, [])
 
         # Set up model - {'have': ['ham', 'irn-bru', 'car']}
         state = State()
@@ -179,7 +179,7 @@ class HDDLGroundingTests(unittest.TestCase):
         # Test the 'or' functionality for preconditions
         # Set up precondition object
         precon_list = ['or', ['have', '?x'], ['have', '?y'], ['have', '?z']]
-        precons = parser._parse_precondition(precon_list)
+        precons = parser._parse_precondition(precon_list, [])
 
         # Set up values
         have_pred = Predicate('have', [RegParameter('?x')])
@@ -226,7 +226,7 @@ class HDDLGroundingTests(unittest.TestCase):
         # Test the 'not' functionality for preconditions
         # Set up precondition object
         precon_list = ['not', ['have', '?x']]
-        precons = parser._parse_precondition(precon_list)
+        precons = parser._parse_precondition(precon_list, [])
 
         # Set up values
         have_pred = Predicate('have', [RegParameter('?x')])
