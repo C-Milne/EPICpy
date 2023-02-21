@@ -5,6 +5,7 @@ from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 class SequentialTracker(ProgressTracker):
     def __init__(self):
+        super().__init__()
         self.actions_taken = []
         self.operations_taken = []
 
@@ -22,6 +23,14 @@ class SequentialTracker(ProgressTracker):
         for op in self.operations_taken:
             new_tracker.add_operation(op)
         return new_tracker
+
+    def check_operation_carried_out(self, operation_string: str):
+        try:
+            if operation_string in self.operations_taken:
+                return True
+            return False
+        except Exception as e:
+            raise NotImplementedError
 
     def __eq__(self, other):
         if type(self) != type(other):

@@ -83,6 +83,9 @@ class AndOrTree:
         self.nodes[node_name] = new_node
         return new_node
 
+    def get_node_for_ranking(self, node_name):
+        return self.nodes[node_name]
+
 
 class Landmarks(SeenStatesPruning):
     def __init__(self, domain, problem, solver, search_models):
@@ -91,7 +94,14 @@ class Landmarks(SeenStatesPruning):
         self.allParameters = AllParameters(self.solver)
 
     def _inner_ranking(self, model):
-        raise NotImplementedError
+        missing_landmarks = 0
+        for l in self.tree.root.landmarks:
+            if l.startswith('FACT--'):
+                raise NotImplementedError
+            else:
+                if not model.progress_tracker.check_operation_carried_out(l):
+                    missing_landmarks += 1
+        return missing_landmarks
 
     def presolving_processing(self) -> None:
         root_node = AndNode('LandMarkRootNode')
@@ -103,17 +113,17 @@ class Landmarks(SeenStatesPruning):
                 i.given_params[p.name] = i.parameters[p_index]
                 p_index += 1
             self._add_to_node(i, root_node)
-
         # Landmark extraction from tree
         self._extract_landmarks()
-        raise NotImplementedError
 
     def _extract_landmarks(self):
-        """Recursive strategy where we begin by calculting the landmarks for the children of the root
+        """Recursive strategy where we begin by calculating the landmarks for the children of the root
         If the node needs the landmarks of some children to be computed we recur and calculate the children's landmarks
         """
-        for r in self.tree.root.requires:
-            r.calculate_landmarks()
+        # for r in self.tree.root.requires:
+        #     r.calculate_landmarks()
+        self.tree.root.calculate_landmarks()
+        self.tree.root.landmarks.remove('LandMarkRootNode')
 
     def _add_to_node(self, task, parent_node):
         # Get / Create a node for the task
