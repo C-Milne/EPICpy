@@ -22,7 +22,8 @@ class StateNovelty(State):
                 novel = self.MaxNoveltyLevel
                 self._seen_elements.add(element_hash)
 
-            # TODO: When retying novelty level > 1 check all this code - refactor preferred
+            # TODO: When we come to do novelty for more than level 2 - maybe we should store combinations to save computing time
+            # TODO: If we do higher levels of novelty remember to update the diagram for the report
             def _create_hash_list(element_hash_from_list):
                 return hash(frozenset([element_hash, *element_hash_from_list]))
 
