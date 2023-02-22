@@ -1,3 +1,5 @@
+import traceback
+
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 from Internal_Representation.action import Action
 from Solver.Progress_Tracking.action_tracker import ActionTracker
@@ -8,12 +10,15 @@ class SequentialTracker(ProgressTracker):
         super().__init__()
         self.actions_taken = []
         self.operations_taken = []
+        self.operations_taken_set = set()
 
     def add_operation(self, operation: ActionTracker):
         assert type(operation) == ActionTracker
         if type(operation.mod) == Action:
             self.actions_taken.append(operation)
         self.operations_taken.append(operation)
+        op_string = str(operation).replace(' - ', '-').replace(' ', '-')
+        self.operations_taken_set.add(op_string)
 
     def get_num_operations_taken(self):
         return len(self.operations_taken)
@@ -25,12 +30,9 @@ class SequentialTracker(ProgressTracker):
         return new_tracker
 
     def check_operation_carried_out(self, operation_string: str):
-        try:
-            if operation_string in self.operations_taken:
-                return True
-            return False
-        except Exception as e:
-            raise NotImplementedError
+        if operation_string in self.operations_taken_set:
+            return True
+        return False
 
     def __eq__(self, other):
         if type(self) != type(other):

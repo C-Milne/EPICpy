@@ -97,6 +97,7 @@ class Landmarks(SeenStatesPruning):
         missing_landmarks = 0
         for l in self.tree.root.landmarks:
             if l.startswith('FACT--'):
+                # TODO: Implement this
                 raise NotImplementedError
             else:
                 if not model.progress_tracker.check_operation_carried_out(l):
@@ -175,6 +176,7 @@ class Landmarks(SeenStatesPruning):
     def _expand_method(self, task, node):
         subtasks = task.task.get_subtasks().get_tasks()
         for mod in subtasks:
+            # TODO: We need to account for tasks and actions we have already seen
             mod = Subtask(mod.task, mod.parameters)
 
             # Check parameter count
