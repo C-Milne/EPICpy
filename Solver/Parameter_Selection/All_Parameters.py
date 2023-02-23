@@ -26,6 +26,8 @@ class AllParameters(ParameterSelector):
             # Get all objects of that type
             if p.name not in parameter_options:
                 parameter_options[p.name] = []
+
+            # TODO: Optimise this - store which objects satisfy each type during problem parsing
             if p.type is not None:
                 for x in self.solver.problem.objects:
                     x = self.solver.problem.objects[x]

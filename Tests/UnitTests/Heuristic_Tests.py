@@ -8,6 +8,7 @@ from Solver.Heuristics.tree_distance_partial_order import TreeDistancePartialOrd
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, AltPrecondition, AltOperatorCondition
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
+from Solver.Heuristics.landmarks import Landmarks
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Internal_Representation.conditions import PredicateCondition
 from Internal_Representation.problem_predicate import ProblemPredicate
@@ -378,6 +379,24 @@ class HeuristicTests(unittest.TestCase):
         parser.parse_domain(self.rover_path + "domain.hddl")
         parser.parse_problem(self.rover_path + "p01.hddl")
         solver.set_heuristic(TreeDistanceSeenStatesPruning)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+
+    def test_landmarks_basic(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.basic_path + "basic.hddl")
+        parser.parse_problem(self.basic_path + "pb1.hddl")
+        solver.set_heuristic(Landmarks)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
+
+    def test_landmarks_rover_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(Landmarks)
         solver.set_search_queue(GBFSSearchQueue)
         res = solver.solve()
         self.assertIsNotNone(res)
