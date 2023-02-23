@@ -122,7 +122,13 @@ class PartialOrderSolver(Solver):
                 if type(eff) == Effects.Effect:
                     param_list = []
                     for i in eff.parameters:
-                        param_list.append(subtask.given_params[i])
+                        if i in subtask.given_params:
+                            param_list.append(subtask.given_params[i])
+                        else:
+                            # Check constants
+                            const = self.domain.get_constant(i)
+                            assert const is not None
+                            param_list.append(const)
 
                     if eff.negated:
                         # Predicate needs to be removed
