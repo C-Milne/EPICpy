@@ -391,3 +391,12 @@ class HeuristicTests(unittest.TestCase):
         solver.set_search_queue(GBFSSearchQueue)
         res = solver.solve()
         self.assertIsNotNone(res)
+
+    def test_landmarks_rover_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(Landmarks)
+        solver.set_search_queue(GBFSSearchQueue)
+        res = solver.solve()
+        self.assertIsNotNone(res)
