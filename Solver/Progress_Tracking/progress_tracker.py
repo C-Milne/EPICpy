@@ -15,6 +15,10 @@ class ProgressTracker(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def check_operation_carried_out(self, operation_string: str) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
     def reproduce(self):
         raise NotImplementedError
 
