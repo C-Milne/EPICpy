@@ -1,3 +1,4 @@
+import copy
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.Object import Object
@@ -98,10 +99,9 @@ class State:
         return False
 
     def reproduce(self):
-        # TODO: Improve this - We dont need to use the add_element function here
         returnState = State()
-        for e in self.elements:
-            returnState.add_element(e)
+        returnState.elements = [*self.elements]
+        returnState._index = copy.deepcopy(self._index)
         return returnState
 
     @staticmethod
