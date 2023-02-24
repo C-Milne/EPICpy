@@ -1,5 +1,3 @@
-import traceback
-
 from Solver.Progress_Tracking.progress_tracker import ProgressTracker
 from Internal_Representation.action import Action
 from Solver.Progress_Tracking.action_tracker import ActionTracker
@@ -25,8 +23,9 @@ class SequentialTracker(ProgressTracker):
 
     def reproduce(self):
         new_tracker = SequentialTracker()
-        for op in self.operations_taken:
-            new_tracker.add_operation(op)
+        new_tracker.operations_taken = [*self.operations_taken]
+        new_tracker.actions_taken = [*self.actions_taken]
+        new_tracker.operations_taken_set = {*self.operations_taken_set}
         return new_tracker
 
     def check_operation_carried_out(self, operation_string: str):
