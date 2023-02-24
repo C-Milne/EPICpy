@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Novelty Tree Distance" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="GBFS Tree Distance Seen States Hamming Tie" type="PythonConfigurationType" factoryName="Python">
     <module name="4th-Year-Dissertation" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/Monroe-Fully-Observable/pfile02-domain.hddl Tests/Examples/Monroe-Fully-Observable/pfile02.hddl -solverModName PartialOrderNoveltySolver -solverPath Solver/Solving_Algorithms/partial_order_novelty.py -heuModName TreeDistanceSeenStatesPruning -heuPath Solver/Heuristics/tree_distance_seen_states.py -searchQueueName NoveltyTreeDistanceGBFSSearchQueue -searchQueuePath Solver/Search_Queues/Novelty_TreeDistance_GBFS_Search_Queue.py" />
+    <option name="PARAMETERS" value="Tests/Examples/Snake/domain.hddl Tests/Examples/Snake/pb01.snake.hddl -heuModName TreeDistanceSeenStatesPruning -heuPath Solver/Heuristics/tree_distance_seen_states.py -searchQueueName SearchQueueGBFSDualHammingDistance -searchQueuePath Solver/Search_Queues/search_queue_dual_heuristic_HammingDistance.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

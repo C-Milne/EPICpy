@@ -73,6 +73,10 @@ class Requirements:
                     for k in self.requirements.keys():
                         if k.startswith("forall") and self.requirements[k] == {}:
                             self.requirements[k] = {pred_name: p}
+            elif len(self.__prepare_prelayer) == 2 and self.__prepare_prelayer[-1] == 'not' and self.__prepare_prelayer[-2] == 'forall':
+                for k in self.requirements.keys():
+                    if k.startswith("forall") and self.requirements[k] == {}:
+                        self.requirements[k] = {'not': {pred_name: p}}
             else:
                 if p not in self.requirements:
                     self.requirements[p] = {"type": None, "predicates": {}}
@@ -135,7 +139,10 @@ class RequirementSelection(ParameterSelector):
         for required_param_name in given_requirements:
             if required_param_name.startswith('forall-'):
                 inner = given_requirements[required_param_name]
-                k = list(inner.keys())[0]
+                try:
+                    k = list(inner.keys())[0]
+                except Exception as e:
+                    raise NotImplementedError
                 inner[k] = 1
                 requirements = {'type': None, 'predicates': inner}
 
