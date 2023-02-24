@@ -13,7 +13,8 @@ class HammingDistancePartialOrder(PartialOrderPruning):
         # Consider distance to goal
         distance_to_goal = 0
         for i in self.goal_cons:
-            if i not in model.current_state.elements:
+            # if i not in model.current_state.elements:
+            if i not in model.current_state:
                 distance_to_goal += 1
         return distance_to_goal
 
