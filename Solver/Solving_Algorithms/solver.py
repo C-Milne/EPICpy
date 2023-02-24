@@ -140,6 +140,8 @@ class Solver(ABC):
             elif type(next_modifier.task) == Method:
                 self._expand_method(next_modifier, search_model)
             elif type(next_modifier.task) == Action:
+                # The model needs a reproduced state before changing its state through an action
+                search_model.current_state = search_model.current_state.reproduce()
                 self._expand_action(next_modifier, search_model)
             else:
                 raise NotImplementedError
