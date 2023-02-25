@@ -26,7 +26,8 @@ class Subtask:
         assert type(params) == dict
         if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
             for i in params:
-                assert type(params[i]) == Object or type(params[i]) == ListParameter
+                if not (type(params[i]) == Object or type(params[i]) == ListParameter):
+                    raise TypeError('Expected Type Object or ListParameter. But Received: {}'.format(type(params[i])))
         self.given_params = params
 
     def evaluate_preconditions(self, model, params, problem) -> bool:
@@ -101,10 +102,7 @@ class Subtasks:
         self.ordered = True
 
     def _create_orderings(self, orderings):
-        try:
-            assert not self.ordered
-        except:
-            raise ValueError
+        assert not self.ordered
         """
         Kahns algorithm
         L ← Empty list that will contain the sorted elements
