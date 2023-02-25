@@ -1,3 +1,4 @@
+import itertools
 from Internal_Representation.Object import Object
 from Internal_Representation.state import State
 from Internal_Representation.Type import Type
@@ -15,6 +16,9 @@ class Problem:
         self.subtasks = None
         self.domain = domain
         self.goal_conditions = None
+        self._initial_task_network_parameters = None
+        self.initial_subtask_orderings = None
+        self._subtasks_before_ordering = []
 
     def set_name(self, name: str):
         assert type(name) == str
@@ -32,12 +36,30 @@ class Problem:
         assert type(v) == ProblemPredicate
         self.initial_state.add_element(v)
 
+    def add_initial_task_network_parameter(self, parameter_name: str, parameter_type: str):
+        if not self._initial_task_network_parameters:
+            self._initial_task_network_parameters = {}
+        self._initial_task_network_parameters[parameter_name] = parameter_type
+
     def add_subtasks(self, sub_tasks):
         assert type(sub_tasks) == Subtasks
         self.subtasks = sub_tasks
 
-    def order_subtasks(self, orderings):
-        self.subtasks.order_subtasks(orderings)
+    def order_subtasks(self):
+        if self.subtasks.ordered:
+            # If the subtasks are already ordered we dont need to order again
+            return
+        if len(self._subtasks_before_ordering) > 0:
+            full_orderings = []
+            for subtasks in self._subtasks_before_ordering:
+                subtasks.order_subtasks(self.initial_subtask_orderings)
+                full_orderings += subtasks.get_task_orderings()
+            self.subtasks.task_orderings = full_orderings
+        else:
+            self.subtasks.order_subtasks(self.initial_subtask_orderings)
+
+    def set_initial_subtask_ordering(self, orderings):
+        self.initial_subtask_orderings = orderings
 
     def get_object(self, name):
         if name in self.objects:
@@ -80,3 +102,27 @@ class Problem:
         if self.goal_conditions is None:
             return False
         return True
+
+    def has_initial_task_network_parameters(self):
+        if not self._initial_task_network_parameters:
+            return False
+        return True
+
+    def ground_initial_subtasks(self):
+        parameter_ordering = []
+        for p in self._initial_task_network_parameters:
+            self._initial_task_network_parameters[p] = self.get_objects_of_type(self._initial_task_network_parameters[p])
+            parameter_ordering.append(p)
+        vals = list(self._initial_task_network_parameters.values())
+        combs = list(itertools.product(*vals))
+
+        for c in combs:
+            # Reproduce self.subtasks
+            new_subtasks = self.subtasks.reproduce()
+            # Assign objects to parameters for each combination
+            for subtask in new_subtasks.tasks:
+                for p_i in range(len(subtask.parameters)):
+                    p = subtask.parameters[p_i]
+                    if type(p) == str:
+                        subtask.parameters[p_i] = c[parameter_ordering.index(p)]
+            self._subtasks_before_ordering.append(new_subtasks)
