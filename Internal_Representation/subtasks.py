@@ -27,7 +27,7 @@ class Subtask:
         if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
             for i in params:
                 if not (type(params[i]) == Object or type(params[i]) == ListParameter):
-                    raise TypeError('Expected Type Object or ListParameter. But Received: {}'.format(type(params[i])))
+                    raise TypeError('Expected Type Object or ListParameter. But Received: {} of Value {}'.format(type(params[i]), params[i]))
         self.given_params = params
 
     def evaluate_preconditions(self, model, params, problem) -> bool:
