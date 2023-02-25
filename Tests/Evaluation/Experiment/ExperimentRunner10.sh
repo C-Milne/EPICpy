@@ -6,7 +6,7 @@
 #SBATCH -o slurm.%j.out
 #SBATCH -e slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --time=170:00:00
+#SBATCH --time=48:00:00
 #SBATCH --partition=compute
 
 date

@@ -4,6 +4,7 @@ from ExperimentRunner import run_test
 if __name__ == "__main__":
     strategy = 12
 
+    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -587,6 +588,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-40.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-45.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-50.hddl", strategy)
+    """
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-006-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-006-007.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-007-007.hddl", strategy)
