@@ -245,7 +245,6 @@ class Landmarks(SeenStatesPruning):
                 self.tree.leaf_nodes.add_leaf_node(initial_fact_node)
 
         # Iterate until no nodes can have landmarks calculated
-        # TODO: Perhaps an early stop when we have landmarks for the root?
         while self.tree.leaf_nodes:
             leaf_node, leaf_node_upwards_recur_set = self.tree.leaf_nodes.pop_leaf_node()
             leaf_node_upwards_recur_set = leaf_node_upwards_recur_set.union({leaf_node.name})
