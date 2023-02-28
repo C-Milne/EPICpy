@@ -12,9 +12,10 @@ class Node:
         self.required_by = []
         self.provides = []
         self.provided_by = []
-        self._landmarks_calculated = False
+        self.landmarks_calculated = False
         self.landmarks = set()
         self._already_seen = set()
+        self.previous_landmark_calculate_positives = 0
 
     def add_to_requires(self, task_node):
         self.requires.append(task_node)
@@ -43,6 +44,9 @@ class Node:
     def get_already_seen(self) -> set:
         return self._already_seen
 
+    def get_child_landmark_calculated_num(self):
+        raise NotImplementedError
+
 
 class AndNode(Node):
     def __init__(self, name):
@@ -50,14 +54,34 @@ class AndNode(Node):
 
     def calculate_landmarks(self):
         """The landmarks of an AndNode is the union of its requirements plus itself"""
-        if not self._landmarks_calculated:
-            assert all([r._landmarks_calculated for r in self.requires])
-            self.landmarks = self.landmarks.union(*[s.landmarks for s in self.requires], {self.name})
+        # if self.landmarks_calculated:
+        #     print('Duplicate Landmark Calculation: {}'.format(self.name))
+        # else:
+        #     print('Landmark Calculation: {}'.format(self.name))
 
-            if self.name.startswith('FACT--'):
-                assert all([p._landmarks_calculated for p in self.provided_by])
-                self.landmarks = self.landmarks.union(*[s.landmarks for s in self.provided_by])
-            self._landmarks_calculated = True
+        if not self.name.startswith('FACT--'):
+            assert all([r.landmarks_calculated for r in self.requires])
+            self.landmarks = self.landmarks.union(*[s.landmarks for s in self.requires], {self.name})
+        else:
+            self.landmarks = self.landmarks.union(*[s.landmarks for s in self.provided_by])
+        self.landmarks_calculated = True
+        self.previous_landmark_calculate_positives = self.get_child_landmark_calculated_num()
+
+    def set_landmarks_initial_fact(self):
+        assert self.name.startswith('FACT--')
+        self.landmarks = {self.name}
+        self.landmarks_calculated = True
+
+    def get_child_landmark_calculated_num(self):
+        return sum([r.landmarks_calculated for r in self.requires] + [r.landmarks_calculated for r in self.provided_by])
+
+
+class FactNode(AndNode):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def get_child_landmark_calculated_num(self):
+        return sum([r.landmarks_calculated for r in self.provided_by])
 
 
 class OrNode(Node):
@@ -66,21 +90,82 @@ class OrNode(Node):
 
     def calculate_landmarks(self):
         """The landmarks of an OrNode is the intersection of its requirements, union itself"""
-        if not self._landmarks_calculated:
-            assert all([r._landmarks_calculated for r in self.requires])
-            if len(self.requires) > 1:
-                self.landmarks = self.requires[0].landmarks.intersection(*[s.landmarks for s in self.requires[1:]])
-            elif len(self.landmarks) > 0:
-                self.landmarks = self.requires[0].landmarks
-            self.landmarks = self.landmarks.union({self.name})
-            self._landmarks_calculated = True
+        assert any([r.landmarks_calculated for r in self.requires])
+        # if self.landmarks_calculated:
+        #     print('Duplicate Landmark Calculation: {}'.format(self.name))
+        # else:
+        #     print('Landmark Calculation: {}'.format(self.name))
+
+        if len(self.requires) > 1:
+            self.landmarks = self.requires[0].landmarks.intersection(*[s.landmarks for s in self.requires[1:] if s.landmarks_calculated])
+        elif len(self.landmarks) > 0:
+            self.landmarks = self.requires[0].landmarks
+        self.landmarks = self.landmarks.union({self.name})
+        self.landmarks_calculated = True
+        self.previous_landmark_calculate_positives = self.get_child_landmark_calculated_num()
+
+    def get_child_landmark_calculated_num(self):
+        return sum([r.landmarks_calculated for r in self.requires])
+
+
+class LeafNodes:
+    def __init__(self):
+        self.leaf_nodes = []
+        self.leaf_node_names = []
+
+    def add_leaf_node(self, node, upwards_recur_seen: set = set()):
+        leaf_node_index = self.get_index_of_node_name(node.name)
+        if leaf_node_index:
+            # This means the node is already in the list
+            # Remove old version from list and add new
+            del self.leaf_nodes[leaf_node_index]
+            del self.leaf_node_names[leaf_node_index]
+
+        self.leaf_nodes.append((node, upwards_recur_seen))
+        self.leaf_node_names.append(node.name)
+
+    def pop_leaf_node(self):
+        del self.leaf_node_names[0]
+        return self.leaf_nodes.pop(0)
+
+    def remove_leaf_node(self, node):
+        if isinstance(node, Node):
+            node_index = self.get_index_of_node_name(node.name)
+        elif type(node) == str:
+            node_index = self.get_index_of_node_name(node)
+        else:
+            raise TypeError
+        if node_index is not None:
+            del self.leaf_nodes[node_index]
+            del self.leaf_node_names[node_index]
+
+    def get_index_of_node_name(self, node_name):
+        i = 0
+        while i < len(self.leaf_node_names):
+            if self.leaf_node_names[i] == node_name:
+                return i
+            i += 1
+        return None
+
+    def __contains__(self, item):
+        if isinstance(item, Node):
+            return item.name in self.leaf_node_names
+        elif type(item) == str:
+            return item in self.leaf_node_names
+        else:
+            raise TypeError
+
+    def __bool__(self):
+        if len(self.leaf_node_names) > 0:
+            return True
+        return False
 
 
 class AndOrTree:
     def __init__(self):
         self.root = None
         self.nodes = {}
-        self.leaf_nodes = set()
+        self.leaf_nodes = LeafNodes()
 
     def add_root_node(self, root_node):
         self.root = root_node
@@ -93,13 +178,20 @@ class AndOrTree:
             new_node = AndNode(node_name)
         elif node_type == "OR":
             new_node = OrNode(node_name)
+        elif node_type == "FACT":
+            new_node = FactNode(node_name)
         else:
             raise ValueError('Unknown node type: {}'.format(node_type))
         if parent_node is not None:
             new_node.set_already_seen(parent_node.get_already_seen())
         self.nodes[node_name] = new_node
-        self.leaf_nodes.add(new_node)
+        self.leaf_nodes.add_leaf_node(new_node)
         return new_node, False
+
+    def get_existing_node(self, node_name):
+        if node_name in self.nodes:
+            return self.nodes[node_name]
+        return None
 
     def get_node_for_ranking(self, node_name):
         return self.nodes[node_name]
@@ -116,7 +208,7 @@ class Landmarks(SeenStatesPruning):
         for l in self.tree.root.landmarks:
             if l.startswith('FACT--'):
                 # TODO: Implement this
-                raise NotImplementedError
+                raise NotImplementedError('FACTS AS LANDMARK NOT IMPLEMENTED YET')
             else:
                 if not model.progress_tracker.check_operation_carried_out(l):
                     missing_landmarks += 1
@@ -143,12 +235,49 @@ class Landmarks(SeenStatesPruning):
         #     r.calculate_landmarks()
         # self.tree.root.calculate_landmarks()
         # self.tree.root.landmarks.remove('LandMarkRootNode')
+        non_calculated_nodes = list(self.tree.nodes.values())
+
+        # Set landmarks for initial facts
+        for f in self.problem.initial_state.elements:
+            initial_fact_node_name = 'FACT--' + str(f).replace(" - ", "-").replace(' ', '-')
+            initial_fact_node = self.tree.get_existing_node(initial_fact_node_name)
+            if initial_fact_node is not None:
+                self.tree.leaf_nodes.add_leaf_node(initial_fact_node)
+
+        # Iterate until no nodes can have landmarks calculated
+        # TODO: Perhaps an early stop when we have landmarks for the root?
         while self.tree.leaf_nodes:
-            leaf_node = self.tree.leaf_nodes.pop()
+            leaf_node, leaf_node_upwards_recur_set = self.tree.leaf_nodes.pop_leaf_node()
+            leaf_node_upwards_recur_set = leaf_node_upwards_recur_set.union({leaf_node.name})
+            already_seen_node = leaf_node.landmarks_calculated
             leaf_node.calculate_landmarks()
-            for r in leaf_node.required_by:
-                if all([x._landmarks_calculated for x in r.requires]) and all([x._landmarks_calculated for x in r.provided_by]):
-                    self.tree.leaf_nodes.add(r)
+
+            if leaf_node in non_calculated_nodes:
+                non_calculated_nodes.remove(leaf_node)
+
+            for r in leaf_node.required_by + leaf_node.provides:
+                if type(r) == OrNode:
+                    if any([x.landmarks_calculated for x in r.requires]) and r.get_child_landmark_calculated_num() > \
+                            r.previous_landmark_calculate_positives:
+                        self.tree.leaf_nodes.add_leaf_node(r)
+                elif type(r) == FactNode:
+                    if any([x.landmarks_calculated for x in r.provided_by]) and \
+                            r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
+                        self.tree.leaf_nodes.add_leaf_node(r)
+                elif type(r) == AndNode:
+                    if all([x.landmarks_calculated for x in r.requires]) and \
+                            all([x.landmarks_calculated for x in r.provided_by]) and \
+                            r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
+                        self.tree.leaf_nodes.add_leaf_node(r)
+
+            if already_seen_node:
+                for r in leaf_node.required_by:
+                    if r.landmarks_calculated and r.name not in leaf_node_upwards_recur_set:
+                        self.tree.leaf_nodes.add_leaf_node(r, leaf_node_upwards_recur_set)
+
+        # root = self.tree.root     # For Debugging
+        # print(root.landmarks)
+        assert self.tree.root.landmarks_calculated
 
     def _add_to_node(self, task, parent_node):
         if not parent_node.in_already_seen(task):
@@ -164,7 +293,7 @@ class Landmarks(SeenStatesPruning):
             parent_node.add_to_already_seen(task)
             node.add_to_required_by(parent_node)
             if parent_node in self.tree.leaf_nodes:
-                self.tree.leaf_nodes.remove(parent_node)
+                self.tree.leaf_nodes.remove_leaf_node(parent_node)
 
             if not existed:
                 # Recur
@@ -179,18 +308,18 @@ class Landmarks(SeenStatesPruning):
                     self._expand_action(task, node)
 
     def _add_fact_to_node(self, fact: str, node, operation: str):
-        fact_node, existed = self.tree.get_node(fact, 'AND', None)
+        fact_node, existed = self.tree.get_node(fact, 'FACT', None)
         if operation == "PROVIDES":
             node.add_to_provides(fact_node)
             fact_node.add_to_provided_by(node)
             if fact_node in self.tree.leaf_nodes:
-                self.tree.leaf_nodes.remove(fact_node)
+                self.tree.leaf_nodes.remove_leaf_node(fact_node)
         elif operation == "REQUIRES":
             node.add_to_requires(fact_node)
             node.add_to_already_seen(fact)
             fact_node.add_to_required_by(node)
             if node in self.tree.leaf_nodes:
-                self.tree.leaf_nodes.remove(node)
+                self.tree.leaf_nodes.remove_leaf_node(node)
         else:
             raise ValueError("Unknown Fact Operation: {}".format(operation))
 

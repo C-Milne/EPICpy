@@ -17,6 +17,7 @@ from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBFSSearchQueueNewestFirst
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
+from Solver.Search_Queues.Novelty_GBFS_Search_Queue_Oldest_First import NoveltyGBFSOldestFirstQueue
 from Solver.Search_Queues.Novelty_TreeDistance_GBFS_Search_Queue import NoveltyTreeDistanceGBFSSearchQueue
 from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
@@ -25,6 +26,7 @@ from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.landmarks import Landmarks
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
@@ -91,12 +93,22 @@ def run_test(domain_file_path, problem_file_path, strategy):
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        file_name = 'Novelty_level2_Task-Method-Expand-0-TreeDis-results.csv'
+        file_name = 'Novelty_level2_Task-Method-Expand-0-results.csv' # TODO: Rename the file of this when we next push
     elif strategy == 12:
         """Novelty - Level 1 - Checking for Novel Method as well"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'Novelty_Facts_Methods-results.csv'
+    elif strategy == 13:
+        """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
+        controller.set_solver(PartialOrderNoveltySolver)
+        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
+    elif strategy == 14:
+        """Landmarks"""
+        controller.set_search_queue(GBFSSearchQueue)
+        controller.set_heuristic(Landmarks)
+        file_name = 'Landmarks-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
