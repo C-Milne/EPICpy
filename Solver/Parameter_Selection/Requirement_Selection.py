@@ -22,9 +22,10 @@ class Requirements:
         self.preconditions = precons
 
     def prepare_requirements(self) -> dict:
+        # TODO: Add support for constantObjectConditions
         for p in self.parameters:
             if type(p) == RegParameter:
-                self.requirements[p.name] = {"type": p.type, "predicates": {}}
+                self.requirements[p.name] = {"type": p.type, "predicates": {}, "Object": None}
         if self.preconditions is not None:
             self.__prepare_prelayer = []
             self.__prepare_requirements_precons()

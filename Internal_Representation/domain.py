@@ -16,6 +16,8 @@ class Domain:
         self.types = {}
         self.predicates = {}
         self.derived_predicates = {}
+        self.constants = {}
+        self.constant_names = set()
         self.problem = problem
 
     def add_action(self, action):
@@ -53,6 +55,10 @@ class Domain:
         else:
             for p in t.parents:
                 self.types[t.name].add_parent(p)
+
+    def add_constant(self, constant):
+        self.constants[constant.name] = constant
+        self.constant_names.add(constant.name)
 
     def get_action(self, action_name):
         """Return an actions object
@@ -122,6 +128,11 @@ class Domain:
         if name not in self.derived_predicates.keys():
             return None
         return self.derived_predicates[name]
+
+    def get_constant(self, name):
+        if name in self.constant_names:
+            return self.constants[name]
+        return None
 
     def name_assigned(self, str):
         """TODO : Test this with all components"""

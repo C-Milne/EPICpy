@@ -1,6 +1,6 @@
 import sys
 from Internal_Representation.conditions import Condition, PredicateCondition, OperatorCondition, VariableCondition, \
-    ForAllCondition, GoalPredicateCondition
+    ForAllCondition, GoalPredicateCondition, ConstantObjectCondition
 Predicate = sys.modules['Internal_Representation.predicate'].Predicate
 
 
@@ -31,6 +31,12 @@ class Precondition:
     def add_variable_condition(self, parameter_name: str, parent: Condition) -> VariableCondition:
         assert isinstance(parent, Condition) or parent is None
         con = VariableCondition(parameter_name)
+        self._final_condition_addition_checks(con, parent)
+        return con
+
+    def add_constant_object_condition(self, parameter_name: str, parent: Condition, problem) -> ConstantObjectCondition:
+        assert isinstance(parent, Condition) or parent is None
+        con = ConstantObjectCondition(parameter_name, problem)
         self._final_condition_addition_checks(con, parent)
         return con
 

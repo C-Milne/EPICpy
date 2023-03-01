@@ -67,6 +67,29 @@ class VariableCondition(Condition):
         return param_dict[self.variable_name]
 
 
+class ConstantObjectCondition(Condition):
+    """
+    :precondition (and
+        (= ?person ccrew1)
+        (= ?veh backhoe1)
+        (= ?loc mendon_pond)
+        (= ?vehloc strong)
+    )
+    In this example ccrew1, blackhoe1 ... are constants in the domain
+    """
+    def __init__(self, object_name: str, problem):
+        super().__init__()
+        assert type(object_name) == str
+        self.object_name = object_name
+        self.object = None
+        self.problem = problem
+
+    def evaluate(self, param_dict: dict, search_model, problem) -> Object:
+        if not self.object:
+            self.object = self.problem.get_object(self.object_name)
+        return self.object
+
+
 class OperatorCondition(Condition):
     def __init__(self, operator: str):
         super().__init__()
