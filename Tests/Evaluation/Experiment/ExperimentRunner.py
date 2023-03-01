@@ -20,6 +20,7 @@ from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue_Oldest_First import NoveltyGBFSOldestFirstQueue
 from Solver.Search_Queues.Novelty_TreeDistance_GBFS_Search_Queue import NoveltyTreeDistanceGBFSSearchQueue
 from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
+from Solver.Search_Queues.search_queue_dual_heuristic_TreeDistance import SearchQueueGBFSDualTreeDistance
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.no_pruning import NoPruning
@@ -156,6 +157,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(Landmarks)
         file_name = 'Landmarks-Hamming-Distance-tie-breaker-results.csv'
+    elif strategy == 23:
+        """Landmarks with Tree Distance Tie Breaker"""
+        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
+        controller.set_heuristic(Landmarks)
+        file_name = 'Landmarks-Tree-Distance-tie-breaker-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
