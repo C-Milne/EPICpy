@@ -35,7 +35,6 @@ from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrder
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
-from Solver.Solving_Algorithms.partial_order_novelty_methods_no_reset import PartialOrderNoveltyMethodsNoResetSolver
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -126,10 +125,10 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'results/Novelty_level2_no_reset-results.csv'
     elif strategy == 17:
-        """Novelty - level1 - Checking for Novel Method - No Reset"""
-        controller.set_solver(PartialOrderNoveltyMethodsNoResetSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        file_name = 'results/Novelty_Methods_no_reset-results.csv'
+        """Novelty - level1 - Checking for Novel Method - Oldest First"""
+        controller.set_solver(PartialOrderNoveltyMethodsSolver)
+        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        file_name = 'Novelty_Facts_Methods_oldest_first-results.csv'
     elif strategy == 18:
         """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
