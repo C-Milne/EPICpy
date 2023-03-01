@@ -1,19 +1,20 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="GBFS Tree Distance Seen States" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="GBFS Landmarks" type="PythonConfigurationType" factoryName="Python">
     <module name="4th-Year-Dissertation" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="" />
+    <option name="SDK_HOME" value="C:\Python39\python.exe" />
+    <option name="SDK_NAME" value="Python 3.9 (LeetCode)" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    <option name="IS_MODULE_SDK" value="true" />
+    <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p01.hddl -heuModName TreeDistanceSeenStatesPruning -heuPath Solver/Heuristics/tree_distance_seen_states.py -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py" />
+    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p04.hddl -heuModName Landmarks -heuPath Solver/Heuristics/landmarks.py -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
