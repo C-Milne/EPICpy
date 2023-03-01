@@ -26,6 +26,7 @@ from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance import TreeDistance
+from Solver.Heuristics.landmarks import Landmarks
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
@@ -103,6 +104,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
+    elif strategy == 14:
+        """Landmarks"""
+        controller.set_search_queue(GBFSSearchQueue)
+        controller.set_heuristic(Landmarks)
+        file_name = 'Landmarks-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
