@@ -140,8 +140,14 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'results/Novelty_Facts_Only_no_reset-HamDis-results.csv'
     elif strategy == 20:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
+        """Novelty - Level 1 - Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(Landmarks)
+        file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
+    elif strategy == 21:
+        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(Landmarks)
         file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
