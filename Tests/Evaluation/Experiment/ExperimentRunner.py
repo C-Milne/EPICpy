@@ -167,6 +167,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(Landmarks)
         file_name = 'results/Landmarks-newest-first-results.csv'
+    elif strategy == 25:
+        """Hamming Distance with Tree Distance Tie Breaker"""
+        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
+        controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
