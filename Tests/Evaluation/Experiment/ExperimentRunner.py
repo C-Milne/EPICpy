@@ -100,7 +100,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        file_name = 'Novelty_Methods-results.csv'
+        file_name = 'Novelty_Facts_Methods-results.csv'
     elif strategy == 13:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
         controller.set_solver(PartialOrderNoveltySolver)
@@ -116,7 +116,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-HamDis-results.csv'
+        file_name = 'results/Novelty_Facts_Only_reset-HamDis-results.csv'
     elif strategy == 16:
         """Novelty - Level 2 - No reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoNoResetSolver)
@@ -127,6 +127,12 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyMethodsNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'results/Novelty_Methods_no_reset-results.csv'
+    elif strategy == 18:
+        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        file_name = 'results/Novelty_Facts_Only_no_reset-TreeDis-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
