@@ -189,6 +189,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         file_name = 'Novelty_Facts_Methods_Tasks-results.csv'
+    elif strategy == 29:
+        """Novelty - level1 - Checking for Novel Methods and Tasks - Oldest First"""
+        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
+        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        file_name = 'Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
