@@ -33,6 +33,7 @@ from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltyS
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_no_reset import PartialOrderNoveltyMethodsNoResetSolver
 
@@ -183,6 +184,11 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'results/Hamming-Distance-seen-states-landmarks-tie-breaker-results.csv'
+    elif strategy == 28:
+        """Novelty - level1 - Checking for Novel Methods and Tasks"""
+        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        file_name = 'Novelty_Facts_Methods_Tasks-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
