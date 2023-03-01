@@ -50,7 +50,7 @@ class PartialOrderSolver(Solver):
                     new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
                     new_model.set_parent_model_number(search_model.get_model_number())
                     new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-                    self._add_model_to_search_queue(new_model, subT)
+                    self._add_model_to_search_queue(new_model, subtask)
 
     def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
