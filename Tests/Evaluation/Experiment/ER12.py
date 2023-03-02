@@ -588,7 +588,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-40.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-45.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-50.hddl", strategy)
-    """
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-006-006-006.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-006-007.hddl", strategy)
     run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-007-007.hddl", strategy)
@@ -766,6 +765,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_140_280.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_150_300.hddl", strategy)
     # Snake Problems
+    """
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb01.snake.hddl", strategy)
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb02.snake.hddl", strategy)
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb03.snake.hddl", strategy)

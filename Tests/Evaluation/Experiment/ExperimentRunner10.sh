@@ -8,6 +8,7 @@
 #SBATCH --ntasks=1
 #SBATCH --time=48:00:00
 #SBATCH --partition=compute
+#SBATCH --mem 8G
 
 date
 hostname
