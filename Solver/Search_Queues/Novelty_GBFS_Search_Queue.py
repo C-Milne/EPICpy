@@ -4,8 +4,6 @@ from Solver.Search_Queues.search_queue import SearchQueue, Model
 class NoveltyGBFSQueue(SearchQueue):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.num_novel_states = 0
-        self.num_not_novel_states = 0
 
     def novelty_add(self, model, novelty):
         if not isinstance(model, Model):
@@ -27,11 +25,9 @@ class NoveltyGBFSQueue(SearchQueue):
             return  # Do not add to search queue
 
         if novelty > 0:
-            self.num_novel_states += 1
             ranking = -1 * novelty  # We do this since we adjust the novelty scores from the state novelty class
             # i.e. when max level = 2, a new fact gets score 2 and new pair get score 1
         else:
-            self.num_not_novel_states += 1
             ranking = novelty
 
         model.set_ranking(ranking)

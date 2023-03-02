@@ -12,6 +12,8 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         super().set_search_queue(NoveltyGBFSQueue)
         self.set_heuristic(SeenStatesPruning)
         self.max_novelty_level = 1
+        self.num_novel_states = 0
+        self.num_not_novel_states = 0
 
     def set_search_queue(self, search_queue):
         if issubclass(search_queue, NoveltyGBFSQueue):
@@ -103,4 +105,11 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                     raise NotImplementedError
 
         search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
+        # Track amount of novel and not novel states
+        if novelty > 0:
+            self.num_novel_states += 1
+        else:
+            self.num_not_novel_states += 1
+
+        # Add model to search queue
         self.search_models.novelty_add(search_model, novelty)

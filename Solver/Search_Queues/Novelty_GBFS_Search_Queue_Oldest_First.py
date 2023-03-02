@@ -11,11 +11,9 @@ class NoveltyGBFSOldestFirstQueue(NoveltyGBFSQueue):
             return  # Do not add to search queue
 
         if novelty > 0:
-            self.num_novel_states += 1
             ranking = -1 * novelty  # We do this since we adjust the novelty scores from the state novelty class
             # i.e. when max level = 2, a new fact gets score 2 and new pair get score 1
         else:
-            self.num_not_novel_states += 1
             ranking = novelty
 
         model.set_ranking(ranking)

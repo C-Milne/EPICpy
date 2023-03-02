@@ -236,8 +236,8 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     # Find percentage of novel states
     if isinstance(controller.solver, PartialOrderNoveltySolver):
-        num_novel_states = controller.solver.search_models.num_novel_states
-        num_not_novel_states = controller.solver.search_models.num_not_novel_states
+        num_novel_states = controller.solver.num_novel_states
+        num_not_novel_states = controller.solver.num_not_novel_states
         percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
     else:
         num_novel_states = 'N/A'
