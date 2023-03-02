@@ -2,6 +2,7 @@ import itertools
 import re
 import time
 import os
+import subprocess
 import sys
 from datetime import datetime
 import argparse
@@ -36,6 +37,8 @@ from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrder
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
+from Solver.Models.PandaVerifyModel import PandaVerifyModel
+from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -48,6 +51,8 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Hamming-Distance-seen-states-results.csv'
     elif strategy == 2:
         """Seen States Pruning"""
@@ -264,12 +269,36 @@ def run_test(domain_file_path, problem_file_path, strategy):
     else:
         model_elements = 'N/A'
 
+    if res is not None and isinstance(res, PandaVerifyModel) and isinstance(res.progress_tracker, PandaVerifyFormatTracker) \
+            and sys.platform != "win32":
+        output_file_name = "{}.txt".format(strategy)
+        controller.output_result_file(res, output_file_name)
+        result = subprocess.run('./pandaPIparser --verify {} {} output/{}'.format(domain_file_path, problem_file_path, output_file_name),
+                                shell=True, capture_output=True, text=True)
+        output = result
+        print('here')
+        # self.assertIn("""Actions Taken:
+        # drop - kiwi
+        # pickup - banjo
+        #
+        # Operations Taken:
+        # swap - banjo kiwi
+        # have_second - banjo kiwi
+        # drop - kiwi
+        # pickup - banjo
+        #
+        # Search Models Created During Search: 3
+        # """, output)
+        verified = None
+    else:
+        verified = 'N/A'
+
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
                   len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, file_name)
+                  percentage_novel_states, solved, verified, file_name)
 
 
 def calculate_all_possible_facts_and_pairings(domain, problem, model):
@@ -316,7 +345,7 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, file_name):
+                  percentage_novel_states, solved, verified, file_name):
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
@@ -329,14 +358,14 @@ def write_to_file(problem_name, number_expansions, solve_time, all_possible_fact
         write_file = open(file_name, 'w')
         write_file.write(
             'Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,' +
-            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Solved')
-    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
+            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
+    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
                                                                        all_possible_facts, actual_facts,
                                                                        percentage_facts,
                                                                        total_possible_pairs, total_actual_pairs,
                                                                        percentage_pairs,
                                                                        num_novel_states, num_not_novel_states,
-                                                                       percentage_novel_states, solved))
+                                                                       percentage_novel_states, str(verified), solved))
     write_file.close()
 
 
