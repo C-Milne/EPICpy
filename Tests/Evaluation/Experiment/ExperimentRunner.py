@@ -30,6 +30,7 @@ from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPr
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Heuristics.landmarks import Landmarks
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
+from Solver.Solving_Algorithms.partial_order_novelty_light import PartialOrderNoveltyLightSolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
@@ -44,16 +45,19 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     if strategy == 1:
         """Hamming Distance (Seen States)"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'Hamming-Distance-seen-states-results.csv'
     elif strategy == 2:
         """Seen States Pruning"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(SeenStatesPruning)
         file_name = 'seen-state-breadth-first-results.csv'
     elif strategy == 3:
         """Tree Distance (Seen States)"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'Tree-Distance-seen-states-results.csv'
@@ -64,6 +68,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-results.csv'
     elif strategy == 5:
         """Tree Distance"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistance)
         file_name = 'Tree-Distance-results.csv'
@@ -75,16 +80,19 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-TreeDis-results.csv'
     elif strategy == 7:
         """Tree Distance (Seen States) - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'Tree-Distance-seen-states-newest-first-results.csv'
     elif strategy == 8:
         """Hamming Distance (Seen States) - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'Hamming-Distance-seen-states-newest-first-results.csv'
     elif strategy == 9:
         """Tree Distance with Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
@@ -110,6 +118,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(Landmarks)
         file_name = 'Landmarks-results.csv'
@@ -155,31 +164,37 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
     elif strategy == 22:
         """Landmarks with Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(Landmarks)
         file_name = 'results/Landmarks-Hamming-Distance-tie-breaker-results.csv'
     elif strategy == 23:
         """Landmarks with Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
         controller.set_heuristic(Landmarks)
         file_name = 'results/Landmarks-Tree-Distance-tie-breaker-results.csv'
     elif strategy == 24:
         """Landmarks - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(Landmarks)
         file_name = 'results/Landmarks-newest-first-results.csv'
     elif strategy == 25:
         """Hamming Distance with Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
     elif strategy == 26:
         """Tree Distance with Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
     elif strategy == 27:
         """Hamming Distance with Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         file_name = 'results/Hamming-Distance-seen-states-landmarks-tie-breaker-results.csv'
@@ -337,6 +352,9 @@ if __name__ == "__main__":
 
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl", strategy)
@@ -1218,3 +1236,4 @@ if __name__ == "__main__":
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/38.hddl", strategy)
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/39.hddl", strategy)
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/40.hddl", strategy)
+    """

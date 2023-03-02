@@ -32,6 +32,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         """This is where models are added to the queue after expanding an abstract task or method"""
         self.search_models.novelty_add(model, 0)
 
+    def _add_model_to_search_queue_action(self, model, novelty):
+        """Add model to search queue after expanding an action"""
+        self.search_models.novelty_add(model, novelty)
+
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action
 
@@ -112,4 +116,4 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
             self.num_not_novel_states += 1
 
         # Add model to search queue
-        self.search_models.novelty_add(search_model, novelty)
+        self._add_model_to_search_queue_action(search_model, novelty)
