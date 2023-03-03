@@ -2,7 +2,7 @@ from ExperimentRunner import run_test
 
 
 if __name__ == "__main__":
-    strategy = 1
+    strategy = 16
 
     """
     """
