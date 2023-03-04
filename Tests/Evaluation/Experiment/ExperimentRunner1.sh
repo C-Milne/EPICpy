@@ -3,9 +3,10 @@
 #SBATCH --job-name=ExperimentRunner1
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
-#SBATCH -o slurm.%j.out
-#SBATCH -e slurm.%j.err
+#SBATCH -o slurms/slurm.%j.out
+#SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
+#SBATCH --mem 8G
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
 

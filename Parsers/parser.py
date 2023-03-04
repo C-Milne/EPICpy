@@ -254,7 +254,11 @@ class Parser(ABC):
                     l = len(t.parameters)
                     while i < l:
                         if type(t.parameters[i]) == RegParameter:
-                            t.parameters[i] = self.problem.get_object(t.parameters[i].name)
+                            ob = self.problem.get_object(t.parameters[i].name)
+                            if ob:
+                                t.parameters[i] = ob
+                            else:
+                                t.parameters[i] = t.parameters[i].name
                         elif type(t.parameters[i]) == Object:
                             pass
                         elif type(t.parameters[i]) == ListParameter:
@@ -271,6 +275,8 @@ class Parser(ABC):
                         ob = self.problem.get_object(item.parameters[i].name)
                         if ob is not None:
                             item.parameters[i] = ob
+                        else:
+                            item.parameters[i] = item.parameters[i].name
                     elif type(item.parameters[i]) == Object:
                         pass
                     else:
@@ -287,3 +293,6 @@ class Parser(ABC):
             else:
                 raise NotImplementedError("Functionality for post problem grounding of {} is not implemented".format(type(item)))
         self._requires_grounding = []
+        if self.problem.has_initial_task_network_parameters():
+            self.problem.ground_initial_subtasks()
+        self.problem.order_subtasks()
