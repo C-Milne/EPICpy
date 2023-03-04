@@ -16,6 +16,7 @@ class Node:
         self.landmarks = set()
         self._already_seen = set()
         self.previous_landmark_calculate_positives = 0
+        self.upwards_recur_seen = set()
 
     def add_to_requires(self, task_node):
         self.requires.append(task_node)
@@ -109,43 +110,40 @@ class OrNode(Node):
 
 
 class LeafNodes:
-    def __init__(self):
-        self.leaf_nodes = []
-        self.leaf_node_names = []
+    def __init__(self, tree):
+        self.leaf_nodes = set()
+        self.leaf_node_names = set()
+        self.leaf_nodes_recalc = set()
+        self.leaf_node_recalc_names = set()
+        self.tree = tree
 
     def add_leaf_node(self, node, upwards_recur_seen: set = set()):
-        leaf_node_index = self.get_index_of_node_name(node.name)
-        if leaf_node_index:
-            # This means the node is already in the list
-            # Remove old version from list and add new
-            del self.leaf_nodes[leaf_node_index]
-            del self.leaf_node_names[leaf_node_index]
-
-        self.leaf_nodes.append((node, upwards_recur_seen))
-        self.leaf_node_names.append(node.name)
+        node.upwards_recur_seen = node.upwards_recur_seen.union(upwards_recur_seen)
+        if node.name not in self.leaf_node_names and node.name not in self.leaf_node_recalc_names:
+            if node.landmarks_calculated:
+                self.leaf_nodes_recalc.add(node)
+                self.leaf_node_recalc_names.add(node.name)
+            else:
+                self.leaf_nodes.add(node)
+                self.leaf_node_names.add(node.name)
 
     def pop_leaf_node(self):
-        del self.leaf_node_names[0]
-        return self.leaf_nodes.pop(0)
+        if len(self.leaf_node_names) > 0:
+            return_node = self.leaf_nodes.pop()
+            self.leaf_node_names.remove(return_node.name)
+        else:
+            return_node = self.leaf_nodes_recalc.pop()
+            self.leaf_node_recalc_names.remove(return_node.name)
+
+        upwards_recur_seen = return_node.upwards_recur_seen
+        return_node.upwards_recur_seen = set()
+        return return_node, upwards_recur_seen
 
     def remove_leaf_node(self, node):
-        if isinstance(node, Node):
-            node_index = self.get_index_of_node_name(node.name)
-        elif type(node) == str:
-            node_index = self.get_index_of_node_name(node)
-        else:
-            raise TypeError
-        if node_index is not None:
-            del self.leaf_nodes[node_index]
-            del self.leaf_node_names[node_index]
-
-    def get_index_of_node_name(self, node_name):
-        i = 0
-        while i < len(self.leaf_node_names):
-            if self.leaf_node_names[i] == node_name:
-                return i
-            i += 1
-        return None
+        if type(node) == str:
+            node = self.tree.get_existing_node(node)
+        self.leaf_nodes.remove(node)
+        self.leaf_node_names.remove(node.name)
 
     def __contains__(self, item):
         if isinstance(item, Node):
@@ -156,7 +154,7 @@ class LeafNodes:
             raise TypeError
 
     def __bool__(self):
-        if len(self.leaf_node_names) > 0:
+        if len(self.leaf_node_names) > 0 or len(self.leaf_node_recalc_names) > 0:
             return True
         return False
 
@@ -165,7 +163,7 @@ class AndOrTree:
     def __init__(self):
         self.root = None
         self.nodes = {}
-        self.leaf_nodes = LeafNodes()
+        self.leaf_nodes = LeafNodes(self)
 
     def add_root_node(self, root_node):
         self.root = root_node
