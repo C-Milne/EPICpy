@@ -19,7 +19,7 @@ class TreeDistanceSeenStatesPruning(SeenStatesPruning, TreeDistance):
     def _calculate_distance_tasks(self, model: Model):
         return TreeDistance._calculate_distance_tasks(self, model)
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         TreeDistance.presolving_processing(self)
 
     def _calculate_task_node_distance_goal(self, tn) -> int:

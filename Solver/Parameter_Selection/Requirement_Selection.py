@@ -220,6 +220,7 @@ class RequirementSelection(ParameterSelector):
                             return False
                     return True
                 elif pred == "not":
+                    # TODO: Split this entire method up so we have a new method for the 'not' operator
                     i = 0
                     while i < len(result):
                         # This inverts the result for the fact checks for if the fact is present

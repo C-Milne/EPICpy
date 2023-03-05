@@ -14,7 +14,7 @@ class Heuristic(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         raise NotImplementedError
 
     @abstractmethod

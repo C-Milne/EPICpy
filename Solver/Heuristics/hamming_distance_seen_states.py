@@ -11,5 +11,5 @@ class HammingDistanceSeenStatesPruning(SeenStatesPruning, HammingDistance):
     def _inner_ranking(self, model) -> float:
         return HammingDistance.ranking(self, model)
 
-    def presolving_processing(self) -> None:
-        HammingDistance.presolving_processing(self)
+    def presolving_processing(self, **kwargs) -> None:
+        HammingDistance.presolving_processing(self, **kwargs)
