@@ -151,7 +151,7 @@ class DeleteRelaxed(Pruning):
         self.parameter_selector = AllParameters(self.solver)
         self.model_stores = {}
 
-    def ranking(self, model: DefaultModel) -> float:
+    def ranking(self, model: DefaultModel, **kwargs) -> float:
         # Create duplicate state
         alt_state = model.current_state.reproduce()
 
@@ -164,6 +164,11 @@ class DeleteRelaxed(Pruning):
                 model.parent_model_number in self.model_stores:
             self.model_stores[model.model_number] = self.model_stores[model.parent_model_number].reproduce(model.model_number)
 
+        if 'returnAltState' in kwargs:
+            return_alt_state = bool(kwargs['returnAltState'])
+        else:
+            return_alt_state = False
+
         if model.model_number not in self.model_stores:
             self.model_stores[model.model_number] = ModelStore(model.model_number)
             # Create list with all possible actions and methods
@@ -174,9 +179,14 @@ class DeleteRelaxed(Pruning):
 
             # Choose target('s)
             targets = self._get_target_tasks(model)
-            res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets)
-            self.model_stores[model.model_number].ranking = res
-            return res
+            if return_alt_state:
+                res, final_alt_state = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
+                self.model_stores[model.model_number].ranking = res
+                return res, final_alt_state
+            else:
+                res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets)
+                self.model_stores[model.model_number].ranking = res
+                return res
         elif prev_action:
             targets = self._get_target_tasks(model)
             res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number],
@@ -244,7 +254,7 @@ class DeleteRelaxed(Pruning):
                 obs.append(name[start:end])
         return obs
 
-    def _calculate_distance(self, model: DefaultModel, model_store: ModelStore, alt_state: State, targets: list) -> int:
+    def _calculate_distance(self, model: DefaultModel, model_store: ModelStore, alt_state: State, targets: list, return_alt_state=False) -> int:
         model.current_state = alt_state
         iteration = 0
         modifiers = [x for x in model_store.previous_modifiers]
@@ -283,6 +293,15 @@ class DeleteRelaxed(Pruning):
                     prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.alt_problem.get_object(m.name)])
                     model.current_state.add_element(prob_pred)
                 elif type(m) == Method:
+                    # Add the name of the method to the state
+                    method_name = m.name
+                    method_name_ob = self.alt_problem.get_object(method_name)
+                    if method_name_ob is None:
+                        method_name_ob = Object(method_name)
+                        self.alt_problem.add_object(method_name_ob)
+                    method_prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [method_name_ob])
+                    model.current_state.add_element(method_prob_pred)
+
                     # Check if name of task this method expands is already in state
                     ob_names = self._get_objects_from_alt_modifier_name(m, True)
                     task_name = m.task['task'].name
@@ -303,6 +322,7 @@ class DeleteRelaxed(Pruning):
                         except Exception as e:
                             raise TypeError
 
+                    # TODO: Can we improve this by using sets to store which tasks we have already added to the state
                     occurrences = model.current_state.get_indexes("U")
                     found = False
                     if occurrences is None:
@@ -335,6 +355,8 @@ class DeleteRelaxed(Pruning):
             if self._check_targets(targets, found_targets):
                 model_store.previous_modifiers = [x for x in applied_modifiers]
                 model_store.other_modifiers = [x for x in modifiers]
+                if return_alt_state:
+                    return iteration, alt_state
                 return iteration
             elif len(modifiers) == 0 and len(model_store.other_modifiers) > 0 and not used_prev_store:
                 modifiers = [x for x in model_store.other_modifiers]

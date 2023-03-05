@@ -75,10 +75,10 @@ class Solver(ABC):
 
     def solve(self, **kwargs):
         self.parameter_selector.presolving_processing(self.domain, self.problem)
-        self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
 
         printed_subtasks = True  # Change this to False if we want to print the subtasks of the problem before searching
+        initialised_heuristic = False
 
         for subtasks in subtasks_orderings:
             list_subT = []
@@ -108,6 +108,10 @@ class Solver(ABC):
                 list_subT = [list_subT[0]]
 
             initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT, self.progress_tracker)
+
+            if not initialised_heuristic:
+                initialised_heuristic = True
+                self.search_models.heuristic.presolving_processing(initial_model=initial_model)
 
             self.search_models.add(initial_model)
 
