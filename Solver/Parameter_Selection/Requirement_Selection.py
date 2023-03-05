@@ -100,6 +100,12 @@ class RequirementSelection(ParameterSelector):
         super().__init__(solver)
 
     def get_potential_parameters(self, modifier: Modifier, parameters: dict, search_model: Model) -> list:
+        """
+        :param modifier: The modifier we are attempting to add to the task network
+        :param parameters:
+        :param search_model: The Model we are attempting to add the model to
+        :return: List of Lists: containing the possible combinations of objects to use as parameters -> [[ob1, ob2 ...] ...]
+        """
         comparison_result = self.compare_parameters(modifier, parameters)
 
         if not comparison_result[0] and not comparison_result[1]:
@@ -129,7 +135,7 @@ class RequirementSelection(ParameterSelector):
     def _find_satisfying_parameters(self, model: Model, given_requirements: dict, param_dict: dict = {}):
         """Find parameters to satisfy a modifier
         :parameter model:
-        :parameter requirements: {'type': Type/None, 'predicates': {}}
+        :parameter given_requirements: {'type': Type/None, 'predicates': {'and': {'on_board': 1, 'supports': 1}}}
         :parameter param_dict:    : parameters already set - {'?objective': Object, '?mode': Object}
         :return: list of possible combinations of parameters
         """
@@ -161,24 +167,24 @@ class RequirementSelection(ParameterSelector):
                 continue
             else:
                 requirements = given_requirements[required_param_name]
-                for i in self.solver.problem.objects:
-                    i = self.solver.problem.objects[i]
-                    match = self.__check_object_satisfies_parameter(model, i, requirements)
+                possible_objects = self.solver.problem.get_objects_of_type(requirements['type'])
+                for object in possible_objects:
+                    match = self.__check_object_satisfies_parameter(model, object, requirements)
                     if match:
                         if required_param_name not in param_dict.keys():
-                            param_dict[required_param_name] = [i]
+                            param_dict[required_param_name] = [object]
                         else:
-                            param_dict[required_param_name].append(i)
+                            param_dict[required_param_name].append(object)
         if param_dict == {}:
             return False
         # Convert param_dict into a form which can be used - [[?a, ?b, ?c], [?a, ?b, ?d], ... ]
         return self._convert_parameter_options_execution_ready(param_dict, len(given_requirements.keys()))
 
-    def __check_object_satisfies_parameter(self, model: Model, object: Object, requirements: dict):
+    def __check_object_satisfies_parameter(self, model: Model, object: Object, requirements: dict) -> bool:
         """
         :param model:
         :param object:
-        :param requirements: {'type': Type, 'predicates': {'and': {'on_board': 1, 'supports': 1}}
+        :param requirements: {'type': Type, 'predicates': {'and': {'on_board': 1, 'supports': 1}}}
         :return: True - If object satisfies the requirements
         :return: False - Otherwise
         """
@@ -193,6 +199,9 @@ class RequirementSelection(ParameterSelector):
         if required_predicates is None or len(required_predicates) == 0:
             return True
 
+        return self.__check_object_satisfies_parameter_predicate_check(model, object, required_predicates)
+
+    def __check_object_satisfies_parameter_predicate_check(self, model, object, required_predicates):
         # Check if each predicate is satisfied
         for pred in required_predicates:
             if pred == "and" or pred == "not" or pred == "or":
@@ -213,6 +222,7 @@ class RequirementSelection(ParameterSelector):
                 elif pred == "not":
                     i = 0
                     while i < len(result):
+                        # This inverts the result for the fact checks for if the fact is present
                         result[i] = not result[i]
                         i += 1
                     return result
@@ -223,18 +233,21 @@ class RequirementSelection(ParameterSelector):
                             return True
                     return False
             else:
-                indexes = model.current_state.get_indexes(pred)
-                if indexes is None:
-                    return False
-                for index in indexes:
-                    try:
-                        if object == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
-                            return True
-                    except IndexError:
-                        continue
-                    except:
-                        raise TypeError
-                return False
+                return self.__check_object_satisfies_parameter_predicate_exists_check(model, pred, required_predicates)
+
+    def __check_object_satisfies_parameter_predicate_exists_check(self, model, pred, required_predicates):
+        indexes = model.current_state.get_indexes(pred)
+        if indexes is None:
+            return False
+        for index in indexes:
+            try:
+                if object == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
+                    return True
+            except IndexError:
+                continue
+            except:
+                raise TypeError
+        return False
 
     def presolving_processing(self, domain, problem):
         # Define requirements for each method and action

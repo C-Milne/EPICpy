@@ -3,6 +3,7 @@ import sys
 import re
 from Solver.Heuristics.pruning import Pruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
+from Solver.Heuristics.deleteRelactedUtils.delete_relaxed_requirement_parameter_selector import DeleteRelaxedRequirementSelection
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
@@ -148,7 +149,9 @@ class DeleteRelaxed(Pruning):
 
         self.alt_domain = None
         self.alt_problem = None
-        self.parameter_selector = AllParameters(self.solver)
+        self.all_parameters_selector = AllParameters(self.solver)
+        self.requirement_parameters_selector = DeleteRelaxedRequirementSelection(self.solver)
+        self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
 
     def ranking(self, model: DefaultModel, **kwargs) -> float:
@@ -172,10 +175,7 @@ class DeleteRelaxed(Pruning):
         if model.model_number not in self.model_stores:
             self.model_stores[model.model_number] = ModelStore(model.model_number)
             # Create list with all possible actions and methods
-            for a in self.alt_domain.get_all_actions():
-                self.model_stores[model.model_number].previous_modifiers.append(a)
-            for m in self.alt_domain.get_all_methods():
-                self.model_stores[model.model_number].previous_modifiers.append(m)
+            self.model_stores[model.model_number].previous_modifiers = None
 
             # Choose target('s)
             targets = self._get_target_tasks(model)
@@ -257,22 +257,21 @@ class DeleteRelaxed(Pruning):
     def _calculate_distance(self, model: DefaultModel, model_store: ModelStore, alt_state: State, targets: list, return_alt_state=False) -> int:
         model.current_state = alt_state
         iteration = 0
-        modifiers = [x for x in model_store.previous_modifiers]
         applied_modifiers = []
         found_targets = []
         used_prev_store = False
+
+        if model_store.previous_modifiers is None:
+            # If we have no previous modifiers we need to use requirement selection to determine the objects to use for modifiers
+            modifier_selection_mode = True
+            modifiers = None
+        else:
+            modifier_selection_mode = False
+            modifiers = [x for x in model_store.previous_modifiers]
+
         while True:
             iteration += 1
-            applicable_modifiers = []
-            # Find all modifiers which can be applied
-            for m in modifiers:
-                given_params = {}
-                obs = self._get_objects_from_alt_modifier_name(m)
-                params = m.get_parameters()
-                for i in range(len(params)):
-                    given_params[params[i].name] = obs[i]
-                if m.evaluate_preconditions(model, given_params, self.alt_problem):
-                    applicable_modifiers.append((m, copy.copy(given_params)))
+            applicable_modifiers = self._calculate_applicable_modifiers(modifiers, model, modifier_selection_mode)
 
             # Add effects of these modifiers to alt_state
             c = -1
@@ -281,70 +280,9 @@ class DeleteRelaxed(Pruning):
                 given_params = m[1]
                 m = m[0]
                 if type(m) == Action:
-                    for e in m.effects.effects:
-                        if e.negated:
-                            pred = self.alt_domain.get_predicate("not_" + e.predicate.name)
-                            model.current_state.add_element(
-                                ProblemPredicate(pred, [given_params[x] for x in e.parameters]))
-                        else:
-                            model.current_state.add_element(ProblemPredicate(e.predicate, [given_params[x] for x in e.parameters]))
-
-                    # Add action name to state (U-actionName)
-                    prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.alt_problem.get_object(m.name)])
-                    model.current_state.add_element(prob_pred)
+                    self._apply_action(m, model, given_params)
                 elif type(m) == Method:
-                    # Add the name of the method to the state
-                    method_name = m.name
-                    method_name_ob = self.alt_problem.get_object(method_name)
-                    if method_name_ob is None:
-                        method_name_ob = Object(method_name)
-                        self.alt_problem.add_object(method_name_ob)
-                    method_prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [method_name_ob])
-                    model.current_state.add_element(method_prob_pred)
-
-                    # Check if name of task this method expands is already in state
-                    ob_names = self._get_objects_from_alt_modifier_name(m, True)
-                    task_name = m.task['task'].name
-
-                    for param_name in m.task['params']:
-                        try:
-                            i_params = 0
-                            l_params = len(m.parameters)
-                            found = False
-                            while i_params < l_params:
-                                if m.parameters[i_params].name == param_name.name:
-                                    found = True
-                                    break
-                                i_params += 1
-                            if not found:
-                                raise NameError
-                            task_name += "-" + ob_names[i_params]
-                        except Exception as e:
-                            raise TypeError
-
-                    # TODO: Can we improve this by using sets to store which tasks we have already added to the state
-                    occurrences = model.current_state.get_indexes("U")
-                    found = False
-                    if occurrences is None:
-                        occurrences = []
-                    for o in occurrences:
-                        prob_pred = model.current_state.get_element_index(o)
-                        if prob_pred.objects[0].name == task_name:
-                            found = True
-                            break
-
-                    # If not add name of task this method expands to state
-                    if not found:
-                        task_name_ob = self.alt_problem.get_object(task_name)
-                        if task_name_ob is None:
-                            self.alt_problem.add_object(Object(task_name))
-                            task_name_ob = self.alt_problem.get_object(task_name)
-                        prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [task_name_ob])
-                        model.current_state.add_element(prob_pred)
-                        # Check if prob_pred in targets
-                        task_string = str(prob_pred).replace(" ", "")
-                        if task_string in targets:
-                            found_targets.append(task_string)
+                    self._apply_method(m, model, targets, found_targets)
                 else:
                     raise TypeError
                 # Remove modifiers from list
@@ -363,6 +301,110 @@ class DeleteRelaxed(Pruning):
                 used_prev_store = True
             elif len(applicable_modifiers) == 0:
                 return False
+
+    def _calculate_applicable_modifiers(self, modifiers, model, selection_mode) -> list:
+        if selection_mode:
+            return self._calculate_applicable_modifiers_selection_mode(model)
+        else:
+            # Iterate mode
+            return self._calculate_applicable_modifiers_iterate_mode(modifiers, model)
+
+    def _calculate_applicable_modifiers_selection_mode(self, model) -> list:
+        # Iterate over all actions in the domain
+        applicable_actions = self._calculate_applicable_modifiers_selection_mode_find_actions(model)
+        # Iterate over all methods in the domain
+        applicable_methods = self._calculate_applicable_modifiers_selection_mode_find_methods(model)
+        return applicable_actions + applicable_methods
+
+    def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
+        applicable_actions = []
+        for action in self.domain.get_all_actions():
+            param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
+            print('here')
+        raise NotImplementedError
+
+    def _calculate_applicable_modifiers_selection_mode_find_methods(self, model) -> list:
+        raise NotImplementedError
+
+    def _calculate_applicable_modifiers_iterate_mode(self, modifiers, model) -> list:
+        # Find all modifiers which can be applied
+        applicable_modifiers = []
+        for m in modifiers:
+            given_params = {}
+            obs = self._get_objects_from_alt_modifier_name(m)
+            params = m.get_parameters()
+            for i in range(len(params)):
+                given_params[params[i].name] = obs[i]
+            if m.evaluate_preconditions(model, given_params, self.alt_problem):
+                applicable_modifiers.append((m, copy.copy(given_params)))
+        return applicable_modifiers
+
+    def _apply_action(self, m, model, given_params):
+        for e in m.effects.effects:
+            if e.negated:
+                pred = self.alt_domain.get_predicate("not_" + e.predicate.name)
+                model.current_state.add_element(
+                    ProblemPredicate(pred, [given_params[x] for x in e.parameters]))
+            else:
+                model.current_state.add_element(ProblemPredicate(e.predicate, [given_params[x] for x in e.parameters]))
+
+        # Add action name to state (U-actionName)
+        prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.alt_problem.get_object(m.name)])
+        model.current_state.add_element(prob_pred)
+
+    def _apply_method(self, m, model, targets, found_targets):
+        # Add the name of the method to the state
+        method_name = m.name
+        method_name_ob = self.alt_problem.get_object(method_name)
+        if method_name_ob is None:
+            method_name_ob = Object(method_name)
+            self.alt_problem.add_object(method_name_ob)
+        method_prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [method_name_ob])
+        model.current_state.add_element(method_prob_pred)
+
+        # Check if name of task this method expands is already in state
+        ob_names = self._get_objects_from_alt_modifier_name(m, True)
+        task_name = m.task['task'].name
+
+        for param_name in m.task['params']:
+            try:
+                i_params = 0
+                l_params = len(m.parameters)
+                found = False
+                while i_params < l_params:
+                    if m.parameters[i_params].name == param_name.name:
+                        found = True
+                        break
+                    i_params += 1
+                if not found:
+                    raise NameError
+                task_name += "-" + ob_names[i_params]
+            except Exception as e:
+                raise TypeError
+
+        # TODO: Can we improve this by using sets to store which tasks we have already added to the state
+        occurrences = model.current_state.get_indexes("U")
+        found = False
+        if occurrences is None:
+            occurrences = []
+        for o in occurrences:
+            prob_pred = model.current_state.get_element_index(o)
+            if prob_pred.objects[0].name == task_name:
+                found = True
+                break
+
+        # If not add name of task this method expands to state
+        if not found:
+            task_name_ob = self.alt_problem.get_object(task_name)
+            if task_name_ob is None:
+                self.alt_problem.add_object(Object(task_name))
+                task_name_ob = self.alt_problem.get_object(task_name)
+            prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [task_name_ob])
+            model.current_state.add_element(prob_pred)
+            # Check if prob_pred in targets
+            task_string = str(prob_pred).replace(" ", "")
+            if task_string in targets:
+                found_targets.append(task_string)
 
     def _check_targets(self, targets: list, found_targets: list) -> bool:
         if len(targets) == len(found_targets):
@@ -391,7 +433,7 @@ class DeleteRelaxed(Pruning):
         # Give alt domain actions
         for a in self.domain.get_all_actions():
             # Consider action with all possible parameters
-            param_options = self.parameter_selector.get_potential_parameters(a, {}, None)
+            param_options = self.all_parameters_selector.get_potential_parameters(a, {}, None)
             for params in param_options:
                 concat_param_names = ""
                 for p in params:
@@ -405,7 +447,7 @@ class DeleteRelaxed(Pruning):
         # Give alt domain methods
         for m in self.domain.get_all_methods():
             # Consider action with all possible parameters
-            param_options = self.parameter_selector.get_potential_parameters(m, {}, None)
+            param_options = self.all_parameters_selector.get_potential_parameters(m, {}, None)
             for params in param_options:
                 concat_param_names = ""
                 for p in params:
@@ -564,7 +606,7 @@ class DeleteRelaxed(Pruning):
         tasks = self.domain.get_all_tasks()
         for t in tasks:
             # Get all possible combinations of parameter for t
-            param_options = self.parameter_selector.get_potential_parameters(tasks[t], {}, None)
+            param_options = self.all_parameters_selector.get_potential_parameters(tasks[t], {}, None)
             for params in param_options:
                 concat_param_names = ""
                 for p in params:

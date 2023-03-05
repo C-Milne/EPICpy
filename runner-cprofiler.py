@@ -14,7 +14,7 @@ from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Search_Queues.Greedy_Cost_So_Far_Search_Queue import GreedyCostSearchQueue
 
 domain_file_path = "Tests/Examples/Rover/domain.hddl"
-problem_file_path = "Tests/Examples/Rover/p09.hddl"
+problem_file_path = "Tests/Examples/Rover/p08.hddl"
 pr = cProfile.Profile()
 pr.enable()
 controller = Runner(domain_file_path, problem_file_path)
@@ -55,7 +55,7 @@ result = 'ncalls' + result.split('ncalls')[-1]
 result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.split('\n')])
 # save it to disk
 
-with open('output/runner-landmarks-profile9Rover9WithDeleteRelaxed.csv.csv', 'w+') as f:
+with open('output/runner-landmarks-profile8Rover8WithDeleteRelaxed3.csv', 'w+') as f:
     # f=open(result.rsplit('.')[0]+'.csv','w')
     f.write(result)
     f.close()
