@@ -180,10 +180,10 @@ class RequirementSelection(ParameterSelector):
         # Convert param_dict into a form which can be used - [[?a, ?b, ?c], [?a, ?b, ?d], ... ]
         return self._convert_parameter_options_execution_ready(param_dict, len(given_requirements.keys()))
 
-    def __check_object_satisfies_parameter(self, model: Model, object: Object, requirements: dict) -> bool:
+    def __check_object_satisfies_parameter(self, model: Model, ob: Object, requirements: dict, **kwargs) -> bool:
         """
         :param model:
-        :param object:
+        :param ob: Object defined in the problem to be checked for compliance with requirements
         :param requirements: {'type': Type, 'predicates': {'and': {'on_board': 1, 'supports': 1}}}
         :return: True - If object satisfies the requirements
         :return: False - Otherwise
@@ -192,63 +192,88 @@ class RequirementSelection(ParameterSelector):
         required_predicates = requirements['predicates']
 
         # Check type
-        if not self.check_satisfies_type(required_type, object):
+        if not self.check_satisfies_type(required_type, ob):
             return False
 
         # If there is no requirements on predicates then the object satisfies
         if required_predicates is None or len(required_predicates) == 0:
             return True
 
-        return self.__check_object_satisfies_parameter_predicate_check(model, object, required_predicates)
+        return self.__check_object_satisfies_parameter_predicate_check(model, ob, required_predicates, **kwargs)
 
-    def __check_object_satisfies_parameter_predicate_check(self, model, object, required_predicates):
+    def __check_object_satisfies_parameter_predicate_check(self, model, ob, required_predicates, **kwargs):
         # Check if each predicate is satisfied
         for pred in required_predicates:
-            if pred == "and" or pred == "not" or pred == "or":
-                required_param = required_predicates[pred]
-                result = []
-                for x in required_param.keys():
-                    r = self.__check_object_satisfies_parameter(model, object,
-                                                                {'type': None, 'predicates': {x: required_param[x]}})
-                    if type(r) == list:
-                        result += r
-                    else:
-                        result.append(r)
-                if pred == "and":
-                    for i in result:
-                        if i is False:
-                            return False
-                    return True
-                elif pred == "not":
-                    # TODO: Split this entire method up so we have a new method for the 'not' operator
-                    i = 0
-                    while i < len(result):
-                        # This inverts the result for the fact checks for if the fact is present
-                        result[i] = not result[i]
-                        i += 1
-                    return result
-                else:
-                    # pred == or
-                    for i in result:
-                        if i is True:
-                            return True
-                    return False
+            if pred == "and" or pred == "or":
+                return self.__check_object_satisfies_parameter_operator_and_or(model, required_predicates, pred, ob)
+            elif pred == "not":
+                return self.__check_object_satisfies_parameter_operator_not(model, required_predicates, pred, ob)
             else:
-                return self.__check_object_satisfies_parameter_predicate_exists_check(model, pred, required_predicates)
+                # Here we are checking if a fact exists in the state
+                if 'predicate_check_function' not in kwargs:
+                    return self.__check_object_satisfies_parameter_predicate_exists_check(model, pred, required_predicates, ob)
+                else:
+                    return kwargs['predicate_check_function'](model, pred, required_predicates, ob)
 
-    def __check_object_satisfies_parameter_predicate_exists_check(self, model, pred, required_predicates):
+    def __check_object_satisfies_parameter_operator_result_gathering(self, model, required_param, ob, **kwargs):
+        result = []
+        for x in required_param.keys():
+            r = self.__check_object_satisfies_parameter(model, ob,
+                                                        {'type': None, 'predicates': {x: required_param[x]}}, **kwargs)
+            if type(r) == list:
+                result += r
+            else:
+                result.append(r)
+        return result
+
+    def __check_object_satisfies_parameter_operator_not(self, model, required_predicates, pred, ob):
+        required_param = required_predicates[pred]
+        result = self.__check_object_satisfies_parameter_operator_result_gathering(model, required_param, ob,
+                                                                                   predicate_check_function=self.__check_object_satisfies_parameter_predicate_exists_check_not)
+        return result
+
+    def __check_object_satisfies_parameter_operator_and_or(self, model, required_predicates, pred, ob):
+        required_param = required_predicates[pred]
+        result = self.__check_object_satisfies_parameter_operator_result_gathering(model, required_param, ob)
+        if pred == "and":
+            for i in result:
+                if i is False:
+                    return False
+            return True
+        else:
+            # pred == or
+            for i in result:
+                if i is True:
+                    return True
+            return False
+
+    def __check_object_satisfies_parameter_predicate_exists_check(self, model, pred, required_predicates, ob):
         indexes = model.current_state.get_indexes(pred)
         if indexes is None:
             return False
         for index in indexes:
             try:
-                if object == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
+                if ob == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
                     return True
             except IndexError:
                 continue
             except:
                 raise TypeError
         return False
+
+    def __check_object_satisfies_parameter_predicate_exists_check_not(self, model, pred, required_predicates, ob):
+        indexes = model.current_state.get_indexes(pred)
+        if indexes is None:
+            return True
+        for index in indexes:
+            try:
+                if ob == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
+                    return False
+            except IndexError:
+                continue
+            except:
+                raise TypeError
+        return True
 
     def presolving_processing(self, domain, problem):
         # Define requirements for each method and action
