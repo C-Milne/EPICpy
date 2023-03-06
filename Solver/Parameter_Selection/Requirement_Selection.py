@@ -252,14 +252,8 @@ class RequirementSelection(ParameterSelector):
         if indexes is None:
             return False
         for index in indexes:
-            # TODO: Refactor to remove this try block
-            try:
-                if ob == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
-                    return True
-            except IndexError:
-                continue
-            except:
-                raise TypeError
+            if self._compare_object_to_fact(index, required_predicates[pred] - 1, ob, model):
+                return True
         return False
 
     def _check_object_satisfies_parameter_predicate_exists_check_not(self, model, pred, required_predicates, ob):
@@ -267,15 +261,17 @@ class RequirementSelection(ParameterSelector):
         if indexes is None:
             return True
         for index in indexes:
-            # TODO: Refactor to remove this try block
-            try:
-                if ob == model.current_state.elements[index].objects[required_predicates[pred] - 1]:
-                    return False
-            except IndexError:
-                continue
-            except:
-                raise TypeError
+            if self._compare_object_to_fact(index, required_predicates[pred] - 1, ob, model):
+                return False
         return True
+
+    def _compare_object_to_fact(self, fact_index, required_object_index, required_object, model) -> bool:
+        state_fact = model.current_state.get_element_index(fact_index)
+        if not state_fact or len(state_fact.objects) < required_object_index + 1:
+            return False
+        if state_fact.objects[required_object_index] == required_object:
+            return True
+        return False
 
     def presolving_processing(self, domain, problem):
         # Define requirements for each method and action
