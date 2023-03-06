@@ -55,7 +55,7 @@ result = 'ncalls' + result.split('ncalls')[-1]
 result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.split('\n')])
 # save it to disk
 
-with open('output/runner-landmarks-profile1Rover5WithDeleteRelaxed.csv', 'w+') as f:
+with open('output/runner-landmarks-profile2Rover5WithDeleteRelaxed.csv', 'w+') as f:
     # f=open(result.rsplit('.')[0]+'.csv','w')
     f.write(result)
     f.close()
