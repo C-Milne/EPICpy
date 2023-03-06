@@ -3,7 +3,7 @@ import sys
 import re
 from Solver.Heuristics.pruning import Pruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
-from Solver.Heuristics.deleteRelactedUtils.delete_relaxed_requirement_parameter_selector import DeleteRelaxedRequirementSelection
+from Solver.Heuristics.deleteRelaxedUtils.delete_relaxed_requirement_parameter_selector import DeleteRelaxedRequirementSelection
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
@@ -41,53 +41,42 @@ class AltOperatorCondition(OperatorCondition):
         super().__init__(operator)
         self.pred = pred    # This is used for 'not' operators
 
-    def evaluate(self, param_dict: dict, search_model, problem) -> bool:
+    def _evaluate_children(self, param_dict, search_model, problem):
         children_eval = []
         if len(self.children) > 0 and (self.operator == "and" or self.operator == "or" or self.operator == "="):
             children_eval = [x.evaluate(param_dict, search_model, problem) for x in self.children]
-        if self.operator == "and":
-            for i in children_eval:
-                if i != True:
-                    return False
-            return True
-        elif self.operator == "or":
-            for i in children_eval:
-                if i == True:
-                    return True
-            return False
-        elif self.operator == "not":
-            assert len(self.children) == 1
-            """Changes go here"""
-            if type(self.children[0]) == AltOperatorCondition or type(self.children[0]) == OperatorCondition:
-                res = False
-            else:
-                # In the alt state not conditions are stored in the state under new predicates
-                # Such as (not-have, kiwi)
-                p_list = []
-                for i in self.children[0].parameter_name:
-                    p_list.append(param_dict[i])
+        return children_eval
 
-                res = search_model.current_state.check_if_predicate_value_exists(self.pred, p_list)
-            if res:
-                return res
+    def _evaluate_not(self, children_eval, param_dict, search_model, problem):
+        assert len(self.children) == 1
+        child = self.children[0]
+        """Changes go here"""
+        if type(child) == AltOperatorCondition or type(child) == OperatorCondition:
+            res = False
+        else:
+            # In the alt state 'not' conditions are stored in the state under new predicates
+            # Such as (not-have, kiwi)
+            p_list = []
+            for i in child.parameter_name:
+                p_list.append(param_dict[i])
+
+            res = search_model.current_state.check_if_predicate_value_exists(self.pred, p_list)
+
+        if res:
+            return res
+        else:
+            # Try normal 'not' evaluation
+            res = child.evaluate(param_dict, search_model, problem)
+            if res is True:
+                return False
             else:
-                # Try normal not evaluation
-                res = self.children[0].evaluate(param_dict, search_model, problem)
-                if res is True:
+                # Add this new predicate to state
+                try:
+                    search_model.current_state.add_element(ProblemPredicate(self.pred, p_list))
+                except Exception as e:
+                    # TODO: Investigate this and make a fix
                     return False
-                else:
-                    # Add this new predicate to state
-                    try:
-                        search_model.current_state.add_element(ProblemPredicate(self.pred, p_list))
-                    except Exception as e:
-                        return False
-                    return True
-        elif self.operator == "=":
-            v = children_eval[0]
-            for i in children_eval[1:]:
-                if v != i:
-                    return False
-            return True
+                return True
 
 
 class AltPredicateCondition(PredicateCondition):
@@ -154,7 +143,7 @@ class DeleteRelaxed(Pruning):
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
 
-    def ranking(self, model: DefaultModel, **kwargs) -> float:
+    def ranking(self, model: DefaultModel, **kwargs):
         # Create duplicate state
         alt_state = model.current_state.reproduce()
 
@@ -286,17 +275,18 @@ class DeleteRelaxed(Pruning):
                 else:
                     raise TypeError
                 # Remove modifiers from list
-                applied_modifiers.append(modifiers[modifiers.index(m)])
-                del modifiers[modifiers.index(m)]
+                applied_modifiers.append(m)
+                if modifiers:
+                    del modifiers[modifiers.index(m)]
 
             # Check exit conditions
             if self._check_targets(targets, found_targets):
                 model_store.previous_modifiers = [x for x in applied_modifiers]
-                model_store.other_modifiers = [x for x in modifiers]
                 if return_alt_state:
                     return iteration, alt_state
                 return iteration
-            elif len(modifiers) == 0 and len(model_store.other_modifiers) > 0 and not used_prev_store:
+            elif (modifiers and len(modifiers) == 0) and len(model_store.other_modifiers) > 0 and not used_prev_store:
+                # TODO: What is going on here???
                 modifiers = [x for x in model_store.other_modifiers]
                 used_prev_store = True
             elif len(applicable_modifiers) == 0:
@@ -320,11 +310,39 @@ class DeleteRelaxed(Pruning):
         applicable_actions = []
         for action in self.domain.get_all_actions():
             param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
-            print('here')
-        raise NotImplementedError
+            for param_option in param_options:
+                alt_action_name = self._generate_modifier_alt_name(action, param_option)
+                alt_action = Action(alt_action_name, action.get_parameters(), action.preconditions, action.effects)
+                applicable_actions.append((alt_action, param_option))
+        return applicable_actions
 
     def _calculate_applicable_modifiers_selection_mode_find_methods(self, model) -> list:
-        raise NotImplementedError
+        applicable_methods = []
+        for method in self.domain.get_all_methods():
+            param_options = self.requirement_parameters_selector.get_potential_parameters(method, {}, model)
+            for param_option in param_options:
+                # Check if all subtasks have been applied
+                applicable = True
+                for s in method.subtasks.tasks:
+                    required_subtask_name = s.task.name
+                    for s_param in s.parameters:
+                        required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+
+                    if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
+                        applicable = False
+                        break
+                if applicable:
+                    alt_method_name = self._generate_modifier_alt_name(method, param_option)
+                    alt_method = Method(alt_method_name, method.get_parameters(), method.preconditions,
+                                        method.task, method.subtasks, method.constraints)
+                    applicable_methods.append((alt_method, param_option))
+        return applicable_methods
+
+    def _generate_modifier_alt_name(self, modifier, given_params):
+        alt_name = modifier.name
+        for p in modifier.parameters:
+            alt_name += "-{}".format(given_params[p.name].name)
+        return alt_name
 
     def _calculate_applicable_modifiers_iterate_mode(self, modifiers, model) -> list:
         # Find all modifiers which can be applied
@@ -349,7 +367,7 @@ class DeleteRelaxed(Pruning):
                 model.current_state.add_element(ProblemPredicate(e.predicate, [given_params[x] for x in e.parameters]))
 
         # Add action name to state (U-actionName)
-        prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.alt_problem.get_object(m.name)])
+        prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.get_create_object(m.name)])
         model.current_state.add_element(prob_pred)
 
     def _apply_method(self, m, model, targets, found_targets):
@@ -406,6 +424,13 @@ class DeleteRelaxed(Pruning):
             if task_string in targets:
                 found_targets.append(task_string)
 
+    def get_create_object(self, ob_name):
+        if ob_name in self.alt_problem.objects:
+            return self.alt_problem.objects[ob_name]
+        ob = Object(ob_name)
+        self.alt_problem.add_object(ob)
+        return ob
+
     def _check_targets(self, targets: list, found_targets: list) -> bool:
         if len(targets) == len(found_targets):
             return True
@@ -430,163 +455,23 @@ class DeleteRelaxed(Pruning):
             self.alt_domain.add_predicate(Predicate("not_" + p, pred.parameters))
         self.alt_domain.add_predicate(Predicate("U", [RegParameter("?action")]))
 
-        # Give alt domain actions
-        for a in self.domain.get_all_actions():
-            # Consider action with all possible parameters
-            param_options = self.all_parameters_selector.get_potential_parameters(a, {}, None)
-            for params in param_options:
-                concat_param_names = ""
-                for p in params:
-                    concat_param_names += "-" + params[p].name
-                alt_name = a.name + concat_param_names
-                alt_precons = self._process_alt_preconditions(a.get_precondition().get_conditions())
-                alt_effects = copy.deepcopy(a.get_effects())
-                alt_a = Action(alt_name, a.get_parameters(), alt_precons, alt_effects)
-                self.alt_domain.add_action(alt_a)
+    def _generate_alt_preconditions(self, precondition):
+        alt_precon = AltPrecondition(str(precondition.conditions))
+        alt_precon_head = self._generate_alt_preconditions_recur(precondition.head)
+        alt_precon.head = alt_precon_head
+        return alt_precon
 
-        # Give alt domain methods
-        for m in self.domain.get_all_methods():
-            # Consider action with all possible parameters
-            param_options = self.all_parameters_selector.get_potential_parameters(m, {}, None)
-            for params in param_options:
-                concat_param_names = ""
-                for p in params:
-                    concat_param_names += "-" + params[p].name
-                alt_name = m.name + concat_param_names
-                m_precond = m.get_precondition()
-                if m_precond is not None:
-                    alt_precons = self._process_alt_preconditions(m_precond.get_conditions())
-                else:
-                    alt_precons = None
-
-                subTs = m.subtasks
-                if subTs is not None:
-                    alt_subtasks = Subtasks(subTs.ordered)
-                    for s in m.subtasks.tasks:
-                        alt_subtasks.add_subtask(None, s.task, [x for x in s.parameters])
-                else:
-                    alt_subtasks = None
-
-                if alt_precons is None:
-                    alt_precons = AltPrecondition("Alternate Preconditions Unknown")
-                    alt_precons.add_operator_condition("and", None)
-                head = alt_precons.head
-                if not(type(head) == AltOperatorCondition and head.operator == "and" or head is None):
-                    new_op_con = AltOperatorCondition("and", None)
-                    old_head = alt_precons.head
-                    alt_precons.head = new_op_con
-                    head = alt_precons.head
-
-                    if type(old_head) == AltPredicateCondition:
-                        alt_precons.add_predicate_condition(old_head.pred, old_head.parameter_name, alt_precons.head)
-                    elif type(old_head) == AltOperatorCondition:
-                        oh = alt_precons.add_operator_condition(old_head.operator, old_head.parent, old_head.pred)
-                        for c in old_head.children:
-                            oh.add_child(c)
-                    else:
-                        raise TypeError("Unsupported type {}".format(type(old_head)))
-
-                if alt_subtasks is not None:
-                    for s in alt_subtasks.tasks:
-                        alt_subt_name = copy.deepcopy(s.task.name)
-                        for p in s.parameters:
-                            alt_subt_name += "-" + params[p.name].name
-                        alt_precons.add_predicate_condition(self.alt_domain.get_predicate("U"), [alt_subt_name], head)
-
-                alt_m = Method(alt_name, m.get_parameters(), alt_precons, m.get_task_dict(), alt_subtasks, m.get_constraints())
-                self.alt_domain.methods[alt_m.name] = alt_m
-
-    def _process_alt_preconditions(self, params, mod=None):
-        def __parse_conditions(parameters, parent=None):
-            if type(parameters) == list and len(parameters) == 1 and type(parameters[0]) == list:
-                parameters = parameters[0]
-
-            if type(parameters) == list:
-                i = 0
-                l = len(parameters)
-                while i < l:
-                    p = parameters[i]
-                    if type(p) == str:
-                        if p == "and" or p == "or" or p == "not":
-                            if p == "not":
-                                pred_name = parameters[i + 1][0]
-                                if pred_name == "=":
-                                    cons = constraints.add_operator_condition(p, parent)
-                                    __parse_conditions(parameters[i + 1], cons)
-                                    return
-                                pred_name = "not_" + pred_name
-                                pred = self.alt_domain.get_predicate(pred_name)
-                                if pred is None:
-                                    raise NameError("Predicate '{}' not found in alt_domain".format(pred_name))
-                            else:
-                                pred = None
-                            cons = constraints.add_operator_condition(p, parent, pred)
-                            __parse_conditions(parameters[i + 1:], cons)
-                            return
-                        elif p == "=":
-                            cons = constraints.add_operator_condition(p, parent)
-                            for v in parameters[i + 1:]:
-                                __parse_conditions(v, cons)
-                            return
-                        elif len(parameters) > 1 and all([type(x) == str for x in parameters]):
-                            # Here a type is given
-                            # ['valuableorhazardous', '?collect_fees_instance_2_argument_0']
-                            pred = self.domain.get_predicate(p)
-                            if pred is None:
-                                self.domain.add_predicate(Predicate(p, self._parse_parameters(parameters[1:])))
-                                pred = self.domain.get_predicate(p)
-
-                            pred_parameters = parameters[1:]
-                            """Check if all of the parameters defined in pred_parameters are given from the task
-                            (assuming we are parsing a methods precondition)"""
-                            if given_params is None:
-                                constraints.add_predicate_condition(pred, pred_parameters, parent)
-                            else:
-                                # Check if all predicate_params are in given_params
-                                if all([x in given_params for x in pred_parameters]):
-                                    if parent.operator == "not":
-                                        parent.parent.children.remove(parent)
-                                        operator_parent = constraints.add_given_params_operator_condition("not")
-                                        constraints.add_given_params_predicate_condition(pred, pred_parameters,
-                                                                                         operator_parent)
-                                        parent = parent.parent
-                                    else:
-                                        constraints.add_given_params_predicate_condition(pred, pred_parameters, parent)
-                                else:
-                                    constraints.add_predicate_condition(pred, pred_parameters, parent)
-                            i = l
-                        elif len(parameters) == 1 and type(p) == str:
-                            constraints.add_predicate_condition(self.domain.get_predicate(p), [], parent)
-                            i = l
-                        elif p == "forall":
-                            if len(parameters) == 3:
-                                selector = parameters[1]
-                                satisfier = self._parse_precondition(parameters[2])
-                            else:
-                                selector = parameters[1] + [self._parse_precondition(['and'] + parameters[2])]
-                                satisfier = self._parse_precondition(['and'] + parameters[3])
-                            constraints.add_forall_condition(selector, satisfier.head, parent)
-                            i += l
-                        else:
-                            raise TypeError("Unexpected token {}".format(p))
-                    elif type(p) == list:
-                        __parse_conditions(p, parent)
-                    else:
-                        raise TypeError("Unexpected type {}".format(type(p)))
-                    i += 1
-            elif type(parameters) == str:
-                return constraints.add_variable_condition(parameters, parent)
-            else:
-                raise TypeError("Unexpected type {}".format(type(parameters)))
-
-        constraints = AltPrecondition(params)
-        if type(mod) == Method:
-            given_params = [x.name for x in mod.task['params']]
+    def _generate_alt_preconditions_recur(self, condition):
+        if type(condition) == OperatorCondition:
+            alt_condition = AltOperatorCondition(condition.operator, None)
+            alt_condition.children = [self._generate_alt_preconditions_recur(c) for c in condition.children]
+            return alt_condition
+        elif type(condition) == PredicateCondition:
+            alt_condition = AltPredicateCondition(condition.pred, condition.parameter_name)
+            alt_condition.set_parent(condition.parent)
+            return alt_condition
         else:
-            given_params = None
-        given_mod = mod
-        __parse_conditions(params)
-        return constraints
+            raise NotImplementedError
 
     def _generate_alt_problem(self):
         self.alt_problem.initial_state = self.problem.initial_state.reproduce()
@@ -595,21 +480,3 @@ class DeleteRelaxed(Pruning):
         obs = self.problem.get_all_objects()
         for o in obs:
             self.alt_problem.add_object(obs[o])
-
-        # Create objects for modifiers
-        for a in self.alt_domain.actions:
-            self.alt_problem.add_object(Object(a))
-
-        for m in self.alt_domain.methods:
-            self.alt_problem.add_object(Object(m))
-
-        tasks = self.domain.get_all_tasks()
-        for t in tasks:
-            # Get all possible combinations of parameter for t
-            param_options = self.all_parameters_selector.get_potential_parameters(tasks[t], {}, None)
-            for params in param_options:
-                concat_param_names = ""
-                for p in params:
-                    concat_param_names += "-" + params[p].name
-                alt_name = t + concat_param_names
-                self.alt_problem.add_object(Object(alt_name))
