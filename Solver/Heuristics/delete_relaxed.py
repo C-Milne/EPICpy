@@ -311,6 +311,7 @@ class DeleteRelaxed(Pruning):
         for action in self.domain.get_all_actions():
             param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
             for param_option in param_options:
+                # TODO: Check here for already executed actions
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
                 alt_action = Action(alt_action_name, action.get_parameters(), action.preconditions, action.effects)
                 applicable_actions.append((alt_action, param_option))
@@ -331,6 +332,7 @@ class DeleteRelaxed(Pruning):
                     if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
                         applicable = False
                         break
+                # TODO: Check for already carried out method
                 if applicable:
                     alt_method_name = self._generate_modifier_alt_name(method, param_option)
                     alt_method = Method(alt_method_name, method.get_parameters(), method.preconditions,
@@ -368,7 +370,7 @@ class DeleteRelaxed(Pruning):
 
         # Add action name to state (U-actionName)
         prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.get_create_object(m.name)])
-        model.current_state.add_element(prob_pred)
+        model.current_state.add_element(prob_pred, False)
 
     def _apply_method(self, m, model, targets, found_targets):
         # Add the name of the method to the state
@@ -378,7 +380,7 @@ class DeleteRelaxed(Pruning):
             method_name_ob = Object(method_name)
             self.alt_problem.add_object(method_name_ob)
         method_prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [method_name_ob])
-        model.current_state.add_element(method_prob_pred)
+        model.current_state.add_element(method_prob_pred, False)
 
         # Check if name of task this method expands is already in state
         ob_names = self._get_objects_from_alt_modifier_name(m, True)
