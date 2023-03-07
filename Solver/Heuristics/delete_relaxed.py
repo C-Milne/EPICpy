@@ -266,7 +266,7 @@ class DeleteRelaxed(Pruning):
 
         while True:
             iteration += 1
-            applicable_modifiers = self._calculate_applicable_modifiers(modifiers, model, modifier_selection_mode)
+            applicable_modifiers = self._calculate_applicable_modifiers(modifiers, model, modifier_selection_mode, iteration)
 
             # Add effects of these modifiers to alt_state
             c = -1
@@ -298,18 +298,21 @@ class DeleteRelaxed(Pruning):
             elif len(applicable_modifiers) == 0:
                 return False
 
-    def _calculate_applicable_modifiers(self, modifiers, model, selection_mode) -> list:
+    def _calculate_applicable_modifiers(self, modifiers, model, selection_mode, iteration) -> list:
         if selection_mode:
-            return self._calculate_applicable_modifiers_selection_mode(model)
+            return self._calculate_applicable_modifiers_selection_mode(model, iteration > 1)
         else:
             # Iterate mode
             return self._calculate_applicable_modifiers_iterate_mode(modifiers, model)
 
-    def _calculate_applicable_modifiers_selection_mode(self, model) -> list:
+    def _calculate_applicable_modifiers_selection_mode(self, model, find_methods) -> list:
         # Iterate over all actions in the domain
         applicable_actions = self._calculate_applicable_modifiers_selection_mode_find_actions(model)
-        # Iterate over all methods in the domain
-        applicable_methods = self._calculate_applicable_modifiers_selection_mode_find_methods(model)
+        if find_methods:
+            # Iterate over all methods in the domain
+            applicable_methods = self._calculate_applicable_modifiers_selection_mode_find_methods(model)
+        else:
+            applicable_methods = []
         return applicable_actions + applicable_methods
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
