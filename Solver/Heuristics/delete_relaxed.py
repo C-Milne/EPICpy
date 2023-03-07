@@ -377,6 +377,7 @@ class DeleteRelaxed(Pruning):
         # Add action name to state (U-actionName)
         prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.get_create_object(m.name)])
         model.current_state.add_element(prob_pred, False)
+        self._found_actions.add(m.name)
 
     def _apply_method(self, m, model, targets, found_targets):
         # Add the name of the method to the state
@@ -387,6 +388,7 @@ class DeleteRelaxed(Pruning):
             self.alt_problem.add_object(method_name_ob)
         method_prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [method_name_ob])
         model.current_state.add_element(method_prob_pred, False)
+        self._found_methods.add(method_name)
 
         # Check if name of task this method expands is already in state
         ob_names = self._get_objects_from_alt_modifier_name(m, True)
@@ -408,14 +410,13 @@ class DeleteRelaxed(Pruning):
             except Exception as e:
                 raise TypeError
 
-        # TODO: Can we improve this by using sets to store which tasks we have already added to the state
         if task_name not in self._found_tasks:
             task_name_ob = self.alt_problem.get_object(task_name)
             if task_name_ob is None:
                 self.alt_problem.add_object(Object(task_name))
                 task_name_ob = self.alt_problem.get_object(task_name)
             prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [task_name_ob])
-            model.current_state.add_element(prob_pred)
+            model.current_state.add_element(prob_pred, False)
             # Check if prob_pred in targets
             task_string = str(prob_pred).replace(" ", "")
             if task_string in targets:
