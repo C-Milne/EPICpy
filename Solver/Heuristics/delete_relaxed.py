@@ -142,6 +142,9 @@ class DeleteRelaxed(Pruning):
         self.requirement_parameters_selector = DeleteRelaxedRequirementSelection(self.solver)
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
+        self._found_actions = set()
+        self._found_methods = set()
+        self._found_tasks = set()
 
     def ranking(self, model: DefaultModel, **kwargs):
         # Create duplicate state
@@ -249,6 +252,9 @@ class DeleteRelaxed(Pruning):
         applied_modifiers = []
         found_targets = []
         used_prev_store = False
+        self._found_tasks = set()
+        self._found_methods = set()
+        self._found_actions = set()
 
         if model_store.previous_modifiers is None:
             # If we have no previous modifiers we need to use requirement selection to determine the objects to use for modifiers
@@ -403,18 +409,7 @@ class DeleteRelaxed(Pruning):
                 raise TypeError
 
         # TODO: Can we improve this by using sets to store which tasks we have already added to the state
-        occurrences = model.current_state.get_indexes("U")
-        found = False
-        if occurrences is None:
-            occurrences = []
-        for o in occurrences:
-            prob_pred = model.current_state.get_element_index(o)
-            if prob_pred.objects[0].name == task_name:
-                found = True
-                break
-
-        # If not add name of task this method expands to state
-        if not found:
+        if task_name not in self._found_tasks:
             task_name_ob = self.alt_problem.get_object(task_name)
             if task_name_ob is None:
                 self.alt_problem.add_object(Object(task_name))
@@ -425,6 +420,7 @@ class DeleteRelaxed(Pruning):
             task_string = str(prob_pred).replace(" ", "")
             if task_string in targets:
                 found_targets.append(task_string)
+            self._found_tasks.add(task_name)
 
     def get_create_object(self, ob_name):
         if ob_name in self.alt_problem.objects:
