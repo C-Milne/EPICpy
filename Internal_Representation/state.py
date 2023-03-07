@@ -9,9 +9,12 @@ class State:
         self._index = {}
         self.elements = []
 
-    def add_element(self, element: ProblemPredicate):
+    def add_element(self, element: ProblemPredicate, check_presence=True):
         assert type(element) == ProblemPredicate
-        if element not in self:
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        if add_to_state:
             self.elements.append(element)
             self._add_element_to_index(element)
 

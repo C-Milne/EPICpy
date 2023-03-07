@@ -34,7 +34,7 @@ class Problem:
 
     def add_to_initial_state(self, v: ProblemPredicate):
         assert type(v) == ProblemPredicate
-        self.initial_state.add_element(v)
+        self.initial_state.add_element(v, False)
 
     def add_initial_task_network_parameter(self, parameter_name: str, parameter_type: str):
         if not self._initial_task_network_parameters:
