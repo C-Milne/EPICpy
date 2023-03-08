@@ -60,7 +60,7 @@ class AltOperatorCondition(OperatorCondition):
             for i in child.parameter_name:
                 p_list.append(param_dict[i])
 
-            res = search_model.current_state.check_if_predicate_value_exists(self.pred, p_list)
+            res = search_model.current_state.check_if_predicate_value_exists(child.pred, p_list)
 
         if res:
             return res
@@ -322,8 +322,8 @@ class DeleteRelaxed(Pruning):
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
         applicable_actions = []
-        for action in self.domain.get_all_actions():
-            param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
+        for action in self.alt_domain.get_all_actions():
+            param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(action, {}, model)
             for param_option in param_options:
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
 
@@ -337,9 +337,9 @@ class DeleteRelaxed(Pruning):
         applicable_methods = []
         methods_to_check = self._generate_possible_methods_to_check_selection_mode()
         for method in methods_to_check:
-            if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks]):
+            if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
                 continue
-            param_options = self.requirement_parameters_selector.get_potential_parameters(method, {}, model)
+            param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
                 applicable = True
@@ -490,12 +490,23 @@ class DeleteRelaxed(Pruning):
             self.alt_domain.add_predicate(Predicate("not_" + p, pred.parameters))
         self.alt_domain.add_predicate(Predicate("U", [RegParameter("?action")]))
 
-        self._map_actions_to_methods()
-    def _map_actions_to_methods(self):
+        self._preprocess_actions()
+        self._preprocess_methods()
+
+    def _preprocess_methods(self):
         for m in self.domain.get_all_methods():
+            new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
+            new_m.requirements = m.requirements
+            self.alt_domain.add_method(new_m)
             for subtask in m.subtasks.tasks:
                 if type(subtask.task) == Action:
-                    self._add_to_methods_actions_mapping(subtask.task, m)
+                    self._add_to_methods_actions_mapping(subtask.task, new_m)
+
+    def _preprocess_actions(self):
+        for action in self.domain.get_all_actions():
+            new_action = Action(action.name, action.parameters, self._generate_alt_preconditions(action.preconditions), action.effects)
+            new_action.requirements = action.requirements
+            self.alt_domain.add_action(new_action)
 
     def _add_to_methods_actions_mapping(self, action, method):
         if action.name not in self._methods_rely_actions.keys():
@@ -518,6 +529,8 @@ class DeleteRelaxed(Pruning):
             alt_condition = AltPredicateCondition(condition.pred, condition.parameter_name)
             alt_condition.set_parent(condition.parent)
             return alt_condition
+        elif condition is None:
+            return None
         else:
             raise NotImplementedError
 
@@ -527,4 +540,4 @@ class DeleteRelaxed(Pruning):
         # Get objects
         obs = self.problem.get_all_objects()
         for o in obs:
-            self.alt_problem.add_object(obs[o])
+            self.alt_problem.add_object(obs[o], False)

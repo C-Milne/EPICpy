@@ -127,7 +127,6 @@ class RequirementSelection(ParameterSelector):
 
             if result is None:
                 result = modifier.evaluate_preconditions(search_model, param_option, self.solver.problem)
-                print('here')   # TODO: Remove this
 
             if result:
                 return_list.append(param_option)

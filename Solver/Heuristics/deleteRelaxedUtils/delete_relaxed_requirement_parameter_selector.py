@@ -95,10 +95,12 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
 
     def _delete_relaxed_get_objects_method(self, required_type, method, required_param_name):
         valid_options = []
+        parameter_used_in_subtask = False
         for subtask in method.subtasks.tasks:
             if type(subtask.task) == Action:
                 for p_index in range(len(subtask.parameters)):
                     if subtask.parameters[p_index].name == required_param_name:
+                        parameter_used_in_subtask = True
                         potential_objects = self.delete_relaxed_module._used_action_configs[subtask.task.name][p_index]
                         type_checked_potential_objects = set()
                         for ob in potential_objects:
@@ -106,6 +108,9 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
                                 type_checked_potential_objects.add(ob)
                         if len(type_checked_potential_objects) > 0:
                             valid_options.append(type_checked_potential_objects)
+
+        if not parameter_used_in_subtask:
+            return self.solver.problem.get_objects_of_type(required_type)
 
         if len(valid_options) > 0:
             if len(valid_options) == 1:

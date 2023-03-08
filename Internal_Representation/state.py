@@ -92,7 +92,10 @@ class State:
                 i += 1
 
     def check_if_predicate_value_exists(self, predicate: Predicate, obs: list) -> bool:
-        indexes = self.get_indexes(predicate.name)
+        try:
+            indexes = self.get_indexes(predicate.name)
+        except Exception as e:
+            raise NotImplementedError
         prob_pred = ProblemPredicate(predicate, obs)
         if indexes is None:
             return False
