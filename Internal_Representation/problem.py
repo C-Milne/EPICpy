@@ -70,7 +70,6 @@ class Problem:
         return None
 
     def get_objects_of_type(self, param_type):
-        # TODO: Optimise this - store lists of objects that satisfy types during parsing
         if type(param_type) == str:
             param_type = self.domain.get_type(param_type)
         if type(param_type) == Type:

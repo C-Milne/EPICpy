@@ -60,7 +60,7 @@ class AltOperatorCondition(OperatorCondition):
             for i in child.parameter_name:
                 p_list.append(param_dict[i])
 
-            res = search_model.current_state.check_if_predicate_value_exists(child.pred, p_list)
+            res = search_model.current_state.check_if_predicate_value_exists(self.pred, p_list)
 
         if res:
             return res
@@ -522,7 +522,11 @@ class DeleteRelaxed(Pruning):
 
     def _generate_alt_preconditions_recur(self, condition):
         if type(condition) == OperatorCondition:
-            alt_condition = AltOperatorCondition(condition.operator, None)
+            if condition.operator == 'not':
+                alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
+            else:
+                alt_condition = AltOperatorCondition(condition.operator, None)
+
             alt_condition.children = [self._generate_alt_preconditions_recur(c) for c in condition.children]
             return alt_condition
         elif type(condition) == PredicateCondition:
