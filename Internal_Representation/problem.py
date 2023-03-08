@@ -71,14 +71,9 @@ class Problem:
         if type(param_type) == str:
             param_type = self.domain.get_type(param_type)
         if type(param_type) == Type:
-            returnObs = []
-            for o in self.objects:
-                if self.objects[o].type == param_type:
-                    returnObs.append(self.objects[o])
-
-            return returnObs
+            return param_type.satisfying_objects
         elif param_type is None:
-            return self.objects
+            return self.objects.values()
         else:
             raise TypeError("Unexpected type {}".format(type(param_type)))
 

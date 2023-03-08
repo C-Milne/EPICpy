@@ -335,10 +335,11 @@ class DeleteRelaxed(Pruning):
 
     def _calculate_applicable_modifiers_selection_mode_find_methods(self, model) -> list:
         applicable_methods = []
-        for method in self._generate_possible_methods_to_check_selection_mode():
+        methods_to_check = self._generate_possible_methods_to_check_selection_mode()
+        for method in methods_to_check:
             if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks]):
                 continue
-            param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(method, {}, model)
+            param_options = self.requirement_parameters_selector.get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
                 applicable = True
