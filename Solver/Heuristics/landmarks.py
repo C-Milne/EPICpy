@@ -230,6 +230,7 @@ class Landmarks(SeenStatesPruning):
             self._add_to_node(i, root_node)
         # Landmark extraction from tree
         self._extract_landmarks()
+        print('Number of Landmarks Found: {}'.format(len(root_node.landmarks)))
 
     def calculate_reachability(self, initial_model):
         delete_relaxed = DeleteRelaxed(self.domain, self.problem, self.solver, self.search_models)
