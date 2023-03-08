@@ -143,9 +143,8 @@ class DeleteRelaxed(Pruning):
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
         self._methods_rely_actions = {}     # This stores the methods which rely on each action {Action: {Methods}}
-        self._actions_used_last_iteration = set()
-        self._actions_used_this_iteration = set()
         self._found_actions = set()
+        self._found_actions_names = set()
         self._found_methods = set()
         self._found_tasks = set()
 
@@ -258,6 +257,7 @@ class DeleteRelaxed(Pruning):
         self._found_tasks = set()
         self._found_methods = set()
         self._found_actions = set()
+        self._found_action_names = set()
 
         if model_store.previous_modifiers is None:
             # If we have no previous modifiers we need to use requirement selection to determine the objects to use for modifiers
@@ -316,8 +316,6 @@ class DeleteRelaxed(Pruning):
             applicable_methods = self._calculate_applicable_modifiers_selection_mode_find_methods(model)
         else:
             applicable_methods = []
-        self._actions_used_last_iteration = self._actions_used_this_iteration
-        self._actions_used_this_iteration = set()
         return applicable_actions + applicable_methods
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
@@ -325,11 +323,12 @@ class DeleteRelaxed(Pruning):
         for action in self.domain.get_all_actions():
             param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
             for param_option in param_options:
-                # TODO: Check here for already executed actions
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
-                alt_action = Action(alt_action_name, action.get_parameters(), action.preconditions, action.effects)
-                applicable_actions.append((alt_action, param_option))
-                self._actions_used_this_iteration.add(action.name)
+
+                if alt_action_name not in self._found_actions:
+                    alt_action = Action(alt_action_name, action.get_parameters(), action.preconditions, action.effects)
+                    applicable_actions.append((alt_action, param_option))
+                    self._found_actions_names.add(action.name)
         return applicable_actions
 
     def _calculate_applicable_modifiers_selection_mode_find_methods(self, model) -> list:
@@ -347,20 +346,22 @@ class DeleteRelaxed(Pruning):
                     if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
                         applicable = False
                         break
-                # TODO: Check for already carried out method
+
                 if applicable:
                     alt_method_name = self._generate_modifier_alt_name(method, param_option)
-                    alt_method = Method(alt_method_name, method.get_parameters(), method.preconditions,
-                                        method.task, method.subtasks, method.constraints)
-                    applicable_methods.append((alt_method, param_option))
+                    if alt_method_name not in self._found_methods:
+                        alt_method = Method(alt_method_name, method.get_parameters(), method.preconditions,
+                                            method.task, method.subtasks, method.constraints)
+                        applicable_methods.append((alt_method, param_option))
         return applicable_methods
 
     def _generate_possible_methods_to_check_selection_mode(self):
-        if len(self._actions_used_last_iteration) == 1:
-            return self._methods_rely_actions[self._actions_used_last_iteration.pop()]
-        return_methods = self._methods_rely_actions[self._actions_used_last_iteration.pop()]
-        union_elements = [self._methods_rely_actions[a] for a in self._actions_used_last_iteration]
-        return_methods = return_methods.union(*union_elements)
+        if len(self._found_actions_names) == 0:
+            return set()
+        elif len(self._found_actions_names) == 1:
+            return self._methods_rely_actions[next(iter(self._found_actions_names))]
+        union_elements = [self._methods_rely_actions[a] for a in self._found_actions_names]
+        return_methods = set().union(*union_elements)
         return return_methods
 
     def _generate_modifier_alt_name(self, modifier, given_params):
