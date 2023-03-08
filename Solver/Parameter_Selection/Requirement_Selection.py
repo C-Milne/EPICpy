@@ -145,10 +145,7 @@ class RequirementSelection(ParameterSelector):
         for required_param_name in given_requirements:
             if required_param_name.startswith('forall-'):
                 inner = given_requirements[required_param_name]
-                try:
-                    k = list(inner.keys())[0]
-                except Exception as e:
-                    raise NotImplementedError
+                k = list(inner.keys())[0]
                 inner[k] = 1
                 requirements = {'type': None, 'predicates': inner}
 
