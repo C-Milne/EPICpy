@@ -142,6 +142,9 @@ class DeleteRelaxed(Pruning):
         self.requirement_parameters_selector = DeleteRelaxedRequirementSelection(self.solver)
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
+        self._methods_rely_actions = {}     # This stores the methods which rely on each action {Action: {Methods}}
+        self._actions_used_last_iteration = set()
+        self._actions_used_this_iteration = set()
         self._found_actions = set()
         self._found_methods = set()
         self._found_tasks = set()
@@ -313,6 +316,8 @@ class DeleteRelaxed(Pruning):
             applicable_methods = self._calculate_applicable_modifiers_selection_mode_find_methods(model)
         else:
             applicable_methods = []
+        self._actions_used_last_iteration = self._actions_used_this_iteration
+        self._actions_used_this_iteration = set()
         return applicable_actions + applicable_methods
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
@@ -324,11 +329,12 @@ class DeleteRelaxed(Pruning):
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
                 alt_action = Action(alt_action_name, action.get_parameters(), action.preconditions, action.effects)
                 applicable_actions.append((alt_action, param_option))
+                self._actions_used_this_iteration.add(action.name)
         return applicable_actions
 
     def _calculate_applicable_modifiers_selection_mode_find_methods(self, model) -> list:
         applicable_methods = []
-        for method in self.domain.get_all_methods():
+        for method in self._generate_possible_methods_to_check_selection_mode():
             param_options = self.requirement_parameters_selector.get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
@@ -348,6 +354,14 @@ class DeleteRelaxed(Pruning):
                                         method.task, method.subtasks, method.constraints)
                     applicable_methods.append((alt_method, param_option))
         return applicable_methods
+
+    def _generate_possible_methods_to_check_selection_mode(self):
+        if len(self._actions_used_last_iteration) == 1:
+            return self._methods_rely_actions[self._actions_used_last_iteration.pop()]
+        return_methods = self._methods_rely_actions[self._actions_used_last_iteration.pop()]
+        union_elements = [self._methods_rely_actions[a] for a in self._actions_used_last_iteration]
+        return_methods = return_methods.union(*union_elements)
+        return return_methods
 
     def _generate_modifier_alt_name(self, modifier, given_params):
         alt_name = modifier.name
@@ -456,6 +470,19 @@ class DeleteRelaxed(Pruning):
             self.alt_domain.add_predicate(pred)
             self.alt_domain.add_predicate(Predicate("not_" + p, pred.parameters))
         self.alt_domain.add_predicate(Predicate("U", [RegParameter("?action")]))
+
+        self._map_actions_to_methods()
+    def _map_actions_to_methods(self):
+        for m in self.domain.get_all_methods():
+            for subtask in m.subtasks.tasks:
+                if type(subtask.task) == Action:
+                    self._add_to_methods_actions_mapping(subtask.task, m)
+
+    def _add_to_methods_actions_mapping(self, action, method):
+        if action.name not in self._methods_rely_actions.keys():
+            self._methods_rely_actions[action.name] = {method}
+        else:
+            self._methods_rely_actions[action.name].add(method)
 
     def _generate_alt_preconditions(self, precondition):
         alt_precon = AltPrecondition(str(precondition.conditions))
