@@ -22,3 +22,6 @@ class RegParameter(Parameter):
                 return False
         except AttributeError:
             return False
+
+    def __str__(self):
+        return self.name + " - " + self.type.name

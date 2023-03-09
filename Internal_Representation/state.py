@@ -1,3 +1,4 @@
+import copy
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.Object import Object
@@ -8,9 +9,12 @@ class State:
         self._index = {}
         self.elements = []
 
-    def add_element(self, element: ProblemPredicate):
+    def add_element(self, element: ProblemPredicate, check_presence=True):
         assert type(element) == ProblemPredicate
-        if element not in self:
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        if add_to_state:
             self.elements.append(element)
             self._add_element_to_index(element)
 
@@ -88,7 +92,10 @@ class State:
                 i += 1
 
     def check_if_predicate_value_exists(self, predicate: Predicate, obs: list) -> bool:
-        indexes = self.get_indexes(predicate.name)
+        try:
+            indexes = self.get_indexes(predicate.name)
+        except Exception as e:
+            raise NotImplementedError
         prob_pred = ProblemPredicate(predicate, obs)
         if indexes is None:
             return False
@@ -98,10 +105,9 @@ class State:
         return False
 
     def reproduce(self):
-        # TODO: Improve this - We dont need to use the add_element function here
         returnState = State()
-        for e in self.elements:
-            returnState.add_element(e)
+        returnState.elements = [*self.elements]
+        returnState._index = copy.deepcopy(self._index)
         return returnState
 
     @staticmethod

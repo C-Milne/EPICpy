@@ -16,7 +16,7 @@ class SeenStatesPruning(Heuristic):
     def _inner_ranking(self, model):
         return 0
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         pass
 
     def task_milestone(self, model) -> bool:

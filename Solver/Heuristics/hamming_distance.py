@@ -13,11 +13,11 @@ class HammingDistance(Pruning):
         # Consider distance to goal
         distance_to_goal = 0
         for i in self.goal_cons:
-            if i not in model.current_state.elements:
+            if i not in model.current_state:
                 distance_to_goal += 1
         return distance_to_goal
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         if self.problem.goal_conditions is not None:
             for i in self.problem.goal_conditions.conditions:
                 if type(i) == list:
