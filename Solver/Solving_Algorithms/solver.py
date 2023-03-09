@@ -1,5 +1,6 @@
 import sys
 from abc import ABC, abstractmethod, ABCMeta
+from Solver.Models.model import Model
 from Solver.Models.default_model import DefaultModel
 from Solver.Search_Queues.search_queue import SearchQueue
 from Internal_Representation.method import Method
@@ -284,8 +285,8 @@ class Solver(ABC):
         return model.reproduce(self.problem, search_mods)
 
     @staticmethod
-    def output(resulting_model: DefaultModel):
-        assert isinstance(resulting_model, DefaultModel) or resulting_model is None
+    def output(resulting_model: Model):
+        assert isinstance(resulting_model, Model) or resulting_model is None
 
         if not resulting_model is None:
             print(resulting_model.get_progress_tracker())
