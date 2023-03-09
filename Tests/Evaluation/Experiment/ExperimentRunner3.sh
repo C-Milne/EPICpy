@@ -4,7 +4,7 @@
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH -o slurms/slurm.%j.out
-#SBATCH -e slrums/slurm.%j.err
+#SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
