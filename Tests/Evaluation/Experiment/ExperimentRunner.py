@@ -130,14 +130,14 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_Task-results.csv'  # TODO: Rename this
+        file_name = 'results/Novelty_Facts_Only_Task-results.csv'
     elif strategy == 11:
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_level2_Task-Method-Expand-0-results.csv'  # TODO: Rename the file of this when we next push
+        file_name = 'results/Novelty_level2_Task-Method-Expand-0-results.csv'
     elif strategy == 12:
         """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
