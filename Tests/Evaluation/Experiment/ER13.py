@@ -766,7 +766,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_140_280.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_150_300.hddl", strategy)
     # Snake Problems
-    """
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb01.snake.hddl", strategy)
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb02.snake.hddl", strategy)
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb03.snake.hddl", strategy)
