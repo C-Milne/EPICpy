@@ -8,7 +8,8 @@ class PartialOrderNoveltyMethodsSolver(PartialOrderNoveltySolver):
         self._seen_methods = set()
 
     def _add_model_to_search_queue(self, model, addition):
-        """This is where models are added to the queue after expanding an abstract task or method"""
+        """This is where models are added to the queue after expanding an abstract task or method.
+        When decomposing a task, this resets to 0"""
         novelty = self._check_method_novelty(addition)
         self.search_models.novelty_add(model, novelty)
 

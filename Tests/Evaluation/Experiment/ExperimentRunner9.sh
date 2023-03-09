@@ -3,9 +3,10 @@
 #SBATCH --job-name=ExperimentRunner9
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
-#SBATCH -e slurm.%j.err
+#SBATCH -o slurms/slurm.%j.out
+#SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --time=48:00:00
+#SBATCH --time=170:00:00
 #SBATCH --partition=compute
 
 date
