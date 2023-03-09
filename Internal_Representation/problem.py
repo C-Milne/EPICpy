@@ -24,17 +24,20 @@ class Problem:
         assert type(name) == str
         self.name = name
 
-    def add_object(self, ob):
+    def add_object(self, ob, add_type_satisfying=True):
         if type(ob) == list:
             for i in ob:
-                self.add_object(i)
+                self.add_object(i, add_type_satisfying)
         else:
             assert type(ob) == Object
             self.objects[ob.name] = ob
+            if add_type_satisfying:
+                if ob.type is not None:
+                    ob.type.add_satisfying_object(ob)
 
     def add_to_initial_state(self, v: ProblemPredicate):
         assert type(v) == ProblemPredicate
-        self.initial_state.add_element(v)
+        self.initial_state.add_element(v, False)
 
     def add_initial_task_network_parameter(self, parameter_name: str, parameter_type: str):
         if not self._initial_task_network_parameters:
@@ -70,14 +73,9 @@ class Problem:
         if type(param_type) == str:
             param_type = self.domain.get_type(param_type)
         if type(param_type) == Type:
-            returnObs = []
-            for o in self.objects:
-                if self.objects[o].type == param_type:
-                    returnObs.append(self.objects[o])
-
-            return returnObs
+            return param_type.satisfying_objects
         elif param_type is None:
-            return self.objects
+            return self.objects.values()
         else:
             raise TypeError("Unexpected type {}".format(type(param_type)))
 
