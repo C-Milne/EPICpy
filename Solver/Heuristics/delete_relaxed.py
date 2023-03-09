@@ -139,12 +139,13 @@ class DeleteRelaxed(Pruning):
         self.alt_domain = None
         self.alt_problem = None
         self.all_parameters_selector = AllParameters(self.solver)
-        self.requirement_parameters_selector = DeleteRelaxedRequirementSelection(self.solver)
+        self.requirement_parameters_selector = DeleteRelaxedRequirementSelection(self.solver, self)
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
         self._methods_rely_actions = {}     # This stores the methods which rely on each action {Action: {Methods}}
         self._found_actions = set()
         self._found_actions_names = set()
+        self._used_action_configs = {}
         self._found_methods = set()
         self._found_tasks = set()
 
@@ -258,6 +259,7 @@ class DeleteRelaxed(Pruning):
         self._found_methods = set()
         self._found_actions = set()
         self._found_action_names = set()
+        self._used_action_configs = {}
 
         if model_store.previous_modifiers is None:
             # If we have no previous modifiers we need to use requirement selection to determine the objects to use for modifiers
@@ -320,8 +322,8 @@ class DeleteRelaxed(Pruning):
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
         applicable_actions = []
-        for action in self.domain.get_all_actions():
-            param_options = self.requirement_parameters_selector.get_potential_parameters(action, {}, model)
+        for action in self.alt_domain.get_all_actions():
+            param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(action, {}, model)
             for param_option in param_options:
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
 
@@ -335,7 +337,9 @@ class DeleteRelaxed(Pruning):
         applicable_methods = []
         methods_to_check = self._generate_possible_methods_to_check_selection_mode()
         for method in methods_to_check:
-            param_options = self.requirement_parameters_selector.get_potential_parameters(method, {}, model)
+            if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
+                continue
+            param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
                 applicable = True
@@ -396,7 +400,20 @@ class DeleteRelaxed(Pruning):
         # Add action name to state (U-actionName)
         prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.get_create_object(m.name)])
         model.current_state.add_element(prob_pred, False)
-        self._found_actions.add(m.name)
+        self._record_applied_action(m, given_params)
+
+    def _record_applied_action(self, action, parameters_used):
+        self._found_actions.add(action.name)
+        action_default_name = [m.start() for m in re.finditer('-', action.name)]
+        if len(action_default_name) > 0:
+            action_default_name = action.name[:action_default_name[len(action_default_name) - len(action.parameters)]]
+        else:
+            action_default_name = action.name
+
+        if action_default_name not in self._used_action_configs.keys():
+            self._used_action_configs[action_default_name] = [set() for i in range(len(action.parameters))]
+        for i in range(len(action.parameters)):
+            self._used_action_configs[action_default_name][i].add(parameters_used[action.parameters[i].name])
 
     def _apply_method(self, m, model, targets, found_targets):
         # Add the name of the method to the state
@@ -473,12 +490,23 @@ class DeleteRelaxed(Pruning):
             self.alt_domain.add_predicate(Predicate("not_" + p, pred.parameters))
         self.alt_domain.add_predicate(Predicate("U", [RegParameter("?action")]))
 
-        self._map_actions_to_methods()
-    def _map_actions_to_methods(self):
+        self._preprocess_actions()
+        self._preprocess_methods()
+
+    def _preprocess_methods(self):
         for m in self.domain.get_all_methods():
+            new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
+            new_m.requirements = m.requirements
+            self.alt_domain.add_method(new_m)
             for subtask in m.subtasks.tasks:
                 if type(subtask.task) == Action:
-                    self._add_to_methods_actions_mapping(subtask.task, m)
+                    self._add_to_methods_actions_mapping(subtask.task, new_m)
+
+    def _preprocess_actions(self):
+        for action in self.domain.get_all_actions():
+            new_action = Action(action.name, action.parameters, self._generate_alt_preconditions(action.preconditions), action.effects)
+            new_action.requirements = action.requirements
+            self.alt_domain.add_action(new_action)
 
     def _add_to_methods_actions_mapping(self, action, method):
         if action.name not in self._methods_rely_actions.keys():
@@ -494,13 +522,19 @@ class DeleteRelaxed(Pruning):
 
     def _generate_alt_preconditions_recur(self, condition):
         if type(condition) == OperatorCondition:
-            alt_condition = AltOperatorCondition(condition.operator, None)
+            if condition.operator == 'not':
+                alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
+            else:
+                alt_condition = AltOperatorCondition(condition.operator, None)
+
             alt_condition.children = [self._generate_alt_preconditions_recur(c) for c in condition.children]
             return alt_condition
         elif type(condition) == PredicateCondition:
             alt_condition = AltPredicateCondition(condition.pred, condition.parameter_name)
             alt_condition.set_parent(condition.parent)
             return alt_condition
+        elif condition is None:
+            return None
         else:
             raise NotImplementedError
 
@@ -510,4 +544,4 @@ class DeleteRelaxed(Pruning):
         # Get objects
         obs = self.problem.get_all_objects()
         for o in obs:
-            self.alt_problem.add_object(obs[o])
+            self.alt_problem.add_object(obs[o], False)

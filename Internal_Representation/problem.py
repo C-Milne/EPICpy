@@ -24,13 +24,16 @@ class Problem:
         assert type(name) == str
         self.name = name
 
-    def add_object(self, ob):
+    def add_object(self, ob, add_type_satisfying=True):
         if type(ob) == list:
             for i in ob:
-                self.add_object(i)
+                self.add_object(i, add_type_satisfying)
         else:
             assert type(ob) == Object
             self.objects[ob.name] = ob
+            if add_type_satisfying:
+                if ob.type is not None:
+                    ob.type.add_satisfying_object(ob)
 
     def add_to_initial_state(self, v: ProblemPredicate):
         assert type(v) == ProblemPredicate
@@ -67,7 +70,6 @@ class Problem:
         return None
 
     def get_objects_of_type(self, param_type):
-        # TODO: Optimise this - store lists of objects that satisfy types during parsing
         if type(param_type) == str:
             param_type = self.domain.get_type(param_type)
         if type(param_type) == Type:
