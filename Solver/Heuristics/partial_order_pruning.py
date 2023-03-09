@@ -13,7 +13,7 @@ class PartialOrderPruning(Heuristic):
     def ranking(self, model) -> float:
         return 0
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         pass
 
     def task_milestone(self, model) -> bool:

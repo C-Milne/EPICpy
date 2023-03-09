@@ -347,7 +347,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
             return True
         return False
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         self.alt_domain = Domain(None)
         self.alt_problem = Problem(self.alt_domain)
         self.alt_domain.add_problem(self.alt_problem)

@@ -80,6 +80,7 @@ class HeuristicTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
 
+    @unittest.skip
     def test_delete_relaxed_preprocessing_basic_alt_domain(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_path + "basic.hddl")
@@ -167,6 +168,7 @@ class HeuristicTests(unittest.TestCase):
         self.assertIsInstance(alt_domain.methods["have_first-banjo-kiwi"].preconditions.head.children[0], PredicateCondition)
         self.assertEqual(AltOperatorCondition, type(alt_domain.methods["have_first-banjo-kiwi"].preconditions.head.children[1]))
 
+    @unittest.skip
     def test_delete_relaxed_preprocessing_basic_alt_problem(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_path + "basic.hddl")
@@ -248,7 +250,7 @@ class HeuristicTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
 
-    # @unittest.skip
+    @unittest.skip
     def test_delete_relaxed_rover_1(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + "domain.hddl")

@@ -440,10 +440,15 @@ class HDDLParser(Parser):
                 self.problem.add_subtasks(subtasks)
                 self._requires_grounding.append(subtasks)
             elif lead == ":parameters":
-                if params.pop(0) != []:
-                    raise NotImplementedError
+                group = params.pop(0)
+                if group != []:
+                    while group:
+                        param_name = group.pop(0)
+                        group.pop(0)    # This is the '-' between the parameter name and type
+                        param_type_str = group.pop(0)
+                        self.problem.add_initial_task_network_parameter(param_name, param_type_str)
             elif lead == ":ordering":
-                self.problem.order_subtasks(params.pop(0))
+                self.problem.set_initial_subtask_ordering(params.pop(0))
                 ordered = True
             elif lead == ":constraints":
                 group = params.pop(0)
@@ -454,7 +459,8 @@ class HDDLParser(Parser):
 
         if not ordered_subtasks and not ordered:
             # We need to order the subtasks
-            self.problem.order_subtasks([])
+            self.problem.set_initial_subtask_ordering([])
+            self.problem.order_subtasks()
 
     def _parse_goal_state(self, params):
         if type(params) == list and len(params) == 1 and type(params[0]) == list and len(params[0]) > 1:

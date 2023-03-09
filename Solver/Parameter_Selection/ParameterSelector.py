@@ -94,7 +94,10 @@ class ParameterSelector(ABC):
                 param_dict[p] = [q]
             elif type(q) == list:
                 for i in q:
-                    assert type(i) == Object
+                    try:
+                        assert type(i) == Object
+                    except Exception as e:
+                        raise NotImplementedError
             else:
                 raise TypeError("Unknown type {}".format(type(q)))
         # Create combinations

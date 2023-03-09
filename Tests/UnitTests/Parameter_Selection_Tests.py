@@ -10,6 +10,7 @@ class ParameterSelectionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.basic_path_HDDL = "../Examples/Basic/"
         self.rover_path_HDDL = "../Examples/Rover/"
+        self.snake_path = "TestTools/Snake/"
 
     def test_select_all_parameters_basic_hddl(self):
         domain, problem, parser, solver = env_setup(True)
@@ -45,3 +46,13 @@ class ParameterSelectionTests(unittest.TestCase):
         parser.parse_problem(self.rover_path_HDDL + "p01.hddl")
         res = solver.solve()
         self.assertNotEqual(None, res)
+
+    def test_requirements_forall_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        solver.set_parameter_selector(RequirementSelection)
+        parser.parse_domain(self.snake_path + "domain.hddl")
+        parser.parse_problem(self.snake_path + "problem.hddl")
+        solver.parameter_selector.presolving_processing(domain, problem)
+        method_requirements = domain.get_method('hunt_done').requirements
+        # self.assertEqual({'forall-A-1': {'foo': '?a'}}, method_requirements)
+        self.assertEqual({'forall-location-1': {'not': {'mouse-at': '?pos'}}}, method_requirements)

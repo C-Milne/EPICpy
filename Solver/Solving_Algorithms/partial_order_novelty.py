@@ -12,6 +12,8 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         super().set_search_queue(NoveltyGBFSQueue)
         self.set_heuristic(SeenStatesPruning)
         self.max_novelty_level = 1
+        self.num_novel_states = 0
+        self.num_not_novel_states = 0
 
     def set_search_queue(self, search_queue):
         if issubclass(search_queue, NoveltyGBFSQueue):
@@ -29,6 +31,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
     def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
         self.search_models.novelty_add(model, 0)
+
+    def _add_model_to_search_queue_action(self, model, novelty):
+        """Add model to search queue after expanding an action"""
+        self.search_models.novelty_add(model, novelty)
 
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action
@@ -103,4 +109,11 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                     raise NotImplementedError
 
         search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-        self.search_models.novelty_add(search_model, novelty)
+        # Track amount of novel and not novel states
+        if novelty > 0:
+            self.num_novel_states += 1
+        else:
+            self.num_not_novel_states += 1
+
+        # Add model to search queue
+        self._add_model_to_search_queue_action(search_model, novelty)

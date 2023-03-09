@@ -74,7 +74,7 @@ class TreeDistance(Pruning):
                 distance += self.tree.nodes[m.name].distance
         return distance
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         # Add all actions to tree
         for a in self.domain.get_all_actions():
             node = self.tree.add_node(a.name)

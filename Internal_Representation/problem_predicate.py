@@ -19,6 +19,9 @@ class ProblemPredicate:
         self.predicate = predicate
         self.objects = objects
         self.ob_names = [o.name for o in objects]
+        self.name = predicate.name
+        for ob_name in self.ob_names:
+            self.name += "-{}".format(ob_name)
 
     def __hash__(self):
         return hash((self.predicate.name, tuple(self.ob_names)))
@@ -26,9 +29,11 @@ class ProblemPredicate:
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        elif self.predicate != other.predicate:
-            return False
-        elif self.objects != other.objects:
+        # elif self.predicate != other.predicate:
+        #     return False
+        # elif self.objects != other.objects:
+        #     return False
+        elif self.name != other.name:
             return False
         return True
 

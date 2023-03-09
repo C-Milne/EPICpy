@@ -43,10 +43,10 @@ class DefaultModel(Model):
 
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
-            new_model = DefaultModel(self.current_state.reproduce(),
+            new_model = DefaultModel(self.current_state,
                                      self.search_modifiers, problem, [])
         else:
-            new_model = DefaultModel(self.current_state.reproduce(),
+            new_model = DefaultModel(self.current_state,
                                      search_mods, problem, [])
 
         new_model.waiting_subtasks = [*self.waiting_subtasks]

@@ -2,6 +2,7 @@ import itertools
 import re
 import time
 import os
+import subprocess
 import sys
 from datetime import datetime
 import argparse
@@ -20,6 +21,8 @@ from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue_Oldest_First import NoveltyGBFSOldestFirstQueue
 from Solver.Search_Queues.Novelty_TreeDistance_GBFS_Search_Queue import NoveltyTreeDistanceGBFSSearchQueue
 from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
+from Solver.Search_Queues.search_queue_dual_heuristic_TreeDistance import SearchQueueGBFSDualTreeDistance
+from Solver.Search_Queues.search_queue_dual_heuristic_Landmarks import SearchQueueGBFSDualLandmarks
 from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Heuristics.no_pruning import NoPruning
@@ -28,9 +31,21 @@ from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPr
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Heuristics.landmarks import Landmarks
 from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
+from Solver.Solving_Algorithms.partial_order_novelty_light import PartialOrderNoveltyLightSolver
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
+from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
+from Solver.Models.PandaVerifyModel import PandaVerifyModel
+from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
+
+PANDAVERIFYSUCCESSFULLOUTPUT = "IDs of subtasks used in the plan exist: trueTasks declared in plan actually exist and " \
+                               "can be instantiated as given: trueMethods don't contain duplicate subtasks: " \
+                               "trueMethods don't contain orphaned " \
+                               "tasks: trueMethods can be instantiated: trueOrder induced by methods is present in " \
+                               "plan: truePlan is executable: " \
+                               "truePlan verification result: true"
 
 
 def run_test(domain_file_path, problem_file_path, strategy):
@@ -40,75 +55,227 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     if strategy == 1:
         """Hamming Distance (Seen States)"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Hamming-Distance-seen-states-results.csv'
     elif strategy == 2:
         """Seen States Pruning"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(SeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'seen-state-breadth-first-results.csv'
     elif strategy == 3:
         """Tree Distance (Seen States)"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Tree-Distance-seen-states-results.csv'
     elif strategy == 4:
         """Novelty - Level 1 - Reset to 0 after task or method expansion"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-results.csv'
     elif strategy == 5:
         """Tree Distance"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistance)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Tree-Distance-results.csv'
     elif strategy == 6:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-TreeDis-results.csv'
     elif strategy == 7:
         """Tree Distance (Seen States) - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Tree-Distance-seen-states-newest-first-results.csv'
     elif strategy == 8:
         """Hamming Distance (Seen States) - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Hamming-Distance-seen-states-newest-first-results.csv'
     elif strategy == 9:
         """Tree Distance with Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
     elif strategy == 10:
         """Novelty - Level 1 - No reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        file_name = 'Novelty_Facts_Only_Task-results.csv'
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'Novelty_Facts_Only_Task-results.csv'  # TODO: Rename this
     elif strategy == 11:
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        file_name = 'Novelty_level2_Task-Method-Expand-0-results.csv' # TODO: Rename the file of this when we next push
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'Novelty_level2_Task-Method-Expand-0-results.csv'  # TODO: Rename the file of this when we next push
     elif strategy == 12:
-        """Novelty - Level 1 - Checking for Novel Method as well"""
+        """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Novelty_Facts_Methods-results.csv'
     elif strategy == 13:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'Landmarks-results.csv'
+    elif strategy == 15:
+        """Novelty - Level 1 - Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltySolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Only_reset-HamDis-results.csv'
+    elif strategy == 16:
+        """Novelty - Level 2 - No reset after task or method expansion"""
+        controller.set_solver(PartialOrderNoveltyLevelTwoNoResetSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_level2_no_reset-results.csv'
+    elif strategy == 17:
+        """Novelty - level1 - Checking for Novel Method - Oldest First"""
+        controller.set_solver(PartialOrderNoveltyMethodsSolver)
+        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'Novelty_Facts_Methods_oldest_first-results.csv'
+    elif strategy == 18:
+        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Only_no_reset-TreeDis-results.csv'
+    elif strategy == 19:
+        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Only_no_reset-HamDis-results.csv'
+    elif strategy == 20:
+        """Novelty - Level 1 - Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltySolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
+    elif strategy == 21:
+        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyNoResetSolver)
+        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
+        controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
+    elif strategy == 22:
+        """Landmarks with Hamming Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
+        controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Landmarks-Hamming-Distance-tie-breaker-results.csv'
+    elif strategy == 23:
+        """Landmarks with Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
+        controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Landmarks-Tree-Distance-tie-breaker-results.csv'
+    elif strategy == 24:
+        """Landmarks - Newest First Search Queue"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(GBFSSearchQueueNewestFirst)
+        controller.set_heuristic(Landmarks)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Landmarks-newest-first-results.csv'
+    elif strategy == 25:
+        """Hamming Distance with Tree Distance Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
+        controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
+    elif strategy == 26:
+        """Tree Distance with Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(SearchQueueGBFSDualLandmarks)
+        controller.set_heuristic(TreeDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
+    elif strategy == 27:
+        """Hamming Distance with Landmarks Tie Breaker"""
+        controller.set_solver(PartialOrderNoveltyLightSolver)
+        controller.set_search_queue(SearchQueueGBFSDualLandmarks)
+        controller.set_heuristic(HammingDistanceSeenStatesPruning)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Hamming-Distance-seen-states-landmarks-tie-breaker-results.csv'
+    elif strategy == 28:
+        """Novelty - level1 - Checking for Novel Methods and Tasks"""
+        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'Novelty_Facts_Methods_Tasks-results.csv'
+    elif strategy == 29:
+        """Novelty - level1 - Checking for Novel Methods and Tasks - Oldest First"""
+        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
+        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
+        controller.set_model(PandaVerifyModel)
+        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
@@ -152,8 +319,8 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     # Find percentage of novel states
     if isinstance(controller.solver, PartialOrderNoveltySolver):
-        num_novel_states = controller.solver.search_models.num_novel_states
-        num_not_novel_states = controller.solver.search_models.num_not_novel_states
+        num_novel_states = controller.solver.num_novel_states
+        num_not_novel_states = controller.solver.num_not_novel_states
         percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
     else:
         num_novel_states = 'N/A'
@@ -165,12 +332,30 @@ def run_test(domain_file_path, problem_file_path, strategy):
     else:
         model_elements = 'N/A'
 
+    if res is not None and isinstance(res, PandaVerifyModel) and isinstance(res.progress_tracker,
+                                                                            PandaVerifyFormatTracker) \
+            and sys.platform != "win32":
+        output_file_name = "{}.txt".format(strategy)
+        controller.output_result_file(res, output_file_name)
+        result = subprocess.run(
+            './pandaPIparser -C --verify {} {} output/{}'.format(domain_file_path, problem_file_path, output_file_name),
+            shell=True, capture_output=True, text=True)
+
+        output = ''.join(s for s in str(result.stdout) if 31 < ord(s) < 126)
+
+        if PANDAVERIFYSUCCESSFULLOUTPUT in output:
+            verified = True
+        else:
+            verified = False
+    else:
+        verified = 'N/A'
+
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
                   len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, file_name)
+                  percentage_novel_states, solved, verified, file_name)
 
 
 def calculate_all_possible_facts_and_pairings(domain, problem, model):
@@ -217,29 +402,35 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, file_name):
+                  percentage_novel_states, solved, verified, file_name):
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
     else:
+        if '/' in file_name:
+            target_folder = file_name.split('/')[0]
+            if not os.path.exists(target_folder):
+                os.mkdir(target_folder)
         # If file does not exist make one
         write_file = open(file_name, 'w')
         write_file.write(
             'Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,' +
-            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Solved')
-    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                                       all_possible_facts, actual_facts,
-                                                                       percentage_facts,
-                                                                       total_possible_pairs, total_actual_pairs,
-                                                                       percentage_pairs,
-                                                                       num_novel_states, num_not_novel_states,
-                                                                       percentage_novel_states, solved))
+            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
+    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
+                                                                          all_possible_facts, actual_facts,
+                                                                          percentage_facts,
+                                                                          total_possible_pairs, total_actual_pairs,
+                                                                          percentage_pairs,
+                                                                          num_novel_states, num_not_novel_states,
+                                                                          percentage_novel_states, str(verified),
+                                                                          solved))
     write_file.close()
 
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("strategy", metavar='S', type=int, nargs="?", help='Number corresponding to strategy required',
+    argparser.add_argument("strategy", metavar='S', type=int, nargs="?",
+                           help='Number corresponding to strategy required',
                            default=None)
     args = argparser.parse_args()
     strategy = args.strategy
@@ -249,6 +440,9 @@ if __name__ == "__main__":
 
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl", strategy)
@@ -779,86 +973,86 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
     # Minecraft Player Problems
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-003-003.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-003-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-004-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-005-005-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-004-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-004-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-005-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-006-006-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-007-007-007-007.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-008-008-008-008.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-009-009-009-009.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-010-010-010-010.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-011-011-011-011.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-012-012-012-012.hddl", strategy)
-    run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-013-013-013-013.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-003-003.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-003-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-004-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-005-005-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-004-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-004-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-005-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-006-006-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-007-007-007-007.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-008-008-008-008.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-009-009-009-009.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-010-010-010-010.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-011-011-011-011.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-012-012-012-012.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-013-013-013-013.hddl", strategy)
     # Minecraft Regular Problems
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-003-003-003.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-003-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-004-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-004-004-004.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-004-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-005-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-005-005-005.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-005-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-06.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-07.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-08.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-09.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-10.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-11.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-12.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-13.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-14.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-15.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-16.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-17.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-18.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-19.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-20.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-25.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-30.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-35.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-40.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-45.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-50.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-006-006-006.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-006-007.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-007-007.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-007-007-007.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-007-008.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-008-008.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-008-008-008.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-008-009.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-009-009.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-009-009-009-009.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-10.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-15.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-20.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-25.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-30.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-35.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-40.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-45.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-50.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-009-009-010.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-010-010-010.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-015-015-015-015.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-020-020-020-020.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-025-025-025-025.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-030-030-030-030.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-035-035-035-035.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-040-040-040-040.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-045-045-045-045.hddl", strategy)
-    run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-050-050-050-050.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-003-003-003.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-003-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-004-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-004-004-004.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-004-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-005-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-005-005-005.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-005-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-06.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-07.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-08.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-09.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-10.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-11.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-12.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-13.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-14.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-15.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-16.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-17.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-18.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-19.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-20.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-25.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-30.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-35.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-40.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-45.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-50.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-006-006-006.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-006-007.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-007-007.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-007-007-007.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-007-008.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-008-008.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-008-008-008.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-008-009.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-009-009.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-009-009-009-009.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-10.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-15.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-20.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-25.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-30.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-35.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-40.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-45.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-50.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-009-009-010.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-010-010-010.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-015-015-015-015.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-020-020-020-020.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-025-025-025-025.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-030-030-030-030.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-035-035-035-035.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-040-040-040-040.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-045-045-045-045.hddl", strategy)
+    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-050-050-050-050.hddl", strategy)
     # Monroe Fully Ob Problems
     run_test("../../Examples/Monroe-Fully-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile01.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile02-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile02.hddl", strategy)
@@ -1130,3 +1324,4 @@ if __name__ == "__main__":
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/38.hddl", strategy)
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/39.hddl", strategy)
     run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/40.hddl", strategy)
+    """
