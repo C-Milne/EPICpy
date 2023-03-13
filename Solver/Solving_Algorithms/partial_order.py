@@ -61,18 +61,10 @@ class PartialOrderSolver(Solver):
             return
 
         for subtask_option in subtask.task.subtasks.task_orderings:
-            # with open("Model_Tracking.txt", 'a') as f:
-            #     f.write("Expand Method Reproduce Model: {}\n".format(search_model.model_number))  # TODO: Remove this
-
             search_mod = self.reproduce_model(search_model)
-
-            # with open("Model_Tracking.txt", 'a') as f:
-            #     f.write("Expand Method Model Reproduced: {}\n".format(search_mod.model_number))  # TODO: Remove this
 
             for mod in subtask_option:
                 if mod.task is None:
-                    with open("Model_Tracking.txt", 'a') as f:
-                        f.write("Skipping Subtask Option: {} - {}\n".format(str(subtask), search_mod.model_number))  # TODO: Remove this
                     continue
                 assert type(mod.task) == Action or type(mod.task) == Task
 
@@ -103,17 +95,10 @@ class PartialOrderSolver(Solver):
                 search_mod.insert_modifier(mod, i)
                 i += 1
             search_mod.add_operation(subtask.task, subtask.given_params)
-
-            with open("Model_Tracking.txt", 'a') as f:
-                f.write("Adding model to queue from method: {} - {}\n".format(search_mod.model_number, str(subtask)))  # TODO: Remove this
-
             self._add_model_to_search_queue(search_mod, subtask)
 
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action
-
-        # with open("Model_Tracking.txt", 'a') as f:
-        #     f.write("Expanding Action: {} - {}\n".format(subtask.task.name, search_model.model_number))  # TODO: Remove this
 
         # Check if all the required parameters are given
         comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params) # TODO: An optimisation here that removes the need for this would be good. Check the parameters from parameter selectiors
@@ -178,8 +163,4 @@ class PartialOrderSolver(Solver):
                     raise NotImplementedError
 
         search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-
-        with open("Model_Tracking.txt", 'a') as f:
-            f.write("Adding model to queue from action: {} - {}\n".format(search_model.model_number, str(subtask)))  # TODO: Remove this
-
         self.search_models.add(search_model)
