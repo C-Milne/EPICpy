@@ -1,0 +1,31 @@
+==>
+5 visit waypoint23
+8 navigate rover9 waypoint23 waypoint16
+9 visit waypoint16
+12 navigate rover9 waypoint16 waypoint9
+11 unvisit waypoint16
+7 unvisit waypoint23
+13 nop
+3 sample_soil rover9 rover9store waypoint9
+16 visit waypoint9
+19 navigate rover9 waypoint9 waypoint16
+20 visit waypoint16
+23 navigate rover9 waypoint16 waypoint23
+24 visit waypoint23
+27 navigate rover9 waypoint23 waypoint14
+28 visit waypoint14
+31 navigate rover9 waypoint14 waypoint2
+32 visit waypoint2
+root 0
+0 get_soil_data waypoint9 -> m7_get_soil_data 1 2 3 4
+1 do_navigate1 rover9 waypoint9 -> m1_do_navigate1 5 6 7
+6 do_navigate2 rover9 waypoint23 waypoint9 -> m4_do_navigate2 8 9 10 11
+10 do_navigate2 rover9 waypoint16 waypoint9 -> m3_do_navigate2 12
+2 empty_store rover9store rover9 -> m5_empty_store 13
+4 send_soil_data rover9 waypoint9 -> m8_send_soil_data 14 15
+14 do_navigate1 rover9 waypoint43 -> m1_do_navigate1 16 17 18
+17 do_navigate2 rover9 waypoint9 waypoint43 -> m4_do_navigate2 19 20 21 22
+21 do_navigate2 rover9 waypoint16 waypoint43 -> m4_do_navigate2 23 24 25 26
+25 do_navigate2 rover9 waypoint23 waypoint43 -> m4_do_navigate2 27 28 29 30
+29 do_navigate2 rover9 waypoint14 waypoint43 -> m4_do_navigate2 31 32 33 34
+<==

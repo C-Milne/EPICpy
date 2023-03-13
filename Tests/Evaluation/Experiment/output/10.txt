@@ -1,0 +1,690 @@
+==>
+5 visit waypoint17
+8 navigate rover16 waypoint17 waypoint65
+9 visit waypoint65
+12 navigate rover16 waypoint65 waypoint45
+13 visit waypoint45
+16 navigate rover16 waypoint45 waypoint28
+15 unvisit waypoint45
+11 unvisit waypoint65
+7 unvisit waypoint17
+17 nop
+3 sample_soil rover16 rover16store waypoint28
+20 visit waypoint28
+23 navigate rover16 waypoint28 waypoint45
+24 visit waypoint45
+27 navigate rover16 waypoint45 waypoint65
+28 visit waypoint65
+31 navigate rover16 waypoint65 waypoint6
+30 unvisit waypoint65
+26 unvisit waypoint45
+22 unvisit waypoint28
+19 communicate_soil_data1 rover16 general waypoint28 waypoint6 waypoint33
+37 visit waypoint40
+40 navigate rover1 waypoint40 waypoint7
+41 visit waypoint7
+44 navigate rover1 waypoint7 waypoint49
+43 unvisit waypoint7
+39 unvisit waypoint40
+45 nop
+35 sample_soil rover1 rover1store waypoint49
+48 visit waypoint49
+51 navigate rover1 waypoint49 waypoint6
+50 unvisit waypoint49
+47 communicate_soil_data1 rover1 general waypoint49 waypoint6 waypoint33
+57 visit waypoint6
+60 navigate rover1 waypoint6 waypoint49
+61 visit waypoint49
+64 navigate rover1 waypoint49 waypoint7
+65 visit waypoint7
+68 navigate rover1 waypoint7 waypoint30
+69 visit waypoint30
+72 navigate rover1 waypoint30 waypoint86
+73 visit waypoint86
+76 navigate rover1 waypoint86 waypoint42
+75 unvisit waypoint86
+71 unvisit waypoint30
+67 unvisit waypoint7
+63 unvisit waypoint49
+59 unvisit waypoint6
+77 drop rover1 rover1store
+55 sample_soil rover1 rover1store waypoint42
+80 visit waypoint42
+83 navigate rover1 waypoint42 waypoint86
+84 visit waypoint86
+87 navigate rover1 waypoint86 waypoint30
+88 visit waypoint30
+91 navigate rover1 waypoint30 waypoint7
+92 visit waypoint7
+95 navigate rover1 waypoint7 waypoint49
+96 visit waypoint49
+99 navigate rover1 waypoint49 waypoint6
+98 unvisit waypoint49
+94 unvisit waypoint7
+90 unvisit waypoint30
+86 unvisit waypoint86
+82 unvisit waypoint42
+79 communicate_soil_data1 rover1 general waypoint42 waypoint6 waypoint33
+105 visit waypoint6
+108 navigate rover1 waypoint6 waypoint49
+109 visit waypoint49
+112 navigate rover1 waypoint49 waypoint7
+113 visit waypoint7
+116 navigate rover1 waypoint7 waypoint40
+117 visit waypoint40
+120 navigate rover1 waypoint40 waypoint13
+121 visit waypoint13
+124 navigate rover1 waypoint13 waypoint76
+123 unvisit waypoint13
+119 unvisit waypoint40
+115 unvisit waypoint7
+111 unvisit waypoint49
+107 unvisit waypoint6
+125 drop rover1 rover1store
+103 sample_soil rover1 rover1store waypoint76
+128 visit waypoint76
+131 navigate rover1 waypoint76 waypoint13
+132 visit waypoint13
+135 navigate rover1 waypoint13 waypoint40
+136 visit waypoint40
+139 navigate rover1 waypoint40 waypoint7
+140 visit waypoint7
+143 navigate rover1 waypoint7 waypoint49
+144 visit waypoint49
+147 navigate rover1 waypoint49 waypoint6
+146 unvisit waypoint49
+142 unvisit waypoint7
+138 unvisit waypoint40
+134 unvisit waypoint13
+130 unvisit waypoint76
+127 communicate_soil_data1 rover1 general waypoint76 waypoint6 waypoint33
+153 visit waypoint6
+156 navigate rover1 waypoint6 waypoint49
+157 visit waypoint49
+160 navigate rover1 waypoint49 waypoint7
+161 visit waypoint7
+164 navigate rover1 waypoint7 waypoint40
+165 visit waypoint40
+168 navigate rover1 waypoint40 waypoint61
+169 visit waypoint61
+172 navigate rover1 waypoint61 waypoint47
+173 visit waypoint47
+176 navigate rover1 waypoint47 waypoint51
+175 unvisit waypoint47
+171 unvisit waypoint61
+167 unvisit waypoint40
+163 unvisit waypoint7
+159 unvisit waypoint49
+155 unvisit waypoint6
+177 drop rover1 rover1store
+151 sample_soil rover1 rover1store waypoint51
+180 visit waypoint51
+183 navigate rover1 waypoint51 waypoint47
+184 visit waypoint47
+187 navigate rover1 waypoint47 waypoint61
+188 visit waypoint61
+191 navigate rover1 waypoint61 waypoint40
+192 visit waypoint40
+195 navigate rover1 waypoint40 waypoint7
+196 visit waypoint7
+199 navigate rover1 waypoint7 waypoint49
+200 visit waypoint49
+203 navigate rover1 waypoint49 waypoint6
+202 unvisit waypoint49
+198 unvisit waypoint7
+194 unvisit waypoint40
+190 unvisit waypoint61
+186 unvisit waypoint47
+182 unvisit waypoint51
+179 communicate_soil_data1 rover1 general waypoint51 waypoint6 waypoint33
+209 visit waypoint6
+212 navigate rover1 waypoint6 waypoint49
+213 visit waypoint49
+216 navigate rover1 waypoint49 waypoint7
+217 visit waypoint7
+220 navigate rover1 waypoint7 waypoint30
+219 unvisit waypoint7
+215 unvisit waypoint49
+211 unvisit waypoint6
+221 drop rover1 rover1store
+207 sample_soil rover1 rover1store waypoint30
+224 visit waypoint30
+227 navigate rover1 waypoint30 waypoint7
+228 visit waypoint7
+231 navigate rover1 waypoint7 waypoint49
+232 visit waypoint49
+235 navigate rover1 waypoint49 waypoint6
+234 unvisit waypoint49
+230 unvisit waypoint7
+226 unvisit waypoint30
+223 communicate_soil_data1 rover1 general waypoint30 waypoint6 waypoint33
+241 visit waypoint6
+244 navigate rover1 waypoint6 waypoint49
+245 visit waypoint49
+248 navigate rover1 waypoint49 waypoint7
+249 visit waypoint7
+252 navigate rover1 waypoint7 waypoint17
+253 visit waypoint17
+256 navigate rover1 waypoint17 waypoint64
+257 visit waypoint64
+260 navigate rover1 waypoint64 waypoint81
+259 unvisit waypoint64
+255 unvisit waypoint17
+251 unvisit waypoint7
+247 unvisit waypoint49
+243 unvisit waypoint6
+261 drop rover1 rover1store
+239 sample_soil rover1 rover1store waypoint81
+264 visit waypoint81
+267 navigate rover1 waypoint81 waypoint64
+268 visit waypoint64
+271 navigate rover1 waypoint64 waypoint17
+272 visit waypoint17
+275 navigate rover1 waypoint17 waypoint7
+276 visit waypoint7
+279 navigate rover1 waypoint7 waypoint49
+280 visit waypoint49
+283 navigate rover1 waypoint49 waypoint6
+282 unvisit waypoint49
+278 unvisit waypoint7
+274 unvisit waypoint17
+270 unvisit waypoint64
+266 unvisit waypoint81
+263 communicate_soil_data1 rover1 general waypoint81 waypoint6 waypoint33
+289 visit waypoint6
+292 navigate rover1 waypoint6 waypoint49
+293 visit waypoint49
+296 navigate rover1 waypoint49 waypoint7
+297 visit waypoint7
+300 navigate rover1 waypoint7 waypoint29
+299 unvisit waypoint7
+295 unvisit waypoint49
+291 unvisit waypoint6
+301 drop rover1 rover1store
+287 sample_soil rover1 rover1store waypoint29
+304 visit waypoint29
+307 navigate rover1 waypoint29 waypoint7
+308 visit waypoint7
+311 navigate rover1 waypoint7 waypoint49
+312 visit waypoint49
+315 navigate rover1 waypoint49 waypoint6
+314 unvisit waypoint49
+310 unvisit waypoint7
+306 unvisit waypoint29
+303 communicate_soil_data1 rover1 general waypoint29 waypoint6 waypoint33
+321 visit waypoint6
+324 navigate rover1 waypoint6 waypoint49
+325 visit waypoint49
+328 navigate rover1 waypoint49 waypoint7
+329 visit waypoint7
+332 navigate rover1 waypoint7 waypoint29
+333 visit waypoint29
+336 navigate rover1 waypoint29 waypoint48
+335 unvisit waypoint29
+331 unvisit waypoint7
+327 unvisit waypoint49
+323 unvisit waypoint6
+337 drop rover1 rover1store
+319 sample_soil rover1 rover1store waypoint48
+340 visit waypoint48
+343 navigate rover1 waypoint48 waypoint29
+344 visit waypoint29
+347 navigate rover1 waypoint29 waypoint7
+348 visit waypoint7
+351 navigate rover1 waypoint7 waypoint49
+352 visit waypoint49
+355 navigate rover1 waypoint49 waypoint6
+354 unvisit waypoint49
+350 unvisit waypoint7
+346 unvisit waypoint29
+342 unvisit waypoint48
+339 communicate_soil_data1 rover1 general waypoint48 waypoint6 waypoint33
+361 visit waypoint6
+364 navigate rover1 waypoint6 waypoint49
+365 visit waypoint49
+368 navigate rover1 waypoint49 waypoint7
+369 visit waypoint7
+372 navigate rover1 waypoint7 waypoint29
+373 visit waypoint29
+376 navigate rover1 waypoint29 waypoint46
+375 unvisit waypoint29
+371 unvisit waypoint7
+367 unvisit waypoint49
+363 unvisit waypoint6
+377 drop rover1 rover1store
+359 sample_soil rover1 rover1store waypoint46
+380 visit waypoint46
+383 navigate rover1 waypoint46 waypoint29
+384 visit waypoint29
+387 navigate rover1 waypoint29 waypoint7
+388 visit waypoint7
+391 navigate rover1 waypoint7 waypoint49
+392 visit waypoint49
+395 navigate rover1 waypoint49 waypoint6
+394 unvisit waypoint49
+390 unvisit waypoint7
+386 unvisit waypoint29
+382 unvisit waypoint46
+379 communicate_soil_data1 rover1 general waypoint46 waypoint6 waypoint33
+401 visit waypoint6
+404 navigate rover1 waypoint6 waypoint49
+405 visit waypoint49
+408 navigate rover1 waypoint49 waypoint7
+409 visit waypoint7
+412 navigate rover1 waypoint7 waypoint17
+413 visit waypoint17
+416 navigate rover1 waypoint17 waypoint67
+417 visit waypoint67
+420 navigate rover1 waypoint67 waypoint10
+419 unvisit waypoint67
+415 unvisit waypoint17
+411 unvisit waypoint7
+407 unvisit waypoint49
+403 unvisit waypoint6
+421 drop rover1 rover1store
+399 sample_soil rover1 rover1store waypoint10
+424 visit waypoint10
+427 navigate rover1 waypoint10 waypoint67
+428 visit waypoint67
+431 navigate rover1 waypoint67 waypoint17
+432 visit waypoint17
+435 navigate rover1 waypoint17 waypoint7
+436 visit waypoint7
+439 navigate rover1 waypoint7 waypoint49
+440 visit waypoint49
+443 navigate rover1 waypoint49 waypoint6
+442 unvisit waypoint49
+438 unvisit waypoint7
+434 unvisit waypoint17
+430 unvisit waypoint67
+426 unvisit waypoint10
+423 communicate_soil_data1 rover1 general waypoint10 waypoint6 waypoint33
+449 visit waypoint6
+452 navigate rover1 waypoint6 waypoint49
+453 visit waypoint49
+456 navigate rover1 waypoint49 waypoint7
+457 visit waypoint7
+460 navigate rover1 waypoint7 waypoint30
+461 visit waypoint30
+464 navigate rover1 waypoint30 waypoint86
+463 unvisit waypoint30
+459 unvisit waypoint7
+455 unvisit waypoint49
+451 unvisit waypoint6
+465 drop rover1 rover1store
+447 sample_soil rover1 rover1store waypoint86
+468 visit waypoint86
+471 navigate rover1 waypoint86 waypoint30
+472 visit waypoint30
+475 navigate rover1 waypoint30 waypoint7
+476 visit waypoint7
+479 navigate rover1 waypoint7 waypoint49
+480 visit waypoint49
+483 navigate rover1 waypoint49 waypoint6
+482 unvisit waypoint49
+478 unvisit waypoint7
+474 unvisit waypoint30
+470 unvisit waypoint86
+467 communicate_soil_data1 rover1 general waypoint86 waypoint6 waypoint33
+489 visit waypoint6
+492 navigate rover1 waypoint6 waypoint49
+493 visit waypoint49
+496 navigate rover1 waypoint49 waypoint7
+497 visit waypoint7
+500 navigate rover1 waypoint7 waypoint30
+501 visit waypoint30
+504 navigate rover1 waypoint30 waypoint16
+503 unvisit waypoint30
+499 unvisit waypoint7
+495 unvisit waypoint49
+491 unvisit waypoint6
+505 drop rover1 rover1store
+487 sample_soil rover1 rover1store waypoint16
+508 visit waypoint16
+511 navigate rover1 waypoint16 waypoint30
+512 visit waypoint30
+515 navigate rover1 waypoint30 waypoint7
+516 visit waypoint7
+519 navigate rover1 waypoint7 waypoint49
+520 visit waypoint49
+523 navigate rover1 waypoint49 waypoint6
+522 unvisit waypoint49
+518 unvisit waypoint7
+514 unvisit waypoint30
+510 unvisit waypoint16
+507 communicate_soil_data1 rover1 general waypoint16 waypoint6 waypoint33
+529 visit waypoint6
+532 navigate rover1 waypoint6 waypoint49
+533 visit waypoint49
+536 navigate rover1 waypoint49 waypoint7
+537 visit waypoint7
+540 navigate rover1 waypoint7 waypoint17
+541 visit waypoint17
+544 navigate rover1 waypoint17 waypoint67
+545 visit waypoint67
+548 navigate rover1 waypoint67 waypoint58
+547 unvisit waypoint67
+543 unvisit waypoint17
+539 unvisit waypoint7
+535 unvisit waypoint49
+531 unvisit waypoint6
+549 drop rover1 rover1store
+527 sample_soil rover1 rover1store waypoint58
+552 visit waypoint58
+555 navigate rover1 waypoint58 waypoint67
+556 visit waypoint67
+559 navigate rover1 waypoint67 waypoint17
+560 visit waypoint17
+563 navigate rover1 waypoint17 waypoint7
+564 visit waypoint7
+567 navigate rover1 waypoint7 waypoint49
+568 visit waypoint49
+571 navigate rover1 waypoint49 waypoint6
+570 unvisit waypoint49
+566 unvisit waypoint7
+562 unvisit waypoint17
+558 unvisit waypoint67
+554 unvisit waypoint58
+551 communicate_soil_data1 rover1 general waypoint58 waypoint6 waypoint33
+577 visit waypoint6
+580 navigate rover1 waypoint6 waypoint49
+581 visit waypoint49
+584 navigate rover1 waypoint49 waypoint7
+585 visit waypoint7
+588 navigate rover1 waypoint7 waypoint38
+589 visit waypoint38
+592 navigate rover1 waypoint38 waypoint39
+591 unvisit waypoint38
+587 unvisit waypoint7
+583 unvisit waypoint49
+579 unvisit waypoint6
+593 drop rover1 rover1store
+575 sample_soil rover1 rover1store waypoint39
+596 visit waypoint39
+599 navigate rover1 waypoint39 waypoint38
+600 visit waypoint38
+603 navigate rover1 waypoint38 waypoint7
+604 visit waypoint7
+607 navigate rover1 waypoint7 waypoint49
+608 visit waypoint49
+611 navigate rover1 waypoint49 waypoint6
+610 unvisit waypoint49
+606 unvisit waypoint7
+602 unvisit waypoint38
+598 unvisit waypoint39
+595 communicate_soil_data1 rover1 general waypoint39 waypoint6 waypoint33
+617 visit waypoint6
+620 navigate rover1 waypoint6 waypoint49
+621 visit waypoint49
+624 navigate rover1 waypoint49 waypoint7
+625 visit waypoint7
+628 navigate rover1 waypoint7 waypoint40
+629 visit waypoint40
+632 navigate rover1 waypoint40 waypoint61
+633 visit waypoint61
+636 navigate rover1 waypoint61 waypoint47
+637 visit waypoint47
+640 navigate rover1 waypoint47 waypoint89
+639 unvisit waypoint47
+635 unvisit waypoint61
+631 unvisit waypoint40
+627 unvisit waypoint7
+623 unvisit waypoint49
+619 unvisit waypoint6
+641 drop rover1 rover1store
+615 sample_soil rover1 rover1store waypoint89
+644 visit waypoint89
+647 navigate rover1 waypoint89 waypoint47
+648 visit waypoint47
+651 navigate rover1 waypoint47 waypoint61
+652 visit waypoint61
+655 navigate rover1 waypoint61 waypoint40
+656 visit waypoint40
+659 navigate rover1 waypoint40 waypoint7
+660 visit waypoint7
+663 navigate rover1 waypoint7 waypoint49
+664 visit waypoint49
+667 navigate rover1 waypoint49 waypoint6
+666 unvisit waypoint49
+662 unvisit waypoint7
+658 unvisit waypoint40
+654 unvisit waypoint61
+650 unvisit waypoint47
+646 unvisit waypoint89
+643 communicate_soil_data1 rover1 general waypoint89 waypoint6 waypoint33
+673 visit waypoint6
+676 navigate rover1 waypoint6 waypoint49
+677 visit waypoint49
+680 navigate rover1 waypoint49 waypoint7
+681 visit waypoint7
+684 navigate rover1 waypoint7 waypoint40
+685 visit waypoint40
+688 navigate rover1 waypoint40 waypoint61
+689 visit waypoint61
+692 navigate rover1 waypoint61 waypoint82
+693 visit waypoint82
+root 0 32 52 100 148 204 236 284 316 356 396 444 484 524 572 612 668
+0 get_soil_data waypoint28 -> m7_get_soil_data 1 2 3 4
+1 do_navigate1 rover16 waypoint28 -> m1_do_navigate1 5 6 7
+6 do_navigate2 rover16 waypoint17 waypoint28 -> m4_do_navigate2 8 9 10 11
+10 do_navigate2 rover16 waypoint65 waypoint28 -> m4_do_navigate2 12 13 14 15
+14 do_navigate2 rover16 waypoint45 waypoint28 -> m3_do_navigate2 16
+2 empty_store rover16store rover16 -> m5_empty_store 17
+4 send_soil_data rover16 waypoint28 -> m8_send_soil_data 18 19
+18 do_navigate1 rover16 waypoint6 -> m1_do_navigate1 20 21 22
+21 do_navigate2 rover16 waypoint28 waypoint6 -> m4_do_navigate2 23 24 25 26
+25 do_navigate2 rover16 waypoint45 waypoint6 -> m4_do_navigate2 27 28 29 30
+29 do_navigate2 rover16 waypoint65 waypoint6 -> m3_do_navigate2 31
+32 get_soil_data waypoint49 -> m7_get_soil_data 33 34 35 36
+33 do_navigate1 rover1 waypoint49 -> m1_do_navigate1 37 38 39
+38 do_navigate2 rover1 waypoint40 waypoint49 -> m4_do_navigate2 40 41 42 43
+42 do_navigate2 rover1 waypoint7 waypoint49 -> m3_do_navigate2 44
+34 empty_store rover1store rover1 -> m5_empty_store 45
+36 send_soil_data rover1 waypoint49 -> m8_send_soil_data 46 47
+46 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 48 49 50
+49 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 51
+52 get_soil_data waypoint42 -> m7_get_soil_data 53 54 55 56
+53 do_navigate1 rover1 waypoint42 -> m1_do_navigate1 57 58 59
+58 do_navigate2 rover1 waypoint6 waypoint42 -> m4_do_navigate2 60 61 62 63
+62 do_navigate2 rover1 waypoint49 waypoint42 -> m4_do_navigate2 64 65 66 67
+66 do_navigate2 rover1 waypoint7 waypoint42 -> m4_do_navigate2 68 69 70 71
+70 do_navigate2 rover1 waypoint30 waypoint42 -> m4_do_navigate2 72 73 74 75
+74 do_navigate2 rover1 waypoint86 waypoint42 -> m3_do_navigate2 76
+54 empty_store rover1store rover1 -> m6_empty_store 77
+56 send_soil_data rover1 waypoint42 -> m8_send_soil_data 78 79
+78 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 80 81 82
+81 do_navigate2 rover1 waypoint42 waypoint6 -> m4_do_navigate2 83 84 85 86
+85 do_navigate2 rover1 waypoint86 waypoint6 -> m4_do_navigate2 87 88 89 90
+89 do_navigate2 rover1 waypoint30 waypoint6 -> m4_do_navigate2 91 92 93 94
+93 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 95 96 97 98
+97 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 99
+100 get_soil_data waypoint76 -> m7_get_soil_data 101 102 103 104
+101 do_navigate1 rover1 waypoint76 -> m1_do_navigate1 105 106 107
+106 do_navigate2 rover1 waypoint6 waypoint76 -> m4_do_navigate2 108 109 110 111
+110 do_navigate2 rover1 waypoint49 waypoint76 -> m4_do_navigate2 112 113 114 115
+114 do_navigate2 rover1 waypoint7 waypoint76 -> m4_do_navigate2 116 117 118 119
+118 do_navigate2 rover1 waypoint40 waypoint76 -> m4_do_navigate2 120 121 122 123
+122 do_navigate2 rover1 waypoint13 waypoint76 -> m3_do_navigate2 124
+102 empty_store rover1store rover1 -> m6_empty_store 125
+104 send_soil_data rover1 waypoint76 -> m8_send_soil_data 126 127
+126 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 128 129 130
+129 do_navigate2 rover1 waypoint76 waypoint6 -> m4_do_navigate2 131 132 133 134
+133 do_navigate2 rover1 waypoint13 waypoint6 -> m4_do_navigate2 135 136 137 138
+137 do_navigate2 rover1 waypoint40 waypoint6 -> m4_do_navigate2 139 140 141 142
+141 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 143 144 145 146
+145 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 147
+148 get_soil_data waypoint51 -> m7_get_soil_data 149 150 151 152
+149 do_navigate1 rover1 waypoint51 -> m1_do_navigate1 153 154 155
+154 do_navigate2 rover1 waypoint6 waypoint51 -> m4_do_navigate2 156 157 158 159
+158 do_navigate2 rover1 waypoint49 waypoint51 -> m4_do_navigate2 160 161 162 163
+162 do_navigate2 rover1 waypoint7 waypoint51 -> m4_do_navigate2 164 165 166 167
+166 do_navigate2 rover1 waypoint40 waypoint51 -> m4_do_navigate2 168 169 170 171
+170 do_navigate2 rover1 waypoint61 waypoint51 -> m4_do_navigate2 172 173 174 175
+174 do_navigate2 rover1 waypoint47 waypoint51 -> m3_do_navigate2 176
+150 empty_store rover1store rover1 -> m6_empty_store 177
+152 send_soil_data rover1 waypoint51 -> m8_send_soil_data 178 179
+178 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 180 181 182
+181 do_navigate2 rover1 waypoint51 waypoint6 -> m4_do_navigate2 183 184 185 186
+185 do_navigate2 rover1 waypoint47 waypoint6 -> m4_do_navigate2 187 188 189 190
+189 do_navigate2 rover1 waypoint61 waypoint6 -> m4_do_navigate2 191 192 193 194
+193 do_navigate2 rover1 waypoint40 waypoint6 -> m4_do_navigate2 195 196 197 198
+197 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 199 200 201 202
+201 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 203
+204 get_soil_data waypoint30 -> m7_get_soil_data 205 206 207 208
+205 do_navigate1 rover1 waypoint30 -> m1_do_navigate1 209 210 211
+210 do_navigate2 rover1 waypoint6 waypoint30 -> m4_do_navigate2 212 213 214 215
+214 do_navigate2 rover1 waypoint49 waypoint30 -> m4_do_navigate2 216 217 218 219
+218 do_navigate2 rover1 waypoint7 waypoint30 -> m3_do_navigate2 220
+206 empty_store rover1store rover1 -> m6_empty_store 221
+208 send_soil_data rover1 waypoint30 -> m8_send_soil_data 222 223
+222 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 224 225 226
+225 do_navigate2 rover1 waypoint30 waypoint6 -> m4_do_navigate2 227 228 229 230
+229 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 231 232 233 234
+233 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 235
+236 get_soil_data waypoint81 -> m7_get_soil_data 237 238 239 240
+237 do_navigate1 rover1 waypoint81 -> m1_do_navigate1 241 242 243
+242 do_navigate2 rover1 waypoint6 waypoint81 -> m4_do_navigate2 244 245 246 247
+246 do_navigate2 rover1 waypoint49 waypoint81 -> m4_do_navigate2 248 249 250 251
+250 do_navigate2 rover1 waypoint7 waypoint81 -> m4_do_navigate2 252 253 254 255
+254 do_navigate2 rover1 waypoint17 waypoint81 -> m4_do_navigate2 256 257 258 259
+258 do_navigate2 rover1 waypoint64 waypoint81 -> m3_do_navigate2 260
+238 empty_store rover1store rover1 -> m6_empty_store 261
+240 send_soil_data rover1 waypoint81 -> m8_send_soil_data 262 263
+262 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 264 265 266
+265 do_navigate2 rover1 waypoint81 waypoint6 -> m4_do_navigate2 267 268 269 270
+269 do_navigate2 rover1 waypoint64 waypoint6 -> m4_do_navigate2 271 272 273 274
+273 do_navigate2 rover1 waypoint17 waypoint6 -> m4_do_navigate2 275 276 277 278
+277 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 279 280 281 282
+281 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 283
+284 get_soil_data waypoint29 -> m7_get_soil_data 285 286 287 288
+285 do_navigate1 rover1 waypoint29 -> m1_do_navigate1 289 290 291
+290 do_navigate2 rover1 waypoint6 waypoint29 -> m4_do_navigate2 292 293 294 295
+294 do_navigate2 rover1 waypoint49 waypoint29 -> m4_do_navigate2 296 297 298 299
+298 do_navigate2 rover1 waypoint7 waypoint29 -> m3_do_navigate2 300
+286 empty_store rover1store rover1 -> m6_empty_store 301
+288 send_soil_data rover1 waypoint29 -> m8_send_soil_data 302 303
+302 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 304 305 306
+305 do_navigate2 rover1 waypoint29 waypoint6 -> m4_do_navigate2 307 308 309 310
+309 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 311 312 313 314
+313 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 315
+316 get_soil_data waypoint48 -> m7_get_soil_data 317 318 319 320
+317 do_navigate1 rover1 waypoint48 -> m1_do_navigate1 321 322 323
+322 do_navigate2 rover1 waypoint6 waypoint48 -> m4_do_navigate2 324 325 326 327
+326 do_navigate2 rover1 waypoint49 waypoint48 -> m4_do_navigate2 328 329 330 331
+330 do_navigate2 rover1 waypoint7 waypoint48 -> m4_do_navigate2 332 333 334 335
+334 do_navigate2 rover1 waypoint29 waypoint48 -> m3_do_navigate2 336
+318 empty_store rover1store rover1 -> m6_empty_store 337
+320 send_soil_data rover1 waypoint48 -> m8_send_soil_data 338 339
+338 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 340 341 342
+341 do_navigate2 rover1 waypoint48 waypoint6 -> m4_do_navigate2 343 344 345 346
+345 do_navigate2 rover1 waypoint29 waypoint6 -> m4_do_navigate2 347 348 349 350
+349 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 351 352 353 354
+353 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 355
+356 get_soil_data waypoint46 -> m7_get_soil_data 357 358 359 360
+357 do_navigate1 rover1 waypoint46 -> m1_do_navigate1 361 362 363
+362 do_navigate2 rover1 waypoint6 waypoint46 -> m4_do_navigate2 364 365 366 367
+366 do_navigate2 rover1 waypoint49 waypoint46 -> m4_do_navigate2 368 369 370 371
+370 do_navigate2 rover1 waypoint7 waypoint46 -> m4_do_navigate2 372 373 374 375
+374 do_navigate2 rover1 waypoint29 waypoint46 -> m3_do_navigate2 376
+358 empty_store rover1store rover1 -> m6_empty_store 377
+360 send_soil_data rover1 waypoint46 -> m8_send_soil_data 378 379
+378 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 380 381 382
+381 do_navigate2 rover1 waypoint46 waypoint6 -> m4_do_navigate2 383 384 385 386
+385 do_navigate2 rover1 waypoint29 waypoint6 -> m4_do_navigate2 387 388 389 390
+389 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 391 392 393 394
+393 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 395
+396 get_soil_data waypoint10 -> m7_get_soil_data 397 398 399 400
+397 do_navigate1 rover1 waypoint10 -> m1_do_navigate1 401 402 403
+402 do_navigate2 rover1 waypoint6 waypoint10 -> m4_do_navigate2 404 405 406 407
+406 do_navigate2 rover1 waypoint49 waypoint10 -> m4_do_navigate2 408 409 410 411
+410 do_navigate2 rover1 waypoint7 waypoint10 -> m4_do_navigate2 412 413 414 415
+414 do_navigate2 rover1 waypoint17 waypoint10 -> m4_do_navigate2 416 417 418 419
+418 do_navigate2 rover1 waypoint67 waypoint10 -> m3_do_navigate2 420
+398 empty_store rover1store rover1 -> m6_empty_store 421
+400 send_soil_data rover1 waypoint10 -> m8_send_soil_data 422 423
+422 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 424 425 426
+425 do_navigate2 rover1 waypoint10 waypoint6 -> m4_do_navigate2 427 428 429 430
+429 do_navigate2 rover1 waypoint67 waypoint6 -> m4_do_navigate2 431 432 433 434
+433 do_navigate2 rover1 waypoint17 waypoint6 -> m4_do_navigate2 435 436 437 438
+437 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 439 440 441 442
+441 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 443
+444 get_soil_data waypoint86 -> m7_get_soil_data 445 446 447 448
+445 do_navigate1 rover1 waypoint86 -> m1_do_navigate1 449 450 451
+450 do_navigate2 rover1 waypoint6 waypoint86 -> m4_do_navigate2 452 453 454 455
+454 do_navigate2 rover1 waypoint49 waypoint86 -> m4_do_navigate2 456 457 458 459
+458 do_navigate2 rover1 waypoint7 waypoint86 -> m4_do_navigate2 460 461 462 463
+462 do_navigate2 rover1 waypoint30 waypoint86 -> m3_do_navigate2 464
+446 empty_store rover1store rover1 -> m6_empty_store 465
+448 send_soil_data rover1 waypoint86 -> m8_send_soil_data 466 467
+466 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 468 469 470
+469 do_navigate2 rover1 waypoint86 waypoint6 -> m4_do_navigate2 471 472 473 474
+473 do_navigate2 rover1 waypoint30 waypoint6 -> m4_do_navigate2 475 476 477 478
+477 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 479 480 481 482
+481 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 483
+484 get_soil_data waypoint16 -> m7_get_soil_data 485 486 487 488
+485 do_navigate1 rover1 waypoint16 -> m1_do_navigate1 489 490 491
+490 do_navigate2 rover1 waypoint6 waypoint16 -> m4_do_navigate2 492 493 494 495
+494 do_navigate2 rover1 waypoint49 waypoint16 -> m4_do_navigate2 496 497 498 499
+498 do_navigate2 rover1 waypoint7 waypoint16 -> m4_do_navigate2 500 501 502 503
+502 do_navigate2 rover1 waypoint30 waypoint16 -> m3_do_navigate2 504
+486 empty_store rover1store rover1 -> m6_empty_store 505
+488 send_soil_data rover1 waypoint16 -> m8_send_soil_data 506 507
+506 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 508 509 510
+509 do_navigate2 rover1 waypoint16 waypoint6 -> m4_do_navigate2 511 512 513 514
+513 do_navigate2 rover1 waypoint30 waypoint6 -> m4_do_navigate2 515 516 517 518
+517 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 519 520 521 522
+521 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 523
+524 get_soil_data waypoint58 -> m7_get_soil_data 525 526 527 528
+525 do_navigate1 rover1 waypoint58 -> m1_do_navigate1 529 530 531
+530 do_navigate2 rover1 waypoint6 waypoint58 -> m4_do_navigate2 532 533 534 535
+534 do_navigate2 rover1 waypoint49 waypoint58 -> m4_do_navigate2 536 537 538 539
+538 do_navigate2 rover1 waypoint7 waypoint58 -> m4_do_navigate2 540 541 542 543
+542 do_navigate2 rover1 waypoint17 waypoint58 -> m4_do_navigate2 544 545 546 547
+546 do_navigate2 rover1 waypoint67 waypoint58 -> m3_do_navigate2 548
+526 empty_store rover1store rover1 -> m6_empty_store 549
+528 send_soil_data rover1 waypoint58 -> m8_send_soil_data 550 551
+550 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 552 553 554
+553 do_navigate2 rover1 waypoint58 waypoint6 -> m4_do_navigate2 555 556 557 558
+557 do_navigate2 rover1 waypoint67 waypoint6 -> m4_do_navigate2 559 560 561 562
+561 do_navigate2 rover1 waypoint17 waypoint6 -> m4_do_navigate2 563 564 565 566
+565 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 567 568 569 570
+569 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 571
+572 get_soil_data waypoint39 -> m7_get_soil_data 573 574 575 576
+573 do_navigate1 rover1 waypoint39 -> m1_do_navigate1 577 578 579
+578 do_navigate2 rover1 waypoint6 waypoint39 -> m4_do_navigate2 580 581 582 583
+582 do_navigate2 rover1 waypoint49 waypoint39 -> m4_do_navigate2 584 585 586 587
+586 do_navigate2 rover1 waypoint7 waypoint39 -> m4_do_navigate2 588 589 590 591
+590 do_navigate2 rover1 waypoint38 waypoint39 -> m3_do_navigate2 592
+574 empty_store rover1store rover1 -> m6_empty_store 593
+576 send_soil_data rover1 waypoint39 -> m8_send_soil_data 594 595
+594 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 596 597 598
+597 do_navigate2 rover1 waypoint39 waypoint6 -> m4_do_navigate2 599 600 601 602
+601 do_navigate2 rover1 waypoint38 waypoint6 -> m4_do_navigate2 603 604 605 606
+605 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 607 608 609 610
+609 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 611
+612 get_soil_data waypoint89 -> m7_get_soil_data 613 614 615 616
+613 do_navigate1 rover1 waypoint89 -> m1_do_navigate1 617 618 619
+618 do_navigate2 rover1 waypoint6 waypoint89 -> m4_do_navigate2 620 621 622 623
+622 do_navigate2 rover1 waypoint49 waypoint89 -> m4_do_navigate2 624 625 626 627
+626 do_navigate2 rover1 waypoint7 waypoint89 -> m4_do_navigate2 628 629 630 631
+630 do_navigate2 rover1 waypoint40 waypoint89 -> m4_do_navigate2 632 633 634 635
+634 do_navigate2 rover1 waypoint61 waypoint89 -> m4_do_navigate2 636 637 638 639
+638 do_navigate2 rover1 waypoint47 waypoint89 -> m3_do_navigate2 640
+614 empty_store rover1store rover1 -> m6_empty_store 641
+616 send_soil_data rover1 waypoint89 -> m8_send_soil_data 642 643
+642 do_navigate1 rover1 waypoint6 -> m1_do_navigate1 644 645 646
+645 do_navigate2 rover1 waypoint89 waypoint6 -> m4_do_navigate2 647 648 649 650
+649 do_navigate2 rover1 waypoint47 waypoint6 -> m4_do_navigate2 651 652 653 654
+653 do_navigate2 rover1 waypoint61 waypoint6 -> m4_do_navigate2 655 656 657 658
+657 do_navigate2 rover1 waypoint40 waypoint6 -> m4_do_navigate2 659 660 661 662
+661 do_navigate2 rover1 waypoint7 waypoint6 -> m4_do_navigate2 663 664 665 666
+665 do_navigate2 rover1 waypoint49 waypoint6 -> m3_do_navigate2 667
+668 get_soil_data waypoint20 -> m7_get_soil_data 669 670 671 672
+669 do_navigate1 rover1 waypoint20 -> m1_do_navigate1 673 674 675
+674 do_navigate2 rover1 waypoint6 waypoint20 -> m4_do_navigate2 676 677 678 679
+678 do_navigate2 rover1 waypoint49 waypoint20 -> m4_do_navigate2 680 681 682 683
+682 do_navigate2 rover1 waypoint7 waypoint20 -> m4_do_navigate2 684 685 686 687
+686 do_navigate2 rover1 waypoint40 waypoint20 -> m4_do_navigate2 688 689 690 691
+690 do_navigate2 rover1 waypoint61 waypoint20 -> m4_do_navigate2 692 693 694 695
+694 do_navigate2 rover1 waypoint82 waypoint20 -> None
+<==

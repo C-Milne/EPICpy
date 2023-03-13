@@ -1,0 +1,38 @@
+==>
+5 nop
+6 nop
+3 sample_soil rover1 rover1store waypoint9
+9 visit waypoint9
+12 navigate rover1 waypoint9 waypoint33
+11 unvisit waypoint9
+8 communicate_soil_data1 rover1 general waypoint9 waypoint33 waypoint3
+18 visit waypoint2
+21 navigate rover2 waypoint2 waypoint14
+20 unvisit waypoint2
+22 nop
+16 sample_soil rover2 rover2store waypoint14
+25 visit waypoint14
+28 navigate rover2 waypoint14 waypoint2
+29 visit waypoint2
+32 navigate rover2 waypoint2 waypoint4
+33 visit waypoint4
+36 navigate rover2 waypoint4 waypoint15
+37 visit waypoint15
+root 0 13
+0 get_soil_data waypoint9 -> m7_get_soil_data 1 2 3 4
+1 do_navigate1 rover1 waypoint9 -> m0_do_navigate1 5
+2 empty_store rover1store rover1 -> m5_empty_store 6
+4 send_soil_data rover1 waypoint9 -> m8_send_soil_data 7 8
+7 do_navigate1 rover1 waypoint33 -> m1_do_navigate1 9 10 11
+10 do_navigate2 rover1 waypoint9 waypoint33 -> m3_do_navigate2 12
+13 get_soil_data waypoint14 -> m7_get_soil_data 14 15 16 17
+14 do_navigate1 rover2 waypoint14 -> m1_do_navigate1 18 19 20
+19 do_navigate2 rover2 waypoint2 waypoint14 -> m3_do_navigate2 21
+15 empty_store rover2store rover2 -> m5_empty_store 22
+17 send_soil_data rover2 waypoint14 -> m8_send_soil_data 23 24
+23 do_navigate1 rover2 waypoint31 -> m1_do_navigate1 25 26 27
+26 do_navigate2 rover2 waypoint14 waypoint31 -> m4_do_navigate2 28 29 30 31
+30 do_navigate2 rover2 waypoint2 waypoint31 -> m4_do_navigate2 32 33 34 35
+34 do_navigate2 rover2 waypoint4 waypoint31 -> m4_do_navigate2 36 37 38 39
+38 do_navigate2 rover2 waypoint15 waypoint31 -> None
+<==

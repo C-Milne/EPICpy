@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/scratch/users/u34cm18/EPICpy/Tests/Evaluation/Experiment/./ER4.py", line 90, in <module>
+    run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p29.hddl", strategy)
+  File "/scratch/users/u34cm18/EPICpy/Tests/Evaluation/Experiment/ExperimentRunner.py", line 327, in run_test
+    percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
+ZeroDivisionError: division by zero
