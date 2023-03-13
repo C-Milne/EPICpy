@@ -5,7 +5,6 @@ if __name__ == "__main__":
     strategy = 29
 
     """
-    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -128,6 +127,7 @@ if __name__ == "__main__":
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth15.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth16.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth17.hddl", strategy)
+    """
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth18.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth19.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth20.hddl", strategy)

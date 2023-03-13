@@ -130,7 +130,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSQueue)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_Task-results.csv'
+        file_name = 'results/Novelty_Facts_Only_No-Reset-results.csv'
     elif strategy == 11:
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
@@ -324,7 +324,10 @@ def run_test(domain_file_path, problem_file_path, strategy):
     if isinstance(controller.solver, PartialOrderNoveltySolver):
         num_novel_states = controller.solver.num_novel_states
         num_not_novel_states = controller.solver.num_not_novel_states
-        percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
+        if num_novel_states + num_not_novel_states == 0:
+            percentage_novel_states = 0
+        else:
+            percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
     else:
         num_novel_states = 'N/A'
         num_not_novel_states = 'N/A'
