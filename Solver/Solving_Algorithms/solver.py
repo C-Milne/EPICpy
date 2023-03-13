@@ -121,6 +121,10 @@ class Solver(ABC):
         else:
             search = True
 
+        # TODO: Remove this
+        write_file = open("Model_Tracking.txt", 'w')
+        write_file.close()
+
         if search != False:
             return self._search()
 
