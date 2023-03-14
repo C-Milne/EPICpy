@@ -112,20 +112,20 @@ class OrNode(Node):
 
 class LeafNodes:
     def __init__(self, tree):
-        self.leaf_nodes = set()
-        self.leaf_node_names = set()
-        self.leaf_nodes_recalc = set()
-        self.leaf_node_recalc_names = set()
+        self.leaf_nodes = []    # This is the nodes to be calculated
+        self.leaf_node_names = set()    # Set of names of nodes in self.leaf_nodes
+        self.leaf_nodes_recalc = []     # This is the nodes to be recalculated
+        self.leaf_node_recalc_names = set()     # Set of names of nodes in self.leaf_nodes_recalc
         self.tree = tree
 
     def add_leaf_node(self, node, upwards_recur_seen: set = set()):
         node.upwards_recur_seen = node.upwards_recur_seen.union(upwards_recur_seen)
         if node.name not in self.leaf_node_names and node.name not in self.leaf_node_recalc_names:
             if node.landmarks_calculated:
-                self.leaf_nodes_recalc.add(node)
+                self.leaf_nodes_recalc.append(node)
                 self.leaf_node_recalc_names.add(node.name)
             else:
-                self.leaf_nodes.add(node)
+                self.leaf_nodes.append(node)
                 self.leaf_node_names.add(node.name)
 
     def pop_leaf_node(self):
@@ -201,9 +201,16 @@ class Landmarks(SeenStatesPruning):
         super().__init__(domain, problem, solver, search_models)
         self.tree = AndOrTree()
         self.reachability = None
+        self.method_reachability = None
         self.alt_problem = None
         self.alt_domain = None
         self.allParameters = AllParameters(self.solver)
+
+        # TODO: Remove this
+        write_file = open("Landmark_Tracking.txt", 'w')
+        write_file.close()
+        write_file = open("Landmark_Result.txt", 'w')
+        write_file.close()
 
     def _inner_ranking(self, model):
         missing_landmarks = 0
@@ -232,11 +239,17 @@ class Landmarks(SeenStatesPruning):
         self._extract_landmarks()
         print('Number of Landmarks Found: {}'.format(len(root_node.landmarks)))
 
+        with open("Landmark_Result.txt", 'a') as f:
+            landmark_list = list(root_node.landmarks)
+            for i in sorted(landmark_list):
+                f.write("{}\n".format(str(i)))  # TODO: Remove this
+
     def calculate_reachability(self, initial_model):
         delete_relaxed = DeleteRelaxed(self.domain, self.problem, self.solver, self.search_models)
         delete_relaxed.presolving_processing()
         goal_distance_estimate, self.reachability = delete_relaxed.ranking(initial_model, returnAltState=True)
         self.alt_problem, self.alt_domain = delete_relaxed.alt_problem, delete_relaxed.alt_domain
+        self.method_reachability = delete_relaxed._found_methods
 
     def _extract_landmarks(self):
         """Recursive strategy where we begin by calculating the landmarks for the children of the root
@@ -257,14 +270,21 @@ class Landmarks(SeenStatesPruning):
 
         # Iterate until no nodes can have landmarks calculated
         while self.tree.leaf_nodes:
+            # Get a node that needs landmarks calculated
             leaf_node, leaf_node_upwards_recur_set = self.tree.leaf_nodes.pop_leaf_node()
             leaf_node_upwards_recur_set = leaf_node_upwards_recur_set.union({leaf_node.name})
             already_seen_node = leaf_node.landmarks_calculated
+
+            with open("Landmark_Tracking.txt", 'a') as f:
+                f.write("Calculating landmarks for: {} - {} - {}\n".format(leaf_node.name, str(leaf_node_upwards_recur_set), already_seen_node))  # TODO: Remove this
+
             leaf_node.calculate_landmarks()
 
+            # Remove from non_calculated set - TODO: Remove this
             if leaf_node in non_calculated_nodes:
                 non_calculated_nodes.remove(leaf_node)
 
+            # Calculate / Recalculate children
             for r in leaf_node.required_by + leaf_node.provides:
                 if type(r) == OrNode:
                     if any([x.landmarks_calculated for x in r.requires]) and r.get_child_landmark_calculated_num() > \
@@ -280,6 +300,7 @@ class Landmarks(SeenStatesPruning):
                             r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
                         self.tree.leaf_nodes.add_leaf_node(r)
 
+            # If this is not the first time calculating the landmarks for this node we need to update nodes upwards in the tree
             if already_seen_node:
                 for r in leaf_node.required_by:
                     if r.landmarks_calculated and r.name not in leaf_node_upwards_recur_set:
@@ -347,11 +368,8 @@ class Landmarks(SeenStatesPruning):
                 subtask_name = method.name
                 for p in param_option:
                     subtask_name += "-" + param_option[p].name
-                option_problem_pred_object = self.alt_problem.get_object(subtask_name)
-                if option_problem_pred_object is None:
-                    continue
-                option_problem_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [option_problem_pred_object])
-                if option_problem_pred in self.reachability:
+
+                if subtask_name in self.method_reachability:
                     subT = Subtask(method, method.parameters)
                     subT.add_given_parameters(param_option)
                     self._add_to_node(subT, node)
