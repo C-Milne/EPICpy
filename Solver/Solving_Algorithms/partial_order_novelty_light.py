@@ -16,8 +16,12 @@ class PartialOrderNoveltyLightSolver(PartialOrderNoveltySolver, Solver):
 
     def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
+        # with open("Model_Tracking.txt", 'a') as f:
+        #     f.write("Adding model to queue after method or task: {}\n".format(model.model_number))  # TODO: Remove this
         self.search_models.add(model)
 
     def _add_model_to_search_queue_action(self, model, novelty):
         """Add model to search queue after expanding an action"""
+        # with open("Model_Tracking.txt", 'a') as f:
+        #     f.write("Adding model to queue after action: {}\n".format(model.model_number))  # TODO: Remove this
         self.search_models.add(model)

@@ -18,6 +18,12 @@ class PandaVerifyModel(Model):
         super().__init__(state, search_modifiers, problem, waiting_subtasks, **kwargs)
         self.id_counter = 0
         self.progress_tracker = PandaVerifyFormatTracker()
+
+        if 'vanilla_search_modifiers' in kwargs:
+            self.vanilla_search_modifiers = kwargs['vanilla_search_modifiers']
+        else:
+            self.vanilla_search_modifiers = [*search_modifiers]
+
         if not all([type(x) == self.PandaVerifyTaskNetworkNode for x in self.search_modifiers]):
             i = 0
             while i < len(self.search_modifiers):
@@ -30,6 +36,7 @@ class PandaVerifyModel(Model):
     def insert_modifier(self, modifier, index=0):
         """This method add modifiers to the task network (search_modifiers)"""
         self.search_modifiers.insert(index, self.PandaVerifyTaskNetworkNode(modifier, self.id_counter))
+        self.vanilla_search_modifiers.insert(index, modifier)
 
         if type(modifier.task) == Action:
             # We need to add the action to the progress tracker no, or else we wont be able to determine which method added it to the task network
@@ -55,15 +62,19 @@ class PandaVerifyModel(Model):
 
     def get_next_modifier(self):
         next_mod = self.search_modifiers.pop(0)
+        self.vanilla_search_modifiers.pop(0)
         self.last_dispense = next_mod
         return next_mod.subtask
 
     def get_names_of_task_network_modifiers(self):
-        return [x.subtask.task.name for x in self.search_modifiers]
+        # return [x.subtask.task.name for x in self.search_modifiers]
+        return [x.task.name for x in self.vanilla_search_modifiers]
 
     def promote_waiting_subtask(self):
         if len(self.search_modifiers) == 0 and len(self.waiting_subtasks) > 0:
-            self.search_modifiers.append(self.PandaVerifyTaskNetworkNode(self.waiting_subtasks.pop(0), self.id_counter))
+            waiting_subtask = self.waiting_subtasks.pop(0)
+            self.search_modifiers.append(self.PandaVerifyTaskNetworkNode(waiting_subtask, self.id_counter))
+            self.vanilla_search_modifiers.append(waiting_subtask)
             self.id_counter += 1
 
     def get_search_modifier(self, index: int):
@@ -72,10 +83,10 @@ class PandaVerifyModel(Model):
     def reproduce(self, problem, search_mods=None):
         if search_mods is None:
             new_model = PandaVerifyModel(self.current_state.reproduce(),
-                                         self.search_modifiers, problem, [])
+                                         self.search_modifiers, problem, [], vanilla_search_modifiers=[*self.vanilla_search_modifiers])
         else:
             new_model = PandaVerifyModel(self.current_state.reproduce(),
-                                         search_mods, problem, [])
+                                         search_mods, problem, [], vanilla_search_modifiers=self._clean_search_modifiers(search_mods))
 
         new_model.waiting_subtasks = [*self.waiting_subtasks]
 
@@ -83,6 +94,7 @@ class PandaVerifyModel(Model):
         new_model.set_last_dispense(self.last_dispense)
         new_model.set_counter(self.id_counter)
         new_model.ranking = self.ranking
+        new_model.set_parent_model_number(self.model_number)
         return new_model
 
     def set_counter(self, i):
@@ -90,3 +102,15 @@ class PandaVerifyModel(Model):
 
     def set_last_dispense(self, node: PandaVerifyTaskNetworkNode):
         self.last_dispense = node
+
+    def get_task_network(self):
+        return self.vanilla_search_modifiers + self.waiting_subtasks
+
+    def _clean_search_modifiers(self, search_mods):
+        clean_mods = []
+        for m in search_mods:
+            if type(m) == self.PandaVerifyTaskNetworkNode:
+                clean_mods.append(m.subtask)
+            else:
+                clean_mods.append(m)
+        return clean_mods

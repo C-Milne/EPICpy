@@ -30,7 +30,6 @@ class DefaultModel(Model):
         op = ActionTracker(mod, parameters_used, root)
         self.progress_tracker.add_operation(op)
 
-
     def promote_waiting_subtask(self):
         if len(self.search_modifiers) == 0 and len(self.waiting_subtasks) > 0:
             self.search_modifiers.append(self.waiting_subtasks.pop(0))
@@ -53,4 +52,5 @@ class DefaultModel(Model):
 
         new_model.set_progress_tracker(self.get_progress_tracker().reproduce())
         new_model.ranking = self.ranking
+        new_model.set_parent_model_number(self.model_number)
         return new_model

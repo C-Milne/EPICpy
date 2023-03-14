@@ -3,7 +3,7 @@
 #SBATCH --job-name=ExperimentRunner4
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
-#SBATCH -o slrums/slurm.%j.out
+#SBATCH -o slurms/slurm.%j.out
 #SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
 #SBATCH --time=170:00:00

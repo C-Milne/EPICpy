@@ -1,3 +1,4 @@
+import os   # TODO: Remove this
 from Solver.Search_Queues.search_queue import SearchQueue
 from Solver.Heuristics.hamming_distance import HammingDistance
 
@@ -10,6 +11,7 @@ class SearchQueueGBFSDualHammingDistance(SearchQueue):
         assert 'solver' in kwargs
         self.HammingDistance = HammingDistance(kwargs['domain'], kwargs['problem'], kwargs['solver'], self)
         self.hamming_setup = False
+        self.last_added_model_num = -1  # TODO: Remove this
 
     def _add_model(self, model):
         if not self.hamming_setup:
@@ -25,9 +27,12 @@ class SearchQueueGBFSDualHammingDistance(SearchQueue):
         ranking = self._calc_ranking(model, res)
         model.set_ranking(ranking)
         model.set_secondary_ranking(hamming_ranking)
+        model.set_queue_location(self._total_added_models)
 
         self._Q.put(model)
         self._queue_size += 1
+        self._total_added_models += 1
+        self.last_added_model_num = model.model_number  # TODO: Remove this
 
     def _calc_ranking(self, model, heuristic_estimate):
         return heuristic_estimate

@@ -60,7 +60,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Hamming-Distance-seen-states-results.csv'
+        file_name = 'results/Hamming-Distance-seen-states-results.csv'
     elif strategy == 2:
         """Seen States Pruning"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -68,7 +68,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(SeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'seen-state-breadth-first-results.csv'
+        file_name = 'results/seen-state-breadth-first-results.csv'
     elif strategy == 3:
         """Tree Distance (Seen States)"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -76,14 +76,14 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Tree-Distance-seen-states-results.csv'
+        file_name = 'results/Tree-Distance-seen-states-results.csv'
     elif strategy == 4:
         """Novelty - Level 1 - Reset to 0 after task or method expansion"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-results.csv'
+        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-results.csv'
     elif strategy == 5:
         """Tree Distance"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -91,7 +91,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistance)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Tree-Distance-results.csv'
+        file_name = 'results/Tree-Distance-results.csv'
     elif strategy == 6:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
@@ -99,7 +99,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-TreeDis-results.csv'
+        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-TreeDis-results.csv'
     elif strategy == 7:
         """Tree Distance (Seen States) - Newest First Search Queue"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -107,7 +107,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Tree-Distance-seen-states-newest-first-results.csv'
+        file_name = 'results/Tree-Distance-seen-states-newest-first-results.csv'
     elif strategy == 8:
         """Hamming Distance (Seen States) - Newest First Search Queue"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -115,7 +115,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Hamming-Distance-seen-states-newest-first-results.csv'
+        file_name = 'results/Hamming-Distance-seen-states-newest-first-results.csv'
     elif strategy == 9:
         """Tree Distance with Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -123,35 +123,35 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
+        file_name = 'results/Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
     elif strategy == 10:
         """Novelty - Level 1 - No reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Only_Task-results.csv'  # TODO: Rename this
+        file_name = 'results/Novelty_Facts_Only_Task-results.csv'
     elif strategy == 11:
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_level2_Task-Method-Expand-0-results.csv'  # TODO: Rename the file of this when we next push
+        file_name = 'results/Novelty_level2_Task-Method-Expand-0-results.csv'
     elif strategy == 12:
         """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Methods-results.csv'
+        file_name = 'results/Novelty_Facts_Methods-results.csv'
     elif strategy == 13:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
+        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -159,7 +159,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(Landmarks)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Landmarks-results.csv'
+        file_name = 'results/Landmarks-results.csv'
     elif strategy == 15:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
@@ -181,7 +181,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Methods_oldest_first-results.csv'
+        file_name = 'results/Novelty_Facts_Methods_oldest_first-results.csv'
     elif strategy == 18:
         """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
@@ -237,7 +237,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(Landmarks)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Landmarks-newest-first-results.csv'
+        file_name = 'results/results/Landmarks-newest-first-results.csv'
     elif strategy == 25:
         """Hamming Distance with Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -253,7 +253,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
+        file_name = 'results/results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
     elif strategy == 27:
         """Hamming Distance with Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -268,14 +268,14 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Methods_Tasks-results.csv'
+        file_name = 'results/Novelty_Facts_Methods_Tasks-results.csv'
     elif strategy == 29:
         """Novelty - level1 - Checking for Novel Methods and Tasks - Oldest First"""
         controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
         controller.set_model(PandaVerifyModel)
         controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
+        file_name = 'results/Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
@@ -284,15 +284,18 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     # Start Search
     print(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    setup_start_time = time.time()
     controller.solver.solve(search=False)
+    setup_end_time = time.time()
+    setup_time = time.time()
     num_expansions = 0
     res = None
-    start_time = time.time()
-    while time.time() - start_time < 1800 and not res:  # while time.time() - start_time < 305
+    solve_start_time = time.time()
+    while time.time() - solve_start_time < 1800 and not res:  # while time.time() - start_time < 305
         res = controller.solver._search(True)
         num_expansions += 1
-    end_time = time.time()
-    solve_time = end_time - start_time
+    solve_end_time = time.time()
+    solve_time = solve_end_time - solve_start_time
 
     solved = True
     if not res:
@@ -352,7 +355,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
-    write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time,
+    write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time, setup_time,
                   len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
                   percentage_novel_states, solved, verified, file_name)
@@ -400,7 +403,8 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
     return possible_facts, total_possible_pairs, total_actual_pairs
 
 
-def write_to_file(problem_name, number_expansions, solve_time, all_possible_facts, actual_facts, percentage_facts,
+def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_possible_facts, actual_facts,
+                  percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
                   percentage_novel_states, solved, verified, file_name):
     if os.path.exists(file_name):
@@ -414,16 +418,17 @@ def write_to_file(problem_name, number_expansions, solve_time, all_possible_fact
         # If file does not exist make one
         write_file = open(file_name, 'w')
         write_file.write(
-            'Problem,number expansions,solve time,all_facts,actual_facts,percentage facts,possible_pairs,' +
-            'actual_pairs,percentage pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
-    write_file.write("\n{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                                          all_possible_facts, actual_facts,
-                                                                          percentage_facts,
-                                                                          total_possible_pairs, total_actual_pairs,
-                                                                          percentage_pairs,
-                                                                          num_novel_states, num_not_novel_states,
-                                                                          percentage_novel_states, str(verified),
-                                                                          solved))
+            'Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,' +
+            'actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
+    write_file.write(
+        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
+                                                                setup_time, all_possible_facts, actual_facts,
+                                                                percentage_facts,
+                                                                total_possible_pairs, total_actual_pairs,
+                                                                percentage_pairs,
+                                                                num_novel_states, num_not_novel_states,
+                                                                percentage_novel_states, str(verified),
+                                                                solved))
     write_file.close()
 
 
