@@ -40,7 +40,7 @@ class RunnerTests(unittest.TestCase):
                  [-searchQueuePath SEARCHQUEUEPATH]\r
                  [-progressTrackerName PROGRESSTRACKERNAME]\r
                  [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [-modelModName MODELMODNAME] [-modelPath MODELPATH]\r
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]\r
                  [D] [P]\r
 runner.py: error: Incorrect Usage."""
 
@@ -157,7 +157,7 @@ Search Models Created During Search: 3
                  [-searchQueuePath SEARCHQUEUEPATH]
                  [-progressTrackerName PROGRESSTRACKERNAME]
                  [-progressTrackerPath PROGRESSTRACKERPATH]
-                 [-modelModName MODELMODNAME] [-modelPath MODELPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
                  [D] [P]
 
 positional arguments:
@@ -189,6 +189,7 @@ optional arguments:
   -modelModName MODELMODNAME
                         Name of Model Class
   -modelPath MODELPATH  File path to Model File
+  -O                    Flag to disable printing resulting plan
 """, output)
 
     def test_runner_command_line_heupath_or_heuname_only(self):
