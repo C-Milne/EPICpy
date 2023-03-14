@@ -14,8 +14,10 @@ from Internal_Representation.conditions import PredicateCondition
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.subtasks import Subtask
 from Solver.Models.default_model import DefaultModel
+from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from Solver.Models.model import Model
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
+from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Internal_Representation.state import State
 
 
@@ -362,6 +364,62 @@ class HeuristicTests(unittest.TestCase):
 
         # Add model to search queue
         model1, model2 = models
+        solver.search_models.heuristic.ranking(model1)
+        solver.search_models.heuristic.ranking(model2)
+        seen_states = list(solver.search_models.heuristic._seen_states)
+        self.assertEqual(1, len(seen_states))
+
+    def test_seen_states_pruning_panda_verify(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.rover_path + "domain.hddl")
+        parser.parse_problem(self.rover_path + "p01.hddl")
+        solver.set_heuristic(SeenStatesPruning)
+
+        state1 = State()
+        state1.add_element(ProblemPredicate(domain.get_predicate('at'),
+                                            [problem.get_object('rover0'), problem.get_object('waypoint0')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'),
+                                            [problem.get_object('objective0'), problem.get_object('waypoint0')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'),
+                                            [problem.get_object('objective0'), problem.get_object('waypoint1')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'),
+                                            [problem.get_object('objective0'), problem.get_object('waypoint2')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('visible_from'),
+                                            [problem.get_object('objective0'), problem.get_object('waypoint3')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'),
+                                            [problem.get_object('rover0'), problem.get_object('waypoint0'),
+                                             problem.get_object('waypoint1')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'),
+                                            [problem.get_object('rover0'), problem.get_object('waypoint0'),
+                                             problem.get_object('waypoint3')]))
+        state1.add_element(ProblemPredicate(domain.get_predicate('can_traverse'),
+                                            [problem.get_object('rover0'), problem.get_object('waypoint2'),
+                                             problem.get_object('waypoint3')]))
+
+        search_modifiers1 = []
+        search_modifiers2 = []
+        waiting_subtasks1 = []
+        task = domain.get_task('do_calibrate')
+        subt = Subtask(task, task.get_parameters())
+        subt_given_params = {'?x': problem.get_object('rover0'), '?c': problem.get_object('camera0')}
+        subt.add_given_parameters(subt_given_params)
+        search_modifiers1.append(subt)
+        search_modifiers2.append(subt)
+
+        task = domain.get_task('get_rock_data')
+        subt = Subtask(task, task.get_parameters())
+        subt_given_params = {'?from': problem.get_object('waypoint1')}
+        subt.add_given_parameters(subt_given_params)
+        search_modifiers1.append(subt)
+        search_modifiers2.append(subt)
+
+        subt = Subtask(task, task.get_parameters())
+        subt_given_params = {'?from': problem.get_object('waypoint2')}
+        subt.add_given_parameters(subt_given_params)
+        waiting_subtasks1.append(subt)
+
+        model1 = PandaVerifyModel(state1, search_modifiers1, problem, waiting_subtasks1, progress_tracker_class=PandaVerifyFormatTracker)
+        model2 = PandaVerifyModel(state1, search_modifiers2, problem, waiting_subtasks1, progress_tracker_class=PandaVerifyFormatTracker)
         solver.search_models.heuristic.ranking(model1)
         solver.search_models.heuristic.ranking(model2)
         seen_states = list(solver.search_models.heuristic._seen_states)

@@ -138,6 +138,7 @@ class Solver(ABC):
 
             # Check what needs to be done to this model
             next_modifier = search_model.get_next_modifier()
+            # print("Expanding: {} - {}".format(next_modifier.task.name, [x.name for x in next_modifier.given_params.values()]))   # TODO: Remove this
             assert type(next_modifier) == Subtask
 
             if type(next_modifier.task) == Task:
