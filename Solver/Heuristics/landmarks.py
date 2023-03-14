@@ -18,18 +18,24 @@ class Node:
         self._already_seen = set()
         self.previous_landmark_calculate_positives = 0
         self.upwards_recur_seen = set()
+        self.child_list_hash = None
 
     def add_to_requires(self, task_node):
-        self.requires.append(task_node)
+        if task_node not in self.requires:
+            self.requires.append(task_node)
 
     def add_to_required_by(self, node):
-        self.required_by.append(node)
+        # Check that the node is not already in the required by list
+        if node not in self.required_by:
+            self.required_by.append(node)
 
     def add_to_provides(self, node):
-        self.provides.append(node)
+        if node not in self.provides:
+            self.provides.append(node)
 
     def add_to_provided_by(self, node):
-        self.provided_by.append(node)
+        if node not in self.provided_by:
+            self.provided_by.append(node)
 
     def calculate_landmarks(self):
         raise NotImplementedError
@@ -48,6 +54,15 @@ class Node:
 
     def get_child_landmark_calculated_num(self):
         raise NotImplementedError
+
+    def hash_child_list(self):
+        return hash(frozenset([hash(x) for x in self.required_by]))
+
+    def __hash__(self):
+        return hash(frozenset(self.landmarks))
+
+    def __str__(self):
+        return self.name
 
 
 class AndNode(Node):
@@ -68,6 +83,7 @@ class AndNode(Node):
             self.landmarks = self.landmarks.union(*[s.landmarks for s in self.provided_by])
         self.landmarks_calculated = True
         self.previous_landmark_calculate_positives = self.get_child_landmark_calculated_num()
+        self.child_list_hash = self.hash_child_list()
 
     def set_landmarks_initial_fact(self):
         assert self.name.startswith('FACT--')
@@ -100,11 +116,12 @@ class OrNode(Node):
 
         if len(self.requires) > 1:
             self.landmarks = self.requires[0].landmarks.intersection(*[s.landmarks for s in self.requires[1:] if s.landmarks_calculated])
-        elif len(self.landmarks) > 0:
+        elif len(self.requires) > 0:
             self.landmarks = self.requires[0].landmarks
         self.landmarks = self.landmarks.union({self.name})
         self.landmarks_calculated = True
         self.previous_landmark_calculate_positives = self.get_child_landmark_calculated_num()
+        self.child_list_hash = self.hash_child_list()
 
     def get_child_landmark_calculated_num(self):
         return sum([r.landmarks_calculated for r in self.requires])
@@ -118,9 +135,14 @@ class LeafNodes:
         self.leaf_node_recalc_names = set()     # Set of names of nodes in self.leaf_nodes_recalc
         self.tree = tree
 
-    def add_leaf_node(self, node, upwards_recur_seen: set = set()):
+    def add_leaf_node(self, node, upwards_recur_seen: set = set(), **kwargs):
         node.upwards_recur_seen = node.upwards_recur_seen.union(upwards_recur_seen)
-        if node.name not in self.leaf_node_names and node.name not in self.leaf_node_recalc_names:
+        if 'priority' in kwargs and kwargs['priority']:
+            # Remove the node from both lists
+            self.remove_leaf_node(node)
+            self.leaf_nodes_recalc.insert(0, node)
+            self.leaf_node_recalc_names.add(node.name)
+        elif node.name not in self.leaf_node_names and node.name not in self.leaf_node_recalc_names:
             if node.landmarks_calculated:
                 self.leaf_nodes_recalc.append(node)
                 self.leaf_node_recalc_names.add(node.name)
@@ -143,8 +165,12 @@ class LeafNodes:
     def remove_leaf_node(self, node):
         if type(node) == str:
             node = self.tree.get_existing_node(node)
-        self.leaf_nodes.remove(node)
-        self.leaf_node_names.remove(node.name)
+        if node.name in self.leaf_node_names:
+            self.leaf_nodes.remove(node)
+            self.leaf_node_names.remove(node.name)
+        if node.name in self.leaf_node_recalc_names:
+            self.leaf_nodes_recalc.remove(node)
+            self.leaf_node_recalc_names.remove(node.name)
 
     def __contains__(self, item):
         if isinstance(item, Node):
@@ -206,12 +232,6 @@ class Landmarks(SeenStatesPruning):
         self.alt_domain = None
         self.allParameters = AllParameters(self.solver)
 
-        # TODO: Remove this
-        write_file = open("Landmark_Tracking.txt", 'w')
-        write_file.close()
-        write_file = open("Landmark_Result.txt", 'w')
-        write_file.close()
-
     def _inner_ranking(self, model):
         missing_landmarks = 0
         for l in self.tree.root.landmarks:
@@ -237,12 +257,7 @@ class Landmarks(SeenStatesPruning):
             self._add_to_node(i, root_node)
         # Landmark extraction from tree
         self._extract_landmarks()
-        print('Number of Landmarks Found: {}'.format(len(root_node.landmarks)))
-
-        with open("Landmark_Result.txt", 'a') as f:
-            landmark_list = list(root_node.landmarks)
-            for i in sorted(landmark_list):
-                f.write("{}\n".format(str(i)))  # TODO: Remove this
+        # print('Number of Landmarks Found: {}'.format(len(root_node.landmarks)))
 
     def calculate_reachability(self, initial_model):
         delete_relaxed = DeleteRelaxed(self.domain, self.problem, self.solver, self.search_models)
@@ -272,11 +287,8 @@ class Landmarks(SeenStatesPruning):
         while self.tree.leaf_nodes:
             # Get a node that needs landmarks calculated
             leaf_node, leaf_node_upwards_recur_set = self.tree.leaf_nodes.pop_leaf_node()
-            leaf_node_upwards_recur_set = leaf_node_upwards_recur_set.union({leaf_node.name})
+            leaf_node_upwards_recur_set.add(leaf_node.name)
             already_seen_node = leaf_node.landmarks_calculated
-
-            with open("Landmark_Tracking.txt", 'a') as f:
-                f.write("Calculating landmarks for: {} - {} - {}\n".format(leaf_node.name, str(leaf_node_upwards_recur_set), already_seen_node))  # TODO: Remove this
 
             leaf_node.calculate_landmarks()
 
@@ -284,27 +296,35 @@ class Landmarks(SeenStatesPruning):
             if leaf_node in non_calculated_nodes:
                 non_calculated_nodes.remove(leaf_node)
 
-            # Calculate / Recalculate children
+            # Calculate / Recalculate upwards nodes
             for r in leaf_node.required_by + leaf_node.provides:
                 if type(r) == OrNode:
-                    if any([x.landmarks_calculated for x in r.requires]) and r.get_child_landmark_calculated_num() > \
-                            r.previous_landmark_calculate_positives:
+                    # if any([x.landmarks_calculated for x in r.requires]) and r.get_child_landmark_calculated_num() > \
+                    #         r.previous_landmark_calculate_positives:
+                    if any([x.landmarks_calculated for x in r.requires]) and \
+                            (r.hash_child_list() != r.child_list_hash or r.child_list_hash is None):
                         self.tree.leaf_nodes.add_leaf_node(r)
                 elif type(r) == FactNode:
-                    if any([x.landmarks_calculated for x in r.provided_by]) and \
-                            r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
+                    # if any([x.landmarks_calculated for x in r.provided_by]) and \
+                    #         r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
+                    if any([x.landmarks_calculated for x in r.provided_by]) and (r.hash_child_list() != r.child_list_hash or r.child_list_hash is None):
                         self.tree.leaf_nodes.add_leaf_node(r)
                 elif type(r) == AndNode:
+                    # if all([x.landmarks_calculated for x in r.requires]) and \
+                    #         all([x.landmarks_calculated for x in r.provided_by]) and \
+                    #         r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
                     if all([x.landmarks_calculated for x in r.requires]) and \
                             all([x.landmarks_calculated for x in r.provided_by]) and \
-                            r.get_child_landmark_calculated_num() > r.previous_landmark_calculate_positives:
+                            (r.hash_child_list() != r.child_list_hash or r.child_list_hash is None):
                         self.tree.leaf_nodes.add_leaf_node(r)
 
             # If this is not the first time calculating the landmarks for this node we need to update nodes upwards in the tree
             if already_seen_node:
                 for r in leaf_node.required_by:
                     if r.landmarks_calculated and r.name not in leaf_node_upwards_recur_set:
-                        self.tree.leaf_nodes.add_leaf_node(r, leaf_node_upwards_recur_set)
+                    # child_list_hash = r.hash_child_list()
+                    # if r.landmarks_calculated and child_list_hash != r.child_list_hash:
+                        self.tree.leaf_nodes.add_leaf_node(r, leaf_node_upwards_recur_set, priority=True)
 
         # root = self.tree.root     # For Debugging
         # print(root.landmarks)

@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p02.hddl -heuModName Landmarks -heuPath Solver/Heuristics/landmarks.py -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py -O" />
+    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p02.hddl -heuModName Landmarks -heuPath Solver/Heuristics/landmarks.py -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
