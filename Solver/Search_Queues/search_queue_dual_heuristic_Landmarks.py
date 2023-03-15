@@ -13,7 +13,7 @@ class SearchQueueGBFSDualLandmarks(SearchQueue):
 
     def _add_model(self, model):
         if not self.landmark_setup:
-            self.Landmarks.presolving_processing()
+            self.Landmarks.presolving_processing(initial_model=model)
             self.landmark_setup = True
 
         res = self.heuristic.ranking(model)
