@@ -237,7 +237,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(Landmarks)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/results/Landmarks-newest-first-results.csv'
+        file_name = 'results/Landmarks-newest-first-results.csv'
     elif strategy == 25:
         """Hamming Distance with Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
@@ -253,7 +253,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
+        file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
     elif strategy == 27:
         """Hamming Distance with Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
