@@ -99,7 +99,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-TreeDis-results.csv'
+        file_name = 'results/Novelty_Facts_Only_reset-TreeDis-results.csv'
     elif strategy == 7:
         """Tree Distance (Seen States) - Newest First Search Queue"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
