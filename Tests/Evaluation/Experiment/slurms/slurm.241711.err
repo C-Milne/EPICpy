@@ -1,7 +1,0 @@
-/tmp/slurmd/job241711/slurm_script: line 11: SBATCH: command not found
-Traceback (most recent call last):
-  File "/scratch/users/u34cm18/EPICpy/Tests/Evaluation/Experiment/./ER2.py", line 88, in <module>
-    run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p27.hddl", strategy)
-  File "/scratch/users/u34cm18/EPICpy/Tests/Evaluation/Experiment/ExperimentRunner.py", line 327, in run_test
-    percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
-ZeroDivisionError: division by zero

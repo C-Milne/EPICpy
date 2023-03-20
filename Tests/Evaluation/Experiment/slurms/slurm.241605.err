@@ -1,2 +1,0 @@
-slurmstepd: error: *** JOB 241605 ON compute01 CANCELLED AT 2023-03-10T10:19:12 ***
-slurmstepd: error: Detected 11 oom-kill event(s) in StepId=241605.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
