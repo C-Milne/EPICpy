@@ -50,34 +50,38 @@ class AltOperatorCondition(OperatorCondition):
     def _evaluate_not(self, children_eval, param_dict, search_model, problem):
         assert len(self.children) == 1
         child = self.children[0]
-        """Changes go here"""
+        p_list = []
+        for i in child.parameter_name:
+            p_list.append(param_dict[i])
+
+        res = self._evaluate_not_delete_relaxed(param_dict, search_model, child, p_list)
+
+        if res:
+            return res
+        return self._evaluate_not_standard(param_dict, search_model, child, problem, p_list)
+
+    def _evaluate_not_delete_relaxed(self, param_dict, search_model, child, p_list):
         if type(child) == AltOperatorCondition or type(child) == OperatorCondition:
             res = False
         else:
             # In the alt state 'not' conditions are stored in the state under new predicates
             # Such as (not-have, kiwi)
-            p_list = []
-            for i in child.parameter_name:
-                p_list.append(param_dict[i])
-
             res = search_model.current_state.check_if_predicate_value_exists(self.pred, p_list)
+        return res
 
-        if res:
-            return res
+    def _evaluate_not_standard(self, param_dict, search_model, child, problem, p_list):
+        # Try normal 'not' evaluation
+        res = child.evaluate(param_dict, search_model, problem)
+        if res is True:
+            return False
         else:
-            # Try normal 'not' evaluation
-            res = child.evaluate(param_dict, search_model, problem)
-            if res is True:
+            # Add this new predicate to state
+            try:
+                search_model.current_state.add_element(ProblemPredicate(self.pred, p_list))
+            except Exception as e:
+                # TODO: Investigate this and make a fix
                 return False
-            else:
-                # Add this new predicate to state
-                try:
-                    search_model.current_state.add_element(ProblemPredicate(self.pred, p_list))
-                except Exception as e:
-                    # TODO: Investigate this and make a fix
-                    return False
-                return True
-
+            return True
 
 class AltPredicateCondition(PredicateCondition):
     def __init__(self, pred: Predicate, parameter_names: list):
@@ -523,7 +527,14 @@ class DeleteRelaxed(Pruning):
     def _generate_alt_preconditions_recur(self, condition):
         if type(condition) == OperatorCondition:
             if condition.operator == 'not':
-                alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
+                try:
+                    if not type(condition.children[0]) == OperatorCondition:
+                        alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
+                    else:
+                        alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate(
+                            'not_' + condition.children[0].pred.name))
+                except Exception as e:
+                    raise NotImplementedError
             else:
                 alt_condition = AltOperatorCondition(condition.operator, None)
 
