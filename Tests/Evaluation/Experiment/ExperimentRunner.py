@@ -151,7 +151,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_Task-Method-Expand-0-Oldest-First-results.csv'
+        file_name = 'results/Novelty_Facts_Only_reset-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
