@@ -137,7 +137,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_search_queue(NoveltyGBFSQueue)
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_level2_Task-Method-Expand-0-results.csv'
+        file_name = 'results/Novelty_level2_reset-results.csv'
     elif strategy == 12:
         """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
@@ -287,7 +287,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
     setup_start_time = time.time()
     controller.solver.solve(search=False)
     setup_end_time = time.time()
-    setup_time = time.time()
+    setup_time = setup_end_time - setup_start_time
     num_expansions = 0
     res = None
     solve_start_time = time.time()
