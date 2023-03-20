@@ -1,0 +1,2 @@
+/tmp/slurmd/job242218/slurm_script: line 16: 16455 Killed                  python ./ER23.py
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=242218.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
