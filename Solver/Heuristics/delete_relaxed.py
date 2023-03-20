@@ -30,6 +30,7 @@ Predicate = sys.modules['Internal_Representation.predicate'].Predicate
 RegParameter = sys.modules['Internal_Representation.reg_parameter'].RegParameter
 OperatorCondition = sys.modules['Internal_Representation.conditions'].OperatorCondition
 PredicateCondition = sys.modules['Internal_Representation.conditions'].PredicateCondition
+VariableCondition = sys.modules['Internal_Representation.conditions'].VariableCondition
 Precondition = sys.modules['Internal_Representation.precondition'].Precondition
 Condition = sys.modules['Internal_Representation.conditions'].Condition
 Object = sys.modules['Internal_Representation.Object'].Object
@@ -44,17 +45,23 @@ class AltOperatorCondition(OperatorCondition):
     def _evaluate_children(self, param_dict, search_model, problem):
         children_eval = []
         if len(self.children) > 0 and (self.operator == "and" or self.operator == "or" or self.operator == "="):
-            children_eval = [x.evaluate(param_dict, search_model, problem) for x in self.children]
+            try:
+                for child in self.children:
+                    children_eval.append(child.evaluate(param_dict, search_model, problem))
+            except Exception as e:
+                raise NotImplementedError
         return children_eval
 
     def _evaluate_not(self, children_eval, param_dict, search_model, problem):
         assert len(self.children) == 1
         child = self.children[0]
+        res = False
         p_list = []
-        for i in child.parameter_name:
-            p_list.append(param_dict[i])
+        if not type(child) == AltOperatorCondition:
+            for i in child.parameter_name:
+                p_list.append(param_dict[i])
 
-        res = self._evaluate_not_delete_relaxed(param_dict, search_model, child, p_list)
+            res = self._evaluate_not_delete_relaxed(param_dict, search_model, child, p_list)
 
         if res:
             return res
@@ -152,6 +159,7 @@ class DeleteRelaxed(Pruning):
         self._used_action_configs = {}
         self._found_methods = set()
         self._found_tasks = set()
+        self._methods_no_actions = set()
 
     def ranking(self, model: DefaultModel, **kwargs):
         # Create duplicate state
@@ -179,7 +187,9 @@ class DeleteRelaxed(Pruning):
             # Choose target('s)
             targets = self._get_target_tasks(model)
             if return_alt_state:
-                res, final_alt_state = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
+                res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
+                assert type(res) == tuple and len(res) == 2
+                res, final_alt_state = res
                 self.model_stores[model.model_number].ranking = res
                 return res, final_alt_state
             else:
@@ -298,7 +308,7 @@ class DeleteRelaxed(Pruning):
             if self._check_targets(targets, found_targets):
                 model_store.previous_modifiers = [x for x in applied_modifiers]
                 if return_alt_state:
-                    return iteration, alt_state
+                    return (iteration, alt_state)
                 return iteration
             elif (modifiers and len(modifiers) == 0) and len(model_store.other_modifiers) > 0 and not used_prev_store:
                 # TODO: What is going on here???
@@ -370,7 +380,7 @@ class DeleteRelaxed(Pruning):
         elif len(self._found_actions_names) == 1:
             return self._methods_rely_actions[next(iter(self._found_actions_names))]
         union_elements = [self._methods_rely_actions[a] for a in self._found_actions_names]
-        return_methods = set().union(*union_elements)
+        return_methods = set().union(*union_elements, self._methods_no_actions)
         return return_methods
 
     def _generate_modifier_alt_name(self, modifier, given_params):
@@ -502,9 +512,13 @@ class DeleteRelaxed(Pruning):
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
             self.alt_domain.add_method(new_m)
+            action_subtasks = False
             for subtask in m.subtasks.tasks:
                 if type(subtask.task) == Action:
+                    action_subtasks = True
                     self._add_to_methods_actions_mapping(subtask.task, new_m)
+            if not action_subtasks:
+                self._methods_no_actions.add(new_m)
 
     def _preprocess_actions(self):
         for action in self.domain.get_all_actions():
@@ -527,14 +541,10 @@ class DeleteRelaxed(Pruning):
     def _generate_alt_preconditions_recur(self, condition):
         if type(condition) == OperatorCondition:
             if condition.operator == 'not':
-                try:
-                    if not type(condition.children[0]) == OperatorCondition:
-                        alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
-                    else:
-                        alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate(
-                            'not_' + condition.children[0].pred.name))
-                except Exception as e:
-                    raise NotImplementedError
+                if not type(condition.children[0]) == OperatorCondition:
+                    alt_condition = AltOperatorCondition(condition.operator, self.alt_domain.get_predicate('not_' + condition.children[0].pred.name))
+                else:
+                    alt_condition = AltOperatorCondition(condition.operator, None)
             else:
                 alt_condition = AltOperatorCondition(condition.operator, None)
 
@@ -544,6 +554,8 @@ class DeleteRelaxed(Pruning):
             alt_condition = AltPredicateCondition(condition.pred, condition.parameter_name)
             alt_condition.set_parent(condition.parent)
             return alt_condition
+        elif type(condition) == VariableCondition:
+            return condition
         elif condition is None:
             return None
         else:
