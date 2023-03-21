@@ -14,11 +14,16 @@ from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Search_Queues.Greedy_Cost_So_Far_Search_Queue import GreedyCostSearchQueue
 from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
+from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBFSSearchQueueNewestFirst
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 
-domain_file_path = "Tests/Examples/Rover/domain.hddl"
-problem_file_path = "Tests/Examples/Rover/p10.hddl"
+# domain_file_path = "Tests/Examples/Rover/domain.hddl"
+# problem_file_path = "Tests/Examples/Rover/p10.hddl"
+
+domain_file_path = "Tests/Examples/Barman/domain.hddl"
+problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
+
 pr = cProfile.Profile()
 pr.enable()
 controller = Runner(domain_file_path, problem_file_path)
@@ -31,6 +36,10 @@ controller = Runner(domain_file_path, problem_file_path)
 # controller.set_search_queue(GreedyCostSearchQueue)
 # controller.set_heuristic(Landmarks)
 ###########################################################
+controller.set_solver(PartialOrderNoveltyLightSolver)
+controller.set_search_queue(GBFSSearchQueueNewestFirst)
+controller.set_heuristic(Landmarks)
+###########################################################
 # controller.set_solver(PartialOrderNoveltySolver)
 # controller.set_search_queue(NoveltyGBFSQueue)
 ###########################################################
@@ -40,11 +49,11 @@ controller = Runner(domain_file_path, problem_file_path)
 # controller.set_solver(PartialOrderNoveltyMethodsSolver)
 # controller.set_search_queue(NoveltyGBFSQueue)
 ###########################################################
-controller.set_solver(PartialOrderNoveltyLightSolver)
-controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
-controller.set_heuristic(TreeDistanceSeenStatesPruning)
-controller.set_model(PandaVerifyModel)
-controller.set_progress_tracker(PandaVerifyFormatTracker)
+# controller.set_solver(PartialOrderNoveltyLightSolver)
+# controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
+# controller.set_heuristic(TreeDistanceSeenStatesPruning)
+# controller.set_model(PandaVerifyModel)
+# controller.set_progress_tracker(PandaVerifyFormatTracker)
 ###########################################################
 # controller.set_solver(PartialOrderNoveltyLightSolver)
 # controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
@@ -75,7 +84,7 @@ result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.sp
 # output/runner-landmarks-profile5Rover5WithDeleteRelaxed7.csv
 # output/runner-tree-hamming_panda_verify6.csv
 # output/runner-tree-hamming-PO-light.csv
-with open('output/runner-tree-hamming_panda_verify6.csv', 'w+') as f:
+with open('output/runner-landmarks-newest', 'w+') as f:
     # f=open(result.rsplit('.')[0]+'.csv','w')
     f.write(result)
     f.close()
