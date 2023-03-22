@@ -21,11 +21,11 @@ from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracke
 # domain_file_path = "Tests/Examples/Rover/domain.hddl"
 # problem_file_path = "Tests/Examples/Rover/p10.hddl"
 
-# domain_file_path = "Tests/Examples/Barman/domain.hddl"
-# problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
+domain_file_path = "Tests/Examples/Barman/domain.hddl"
+problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
 
-domain_file_path = "Tests/Examples/Depots/domain.hddl"
-problem_file_path = "Tests/Examples/Depots/p05.hddl"
+# domain_file_path = "Tests/Examples/Depots/domain.hddl"
+# problem_file_path = "Tests/Examples/Depots/p05.hddl"
 
 pr = cProfile.Profile()
 pr.enable()
