@@ -45,11 +45,8 @@ class AltOperatorCondition(OperatorCondition):
     def _evaluate_children(self, param_dict, search_model, problem):
         children_eval = []
         if len(self.children) > 0 and (self.operator == "and" or self.operator == "or" or self.operator == "="):
-            try:
-                for child in self.children:
-                    children_eval.append(child.evaluate(param_dict, search_model, problem))
-            except Exception as e:
-                raise NotImplementedError
+            for child in self.children:
+                children_eval.append(child.evaluate(param_dict, search_model, problem))
         return children_eval
 
     def _evaluate_not(self, children_eval, param_dict, search_model, problem):
@@ -89,6 +86,7 @@ class AltOperatorCondition(OperatorCondition):
                 # TODO: Investigate this and make a fix
                 return False
             return True
+
 
 class AltPredicateCondition(PredicateCondition):
     def __init__(self, pred: Predicate, parameter_names: list):
@@ -358,11 +356,17 @@ class DeleteRelaxed(Pruning):
                 # Check if all subtasks have been applied
                 applicable = True
                 for s in method.subtasks.tasks:
-                    required_subtask_name = s.task.name
-                    for s_param in s.parameters:
-                        required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+                    # required_subtask_name = s.task.name
+                    # for s_param in s.parameters:
+                    #     required_subtask_name += '-{}'.format(param_option[s_param.name].name)
 
-                    if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
+                    param_option_list = [param_option[s_param.name] for s_param in s.parameters]
+
+                    # if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
+                    #     applicable = False
+                    #     break
+
+                    if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
                         applicable = False
                         break
 
@@ -373,6 +377,24 @@ class DeleteRelaxed(Pruning):
                                             method.task, method.subtasks, method.constraints)
                         applicable_methods.append((alt_method, param_option))
         return applicable_methods
+
+    def _check_for_executed_operation(self, operation_name, operation_param_list, operation_type, param_option, operation_parameters):
+        if operation_type == Action:
+            if not operation_name in self._used_action_configs.keys():
+                return False
+            if len(operation_param_list) == 0:
+                return True
+            for i in range(len(operation_param_list)):
+                if operation_param_list[i] not in self._used_action_configs[operation_name][i]:
+                    return False
+            return True
+        elif operation_type == Task:
+            required_subtask_name = operation_name
+            for s_param in operation_parameters:
+                required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+            return required_subtask_name in self._found_tasks
+        else:
+            raise TypeError('Unexpected type: {}'.format(str(operation_type)))
 
     def _generate_possible_methods_to_check_selection_mode(self):
         if len(self._found_actions_names) == 0:
