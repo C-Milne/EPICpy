@@ -12,10 +12,13 @@ class StateNovelty(State):
         self._seen_element_pairs = set()
         self._element_hashes = []   # stores hashes of elements in the state. For levels of novelty > 1
 
-    def add_element(self, element: ProblemPredicate) -> int:
+    def add_element(self, element: ProblemPredicate, check_presence=True) -> int:
         assert type(element) == ProblemPredicate
         novel = None
-        if element not in self.elements:
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        if add_to_state:
             element_hash = hash(element)
 
             if element_hash not in self._seen_elements:

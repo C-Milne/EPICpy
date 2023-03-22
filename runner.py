@@ -160,6 +160,7 @@ if __name__ == "__main__":
     argparser.add_argument("-progressTrackerPath", type=str, help='File path to Progress Tracker File', default=None)
     argparser.add_argument("-modelModName", type=str, help='Name of Model Class', default=None)
     argparser.add_argument("-modelPath", type=str, help='File path to Model File', default=None)
+    argparser.add_argument('-O', action='store_false', help='Flag to disable printing resulting plan')
     argparser.format_help()
     args = argparser.parse_args()
 
@@ -237,8 +238,9 @@ if __name__ == "__main__":
         # Initiate solving
         result = controller.solve()
 
-        # Print result
-        controller.output_result(result)
+        if args.O:
+            # Print result
+            controller.output_result(result)
 
         # Check if we need to write to file
         if write_file is not None:
