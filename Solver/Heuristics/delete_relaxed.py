@@ -1,5 +1,6 @@
 import copy
 import sys
+import os
 import re
 from Solver.Heuristics.pruning import Pruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
@@ -187,6 +188,9 @@ class DeleteRelaxed(Pruning):
             if return_alt_state:
                 res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
                 assert type(res) == tuple and len(res) == 2
+
+                self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
+
                 res, final_alt_state = res
                 self.model_stores[model.model_number].ranking = res
                 return res, final_alt_state
@@ -202,6 +206,31 @@ class DeleteRelaxed(Pruning):
             return res
         else:
             return self.model_stores[model.model_number].ranking
+
+    def write_delete_relaxed_reachability_to_files(self):
+        if not os.path.exists('output'):
+            os.mkdir('output')
+
+        with open("output/DeleteRelaxedReachedActions.txt", 'w') as f:
+            action_list = list(self._found_actions)
+            action_list.sort()
+            for action in action_list:
+                f.write("\n{}".format(action))
+            f.close()
+
+        with open("output/DeleteRelaxedReachedMethods.txt", 'w') as f:
+            method_list = list(self._found_methods)
+            method_list.sort()
+            for method in method_list:
+                f.write("\n{}".format(method))
+            f.close()
+
+        with open('output/DeleteRelaxedReachedTasks.txt', 'w') as f:
+            task_list = list(self._found_tasks)
+            task_list.sort()
+            for task in task_list:
+                f.write("\n{}".format(task))
+            f.close()
 
     def _get_target_tasks(self, model):
         targets = []
