@@ -16,7 +16,7 @@ class StateSelector(ParameterSelector):
         for p in res:
             res[p] = list(res[p])
 
-        self._check_all_parameters_selected(modifier_parameters, res)
+        self._check_all_parameters_selected(modifier_parameters, res, parameters)
 
         converted_list = self._convert_parameter_options_execution_ready(res, len(modifier.parameters))
 
@@ -33,6 +33,7 @@ class StateSelector(ParameterSelector):
 
             if result:
                 return_list.append(param_option)
+
         return return_list
 
     def _select_objects_for_conditions(self, conditions, search_model, selected_parameters, all_parameters, param_dict=None, flag=None):
@@ -80,12 +81,15 @@ class StateSelector(ParameterSelector):
                 else:
                     raise ValueError("Unknown Flag: {}".format(flag))
 
-    def _check_all_parameters_selected(self, modifier_parameters, param_dict):
+    def _check_all_parameters_selected(self, modifier_parameters, param_dict, selected_parameters):
         if len(modifier_parameters) == len(param_dict.keys()):
             return
 
         for p in modifier_parameters:
             if p.name not in param_dict:
-                param_dict[p.name] = self.solver.problem.get_objects_of_type(p.type)
+                if p.name not in selected_parameters:
+                    param_dict[p.name] = self.solver.problem.get_objects_of_type(p.type)
+                else:
+                    param_dict[p.name] = selected_parameters[p.name]
                 if len(modifier_parameters) == len(param_dict.keys()):
                     return
