@@ -191,10 +191,10 @@ class DeleteRelaxed(Pruning):
             targets = self._get_target_tasks(model)
             if return_alt_state:
                 res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
-                assert type(res) == tuple and len(res) == 2
 
                 self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
 
+                assert type(res) == tuple and len(res) == 2
                 res, final_alt_state = res
                 self.model_stores[model.model_number].ranking = res
                 return res, final_alt_state
@@ -443,9 +443,9 @@ class DeleteRelaxed(Pruning):
 
     def _generate_possible_actions_to_check_selection_mode(self):
         if len(self._previously_modified_facts) == 0:
-            return set()
+            return self._actions_no_facts
         elif len(self._previously_modified_facts) == 1:
-            return self._actions_rely_pred[next(iter(self._previously_modified_facts))]
+            return self._actions_rely_pred[next(iter(self._previously_modified_facts))].union(self._actions_no_facts)
 
         union_elements = [self._actions_rely_pred[f] for f in self._previously_modified_facts if f in self._predicates_in_effect]
 
@@ -601,9 +601,14 @@ class DeleteRelaxed(Pruning):
             new_action.requirements = action.requirements
             self.alt_domain.add_action(new_action)
             action_facts = False
-            for effect in action.effects.effects:
-                action_facts = True
-                self._add_to_actions_predicate_mapping(new_action, effect.predicate.name)
+
+            for condition_fact in action.preconditions.conditions:
+                if condition_fact != 'and':
+                    assert type(condition_fact) == list
+                    fact = condition_fact[0]
+                    action_facts = True
+                    self._add_to_actions_predicate_mapping(new_action, fact)
+
             if not action_facts:
                 self._actions_no_facts.add(new_action)
 
