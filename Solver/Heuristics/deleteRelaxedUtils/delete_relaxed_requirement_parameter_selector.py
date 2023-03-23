@@ -120,16 +120,21 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
         return valid_options
 
     def _check_object_satisfies_parameter_predicate_exists_check_not(self, model, pred, required_predicates, ob):
+        # TODO: Switch to this commented out code - this is logically correct I think
         # indexes = model.current_state.get_indexes(pred)
+        # if indexes is None:
+        #      return True
+        #
         # indexes_inverse = model.current_state.get_indexes('not_' + pred)
+        #
         # if indexes_inverse:
         #     for index in indexes_inverse:
         #         if self._compare_object_to_fact(index, required_predicates[pred] - 1, ob, model):
         #             return True
-        # if indexes is None:
-        #     return True
+
         # for index in indexes:
         #     if self._compare_object_to_fact(index, required_predicates[pred] - 1, ob, model):
         #         return False
         # return True
+
         return True
