@@ -1,8 +1,9 @@
 import re
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Modifier, Model, Method, Action
+from Solver.Parameter_Selection.StateSelector import StateSelector
 
 
-class DeleteRelaxedRequirementSelection(RequirementSelection):
+class DeleteRelaxedRequirementSelection(RequirementSelection, StateSelector):
     def __init__(self, solver, delete_relaxed_module):
         super().__init__(solver)
         self.delete_relaxed_module = delete_relaxed_module
@@ -11,7 +12,7 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
         if type(modifier) == Method:
             return self._delete_relaxed_get_potential_parameters_method(modifier, parameters, search_model)
         else:
-            return self.get_potential_parameters(modifier, parameters, search_model)
+            return StateSelector.get_potential_parameters(self, modifier, parameters, search_model)
 
     def _delete_relaxed_get_potential_parameters_method(self, modifier, parameters, search_model):
         """
