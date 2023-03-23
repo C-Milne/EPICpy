@@ -47,7 +47,9 @@ class StateSelector(ParameterSelector):
                 not_conditions.append(condition[1:])
             elif type(condition) == list:
                 if len(condition) > 1:
-                    self._select_objects_satisfy_condition(condition, param_dict, selected_parameters, all_parameters, search_model, flag)
+                    res = self._select_objects_satisfy_condition(condition, param_dict, selected_parameters, all_parameters, search_model, flag)
+                    if res == []:
+                        return {}
                 else:
                     raise NotImplementedError
 
@@ -58,6 +60,10 @@ class StateSelector(ParameterSelector):
     def _select_objects_satisfy_condition(self, condition, param_dict, selected_parameters, all_parameters, search_model, flag):
         pred_name = condition[0]
         fact_indexes = search_model.current_state.get_indexes(pred_name)
+        if fact_indexes is None:
+            return []
+
+        new_param_dict = {}
         for i in fact_indexes:
             fact = search_model.current_state.get_element_index(i)
             for p in range(len(condition) - 1):
@@ -67,19 +73,18 @@ class StateSelector(ParameterSelector):
                     continue
 
                 if flag is None:
-                    if param_name not in param_dict:
-                        param_dict[param_name] = set()
-                    try:
-                        param_dict[param_name].add(fact.objects[p])
-                    except Exception as e:
-                        raise NotImplementedError
+                    if param_name not in new_param_dict:
+                        new_param_dict[param_name] = set()
+                    new_param_dict[param_name].add(fact.objects[p])
                 elif flag == 'NOT':
-                    if param_name not in param_dict:
-                        req_type = all_parameters[param_name].type
-                        param_dict[param_name] = set(self.solver.problem.get_objects_of_type(req_type))
-                    param_dict[param_name].remove(fact.objects[p])
+                    if param_name not in new_param_dict:
+                        req_type = self._get_param_type_from_list(all_parameters, param_name)
+                        new_param_dict[param_name] = set(self.solver.problem.get_objects_of_type(req_type))
+                    new_param_dict[param_name].remove(fact.objects[p])
                 else:
                     raise ValueError("Unknown Flag: {}".format(flag))
+
+        self._intersect_object_sets(new_param_dict, param_dict)
 
     def _check_all_parameters_selected(self, modifier_parameters, param_dict, selected_parameters):
         if len(modifier_parameters) == len(param_dict.keys()):
@@ -93,3 +98,22 @@ class StateSelector(ParameterSelector):
                     param_dict[p.name] = selected_parameters[p.name]
                 if len(modifier_parameters) == len(param_dict.keys()):
                     return
+
+    # def _intersect_object_sets(self, new_param_dict, param_dict):
+    #     for new in new_param_dict:
+    #         if new not in param_dict:
+    #             param_dict[new] = new_param_dict[new]
+    #         else:
+    #             param_dict[new] = param_dict[new].intersection(new_param_dict[new])
+
+    def _intersect_object_sets(self, new_param_dict, param_dict):
+        for new in new_param_dict:
+            if new not in param_dict:
+                param_dict[new] = new_param_dict[new]
+            else:
+                param_dict[new] = param_dict[new].union(new_param_dict[new])
+
+    def _get_param_type_from_list(self, parameter_list, param_name):
+        for p in parameter_list:
+            if p.name == param_name:
+                return p.type

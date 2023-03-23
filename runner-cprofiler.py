@@ -14,15 +14,17 @@ from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Search_Queues.Greedy_Cost_So_Far_Search_Queue import GreedyCostSearchQueue
 from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
+from Solver.Search_Queues.search_queue_dual_heuristic_TreeDistance import SearchQueueGBFSDualTreeDistance
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBFSSearchQueueNewestFirst
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
+from Solver.Parameter_Selection.StateSelector import StateSelector
 
-# domain_file_path = "Tests/Examples/Rover/domain.hddl"
-# problem_file_path = "Tests/Examples/Rover/p10.hddl"
+domain_file_path = "Tests/Examples/Rover/domain.hddl"
+problem_file_path = "Tests/Examples/Rover/p10.hddl"
 
-domain_file_path = "Tests/Examples/Barman/domain.hddl"
-problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
+# domain_file_path = "Tests/Examples/Barman/domain.hddl"
+# problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
 
 # domain_file_path = "Tests/Examples/Depots/domain.hddl"
 # problem_file_path = "Tests/Examples/Depots/p05.hddl"
@@ -39,13 +41,13 @@ controller = Runner(domain_file_path, problem_file_path)
 # controller.set_search_queue(GreedyCostSearchQueue)
 # controller.set_heuristic(Landmarks)
 ###########################################################
-controller.set_solver(PartialOrderNoveltyLightSolver)
-controller.set_search_queue(GBFSSearchQueueNewestFirst)
-controller.set_heuristic(Landmarks)
+# controller.set_solver(PartialOrderNoveltyLightSolver)
+# controller.set_search_queue(GBFSSearchQueueNewestFirst)
+# controller.set_heuristic(Landmarks)
 ###########################################################
 # controller.set_solver(PartialOrderNoveltySolver)
 # controller.set_search_queue(NoveltyGBFSQueue)
-###########################################################
+# ###########################################################
 # controller.set_search_queue(GBFSSearchQueue)
 # controller.set_heuristic(TreeDistanceSeenStatesPruning)
 ###########################################################
@@ -58,9 +60,14 @@ controller.set_heuristic(Landmarks)
 # controller.set_model(PandaVerifyModel)
 # controller.set_progress_tracker(PandaVerifyFormatTracker)
 ###########################################################
+controller.set_solver(PartialOrderNoveltyLightSolver)
+controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
+controller.set_heuristic(TreeDistanceSeenStatesPruning)
+controller.set_parameter_selector(StateSelector)
+###########################################################
 # controller.set_solver(PartialOrderNoveltyLightSolver)
-# controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
-# controller.set_heuristic(TreeDistanceSeenStatesPruning)
+# controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
+# controller.set_heuristic(HammingDistanceSeenStatesPruning)
 ###########################################################
 # controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
 # controller.set_heuristic(TreeDistanceSeenStatesPruning)
@@ -75,6 +82,7 @@ print('Ready to Begin Solving!')
 while time.time() - start_time < 150 and not res:  # while time.time() - start_time < 305
     res = controller.solver._search(True)
 pr.disable()
+print(time.time() - start_time)
 
 result = io.StringIO()
 pstats.Stats(pr, stream=result).print_stats()
@@ -87,7 +95,8 @@ result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.sp
 # output/runner-landmarks-profile5Rover5WithDeleteRelaxed7.csv
 # output/runner-tree-hamming_panda_verify6.csv
 # output/runner-tree-hamming-PO-light.csv
-with open('output/runner-landmarks-newest-barman4.csv', 'w+') as f:
+# output/runner-landmarks-newest-barman4.csv
+with open('output/runner-test-sec1.csv', 'w+') as f:
     # f=open(result.rsplit('.')[0]+'.csv','w')
     f.write(result)
     f.close()
