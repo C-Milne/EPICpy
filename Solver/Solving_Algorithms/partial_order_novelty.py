@@ -36,6 +36,12 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         """Add model to search queue after expanding an action"""
         self.search_models.novelty_add(model, novelty)
 
+    def _action_add_fact_to_state(self, new_predicate, novelty_score, search_model):
+        add_novel_score = search_model.current_state.add_element(new_predicate)
+        if add_novel_score and add_novel_score > novelty_score:
+            novelty_score = add_novel_score
+        return novelty_score
+
     def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         assert type(subtask) == Subtask and type(subtask.task) == Action
 
@@ -77,9 +83,8 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                         new_predicate = ProblemPredicate(eff.predicate, param_list)
                         added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
 
-                        add_novel_score = search_model.current_state.add_element(new_predicate)
-                        if add_novel_score and add_novel_score > novelty:
-                            novelty = add_novel_score
+                        novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
+
                 elif type(eff) == Effects.ForAllEffect:
                     # Get parameters
                     assert type(eff.precondition.head) == ForallCondition
@@ -102,9 +107,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
                                 # Predicate needs to be added
                                 new_predicate = ProblemPredicate(e.predicate, param_list)
 
-                                add_novel_score = search_model.current_state.add_element(new_predicate)
-                                if add_novel_score and add_novel_score > novelty:
-                                    novelty = add_novel_score
+                                novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
                 else:
                     raise NotImplementedError
 
