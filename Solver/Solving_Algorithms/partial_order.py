@@ -125,7 +125,7 @@ class PartialOrderSolver(Solver):
                 else:
                     raise NotImplementedError
 
-    def _expand_action_apply_pred_effect(self, eff, subtask, search_model, added_predicates):
+    def _expand_action_apply_pred_gen_param_list(self, eff, subtask):
         param_list = []
         for i in eff.parameters:
             if i in subtask.given_params:
@@ -135,6 +135,10 @@ class PartialOrderSolver(Solver):
                 const = self.domain.get_constant(i)
                 assert const is not None
                 param_list.append(const)
+        return param_list
+
+    def _expand_action_apply_pred_effect(self, eff, subtask, search_model, added_predicates):
+        param_list = self._expand_action_apply_pred_gen_param_list(eff, subtask)
 
         if eff.negated:
             # Predicate needs to be removed

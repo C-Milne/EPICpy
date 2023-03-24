@@ -42,81 +42,69 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
             novelty_score = add_novel_score
         return novelty_score
 
-    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
-        assert type(subtask) == Subtask and type(subtask.task) == Action
-
-        # Check if all the required parameters are given
-        comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params) # TODO: An optimisation here that removes the need for this would be good. Check the parameters from parameter selectiors
-
-        if not comparison_result[0] == True:
-            # raise ValueError('Invalid Parameters Passed to Action')
-            return
-        # assert comparison_result[0] == True
-
-        # Check preconditions
-        if not subtask.evaluate_preconditions(search_model, subtask.given_params, self.problem):
-            return
-
+    def _expand_action_apply_actions(self, subtask, search_model):
         novelty = 0
         if not subtask.task.effects is None:
             added_predicates = []
             for eff in subtask.task.effects.effects:
-
                 if type(eff) == Effects.Effect:
-                    param_list = []
-                    for i in eff.parameters:
-                        if i in subtask.given_params:
-                            param_list.append(subtask.given_params[i])
-                        else:
-                            # Check constants
-                            const = self.domain.get_constant(i)
-                            assert const is not None
-                            param_list.append(const)
-
-                    if eff.negated:
-                        # Predicate needs to be removed
-                        if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
-                            # If an action tries to add and remove the same predicate we don't delete anything
-                            search_model.current_state.remove_element(eff.predicate, param_list)
-                    else:
-                        # Predicate needs to be added
-                        new_predicate = ProblemPredicate(eff.predicate, param_list)
-                        added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
-
-                        novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
-
+                    novelty = self._expand_action_apply_pred_effect_novelty(eff, subtask, search_model, added_predicates, novelty)
                 elif type(eff) == Effects.ForAllEffect:
-                    # Get parameters
-                    assert type(eff.precondition.head) == ForallCondition
-                    obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
-                    forall_var_name = eff.precondition.head.selected_variable
-                    # Iterate over found parameters
-                    for o in obs:
-                        for e in eff.effects:
-                            param_list = []
-                            for i in e.parameters:
-                                if i.name == forall_var_name:
-                                    param_list.append(o)
-                                else:
-                                    param_list.append(subtask.given_params[i.name])
-
-                            if eff.negated:
-                                # Predicate needs to be removed
-                                search_model.current_state.remove_element(e.predicate, param_list)
-                            else:
-                                # Predicate needs to be added
-                                new_predicate = ProblemPredicate(e.predicate, param_list)
-
-                                novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
+                    novelty = self._expand_action_apply_forall_effect_novelty(eff, subtask, search_model)
                 else:
                     raise NotImplementedError
+        return novelty
 
-        search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-        # Track amount of novel and not novel states
-        if novelty > 0:
-            self.num_novel_states += 1
+    def _expand_action_apply_pred_effect_novelty(self, eff, subtask, search_model, added_predicates, novelty):
+        param_list = self._expand_action_apply_pred_gen_param_list(eff, subtask)
+
+        if eff.negated:
+            # Predicate needs to be removed
+            if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
+                # If an action tries to add and remove the same predicate we don't delete anything
+                search_model.current_state.remove_element(eff.predicate, param_list)
         else:
-            self.num_not_novel_states += 1
+            # Predicate needs to be added
+            new_predicate = ProblemPredicate(eff.predicate, param_list)
+            added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
+            novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
+        return novelty
 
-        # Add model to search queue
-        self._add_model_to_search_queue_action(search_model, novelty)
+    def _expand_action_apply_forall_effect_novelty(self, eff, subtask, search_model, novelty):
+        # Get parameters
+        assert type(eff.precondition.head) == ForallCondition
+        obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
+        forall_var_name = eff.precondition.head.selected_variable
+        # Iterate over found parameters
+        for o in obs:
+            for e in eff.effects:
+                param_list = []
+                for i in e.parameters:
+                    if i.name == forall_var_name:
+                        param_list.append(o)
+                    else:
+                        param_list.append(subtask.given_params[i.name])
+
+                if eff.negated:
+                    # Predicate needs to be removed
+                    search_model.current_state.remove_element(e.predicate, param_list)
+                else:
+                    # Predicate needs to be added
+                    new_predicate = ProblemPredicate(e.predicate, param_list)
+                    novelty = self._action_add_fact_to_state(new_predicate, novelty, search_model)
+        return novelty
+
+    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
+        if self._expand_action_prechecks(subtask, search_model):
+
+            novelty = self._expand_action_apply_actions(subtask, search_model)
+            search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
+
+            # Track amount of novel and not novel states
+            if novelty > 0:
+                self.num_novel_states += 1
+            else:
+                self.num_not_novel_states += 1
+
+            # Add model to search queue
+            self._add_model_to_search_queue_action(search_model, novelty)
