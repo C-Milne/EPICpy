@@ -9,6 +9,9 @@ class State:
         self._index = {}
         self.elements = []
 
+    def initialise(self):
+        pass
+
     def add_element(self, element: ProblemPredicate, check_presence=True):
         assert type(element) == ProblemPredicate
         add_to_state = True

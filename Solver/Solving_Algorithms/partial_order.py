@@ -1,5 +1,4 @@
-from Solver.Solving_Algorithms.solver import Solver, Task
-from Solver.Solving_Algorithms.solver import DefaultModel
+from Solver.Solving_Algorithms.solver import Solver, Task, Model
 from Solver.Solving_Algorithms.solver import State
 from Solver.Solving_Algorithms.solver import Subtasks, Subtask
 from Solver.Solving_Algorithms.solver import ProblemPredicate
@@ -19,7 +18,7 @@ class PartialOrderSolver(Solver):
         """
         self.search_models.add(model)
 
-    def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
+    def _expand_task(self, subtask: Subtask, search_model: Model):
         if len(subtask.task.tasks) != 0:
             for new_task in subtask.task.tasks:
                 self._expand_task(Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
@@ -52,7 +51,7 @@ class PartialOrderSolver(Solver):
                     new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
                     self._add_model_to_search_queue(new_model, subtask)
 
-    def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
+    def _expand_method(self, subtask: Subtask, search_model: Model):
         # Add actions to search model - with parameters
         i = 0
         if subtask.task.subtasks is None:
@@ -177,7 +176,7 @@ class PartialOrderSolver(Solver):
                     new_predicate = ProblemPredicate(e.predicate, param_list)
                     search_model.current_state.add_element(new_predicate)
 
-    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
+    def _expand_action(self, subtask: Subtask, search_model: Model):
         if self._expand_action_prechecks(subtask, search_model):
             self._expand_action_apply_actions(subtask, search_model)
             search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)

@@ -14,6 +14,9 @@ class PartialOrderNoveltyLightSolver(PartialOrderNoveltySolver, Solver):
     def set_search_queue(self, search_queue):
         Solver.set_search_queue(self, search_queue)
 
+    def _setup_set_heuristic(self):
+        pass
+
     def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
         # with open("Model_Tracking.txt", 'a') as f:
