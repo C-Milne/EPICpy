@@ -97,70 +97,81 @@ class PartialOrderSolver(Solver):
             search_mod.add_operation(subtask.task, subtask.given_params)
             self._add_model_to_search_queue(search_mod, subtask)
 
-    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
+    def _expand_action_prechecks(self, subtask, search_model):
         assert type(subtask) == Subtask and type(subtask.task) == Action
 
         # Check if all the required parameters are given
-        comparison_result = self.parameter_selector.compare_parameters(subtask.task, subtask.given_params) # TODO: An optimisation here that removes the need for this would be good. Check the parameters from parameter selectiors
+        comparison_result = self.parameter_selector.compare_parameters(subtask.task,
+                                                                       subtask.given_params)  # TODO: An optimisation here that removes the need for this would be good. Check the parameters from parameter selectiors
 
         if not comparison_result[0] == True:
             # raise ValueError('Invalid Parameters Passed to Action')
-            return
+            return False
         # assert comparison_result[0] == True
 
         # Check preconditions
         if not subtask.evaluate_preconditions(search_model, subtask.given_params, self.problem):
-            return
+            return False
+        return True
 
+    def _expand_action_apply_actions(self, subtask, search_model):
         if not subtask.task.effects is None:
             added_predicates = []
             for eff in subtask.task.effects.effects:
-
                 if type(eff) == Effects.Effect:
-                    param_list = []
-                    for i in eff.parameters:
-                        if i in subtask.given_params:
-                            param_list.append(subtask.given_params[i])
-                        else:
-                            # Check constants
-                            const = self.domain.get_constant(i)
-                            assert const is not None
-                            param_list.append(const)
-
-                    if eff.negated:
-                        # Predicate needs to be removed
-                        if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
-                            # If an action tries to add and remove the same predicate we don't delete anything
-                            search_model.current_state.remove_element(eff.predicate, param_list)
-                    else:
-                        # Predicate needs to be added
-                        new_predicate = ProblemPredicate(eff.predicate, param_list)
-                        added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
-                        search_model.current_state.add_element(new_predicate)
+                    self._expand_action_apply_pred_effect(eff, subtask, search_model, added_predicates)
                 elif type(eff) == Effects.ForAllEffect:
-                    # Get parameters
-                    assert type(eff.precondition.head) == ForallCondition
-                    obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
-                    forall_var_name = eff.precondition.head.selected_variable
-                    # Iterate over found parameters
-                    for o in obs:
-                        for e in eff.effects:
-                            param_list = []
-                            for i in e.parameters:
-                                if i.name == forall_var_name:
-                                    param_list.append(o)
-                                else:
-                                    param_list.append(subtask.given_params[i.name])
-
-                            if eff.negated:
-                                # Predicate needs to be removed
-                                search_model.current_state.remove_element(e.predicate, param_list)
-                            else:
-                                # Predicate needs to be added
-                                new_predicate = ProblemPredicate(e.predicate, param_list)
-                                search_model.current_state.add_element(new_predicate)
+                    self._expand_action_apply_forall_effect(eff, subtask, search_model)
                 else:
                     raise NotImplementedError
 
-        search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-        self.search_models.add(search_model)
+    def _expand_action_apply_pred_effect(self, eff, subtask, search_model, added_predicates):
+        param_list = []
+        for i in eff.parameters:
+            if i in subtask.given_params:
+                param_list.append(subtask.given_params[i])
+            else:
+                # Check constants
+                const = self.domain.get_constant(i)
+                assert const is not None
+                param_list.append(const)
+
+        if eff.negated:
+            # Predicate needs to be removed
+            if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
+                # If an action tries to add and remove the same predicate we don't delete anything
+                search_model.current_state.remove_element(eff.predicate, param_list)
+        else:
+            # Predicate needs to be added
+            new_predicate = ProblemPredicate(eff.predicate, param_list)
+            added_predicates.append((eff.predicate.name, [x.name for x in param_list]))
+            search_model.current_state.add_element(new_predicate)
+
+    def _expand_action_apply_forall_effect(self, eff, subtask, search_model):
+        # Get parameters
+        assert type(eff.precondition.head) == ForallCondition
+        obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
+        forall_var_name = eff.precondition.head.selected_variable
+        # Iterate over found parameters
+        for o in obs:
+            for e in eff.effects:
+                param_list = []
+                for i in e.parameters:
+                    if i.name == forall_var_name:
+                        param_list.append(o)
+                    else:
+                        param_list.append(subtask.given_params[i.name])
+
+                if eff.negated:
+                    # Predicate needs to be removed
+                    search_model.current_state.remove_element(e.predicate, param_list)
+                else:
+                    # Predicate needs to be added
+                    new_predicate = ProblemPredicate(e.predicate, param_list)
+                    search_model.current_state.add_element(new_predicate)
+
+    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
+        if self._expand_action_prechecks(subtask, search_model):
+            self._expand_action_apply_actions(subtask, search_model)
+            search_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
+            self.search_models.add(search_model)
