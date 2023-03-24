@@ -99,19 +99,19 @@ class StateSelector(ParameterSelector):
                 if len(modifier_parameters) == len(param_dict.keys()):
                     return
 
-    # def _intersect_object_sets(self, new_param_dict, param_dict):
-    #     for new in new_param_dict:
-    #         if new not in param_dict:
-    #             param_dict[new] = new_param_dict[new]
-    #         else:
-    #             param_dict[new] = param_dict[new].intersection(new_param_dict[new])
-
     def _intersect_object_sets(self, new_param_dict, param_dict):
         for new in new_param_dict:
             if new not in param_dict:
                 param_dict[new] = new_param_dict[new]
             else:
-                param_dict[new] = param_dict[new].union(new_param_dict[new])
+                param_dict[new] = param_dict[new].intersection(new_param_dict[new])
+
+    # def _intersect_object_sets(self, new_param_dict, param_dict):
+    #     for new in new_param_dict:
+    #         if new not in param_dict:
+    #             param_dict[new] = new_param_dict[new]
+    #         else:
+    #             param_dict[new] = param_dict[new].union(new_param_dict[new])
 
     def _get_param_type_from_list(self, parameter_list, param_name):
         for p in parameter_list:
