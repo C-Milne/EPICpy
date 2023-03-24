@@ -1,466 +1,13 @@
-import itertools
-import re
-import time
-import os
-import subprocess
-import sys
-from datetime import datetime
-import argparse
-from math import comb
-
-working_dir = os.getcwd()
-os.chdir("../../..")
-sys.path.append(os.getcwd())
-os.chdir(working_dir)
-from runner import Runner
-from Internal_Representation.problem_predicate import ProblemPredicate
-from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
-from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
-from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBFSSearchQueueNewestFirst
-from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
-from Solver.Search_Queues.Novelty_GBFS_Search_Queue_Oldest_First import NoveltyGBFSOldestFirstQueue
-from Solver.Search_Queues.Novelty_TreeDistance_GBFS_Search_Queue import NoveltyTreeDistanceGBFSSearchQueue
-from Solver.Search_Queues.search_queue_dual_heuristic_HammingDistance import SearchQueueGBFSDualHammingDistance
-from Solver.Search_Queues.search_queue_dual_heuristic_TreeDistance import SearchQueueGBFSDualTreeDistance
-from Solver.Search_Queues.search_queue_dual_heuristic_Landmarks import SearchQueueGBFSDualLandmarks
-from Solver.Heuristics.hamming_distance_partial_order import HammingDistancePartialOrder
-from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
-from Solver.Heuristics.no_pruning import NoPruning
-from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
-from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
-from Solver.Heuristics.tree_distance import TreeDistance
-from Solver.Heuristics.landmarks import Landmarks
-from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
-from Solver.Solving_Algorithms.partial_order_novelty_light import PartialOrderNoveltyLightSolver
-from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
-from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
-from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
-from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
-from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
-from Solver.Solving_Algorithms.partial_order_hamming_novelty import PartialOrderHammingNoveltySolver
-from Solver.Solving_Algorithms.partial_order_hamming_novelty_no_reset import PartialOrderHammingNoveltyNoResetSolver
-from Solver.Models.PandaVerifyModel import PandaVerifyModel
-from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
-
-PANDAVERIFYSUCCESSFULLOUTPUT = "IDs of subtasks used in the plan exist: trueTasks declared in plan actually exist and " \
-                               "can be instantiated as given: trueMethods don't contain duplicate subtasks: " \
-                               "trueMethods don't contain orphaned " \
-                               "tasks: trueMethods can be instantiated: trueOrder induced by methods is present in " \
-                               "plan: truePlan is executable: " \
-                               "truePlan verification result: true"
-
-
-def run_test(domain_file_path, problem_file_path, strategy):
-    print(domain_file_path)
-    print(problem_file_path)
-    controller = Runner(domain_file_path, problem_file_path)
-
-    if strategy == 1:
-        """Hamming Distance (Seen States)"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueue)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Hamming-Distance-seen-states-results.csv'
-    elif strategy == 2:
-        """Seen States Pruning"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueue)
-        controller.set_heuristic(SeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/seen-state-breadth-first-results.csv'
-    elif strategy == 3:
-        """Tree Distance (Seen States)"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueue)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-seen-states-results.csv'
-    elif strategy == 4:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion"""
-        controller.set_solver(PartialOrderNoveltySolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_reset-newest-results.csv'
-    elif strategy == 5:
-        """Tree Distance"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueue)
-        controller.set_heuristic(TreeDistance)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-results.csv'
-    elif strategy == 6:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltySolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_reset-TreeDis-results.csv'
-    elif strategy == 7:
-        """Tree Distance (Seen States) - Newest First Search Queue"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueueNewestFirst)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-seen-states-newest-first-results.csv'
-    elif strategy == 8:
-        """Hamming Distance (Seen States) - Newest First Search Queue"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueueNewestFirst)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Hamming-Distance-seen-states-newest-first-results.csv'
-    elif strategy == 9:
-        """Tree Distance with Hamming Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
-    elif strategy == 10:
-        """Novelty - Level 1 - No reset after task or method expansion"""
-        controller.set_solver(PartialOrderNoveltyNoResetSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_No-Reset-results.csv'
-    elif strategy == 11:
-        """Novelty - Level 2 - Reset after task or method expansion"""
-        controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_level2_reset-results.csv'
-    elif strategy == 12:
-        """Novelty - level1 - Checking for Novel Method"""
-        controller.set_solver(PartialOrderNoveltyMethodsSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Methods-results.csv'
-    elif strategy == 13:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
-        controller.set_solver(PartialOrderNoveltySolver)
-        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_reset-Oldest-First-results.csv'
-    elif strategy == 14:
-        """Landmarks"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueue)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Landmarks-results.csv'
-    elif strategy == 15:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltySolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_reset-HamDis-results.csv'
-    elif strategy == 16:
-        """Novelty - Level 2 - No reset after task or method expansion"""
-        controller.set_solver(PartialOrderNoveltyLevelTwoNoResetSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_level2_no_reset-results.csv'
-    elif strategy == 17:
-        """Novelty - level1 - Checking for Novel Method - Oldest First"""
-        controller.set_solver(PartialOrderNoveltyMethodsSolver)
-        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Methods_oldest_first-results.csv'
-    elif strategy == 18:
-        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyNoResetSolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_no_reset-TreeDis-results.csv'
-    elif strategy == 19:
-        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyNoResetSolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_no_reset-HamDis-results.csv'
-    elif strategy == 20:
-        """Novelty - Level 1 - Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltySolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
-    elif strategy == 21:
-        """Novelty - Level 1 - No Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyNoResetSolver)
-        controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Only_no_reset-Landmarks-results.csv'
-    elif strategy == 22:
-        """Landmarks with Hamming Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Landmarks-Hamming-Distance-tie-breaker-results.csv'
-    elif strategy == 23:
-        """Landmarks with Tree Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Landmarks-Tree-Distance-tie-breaker-results.csv'
-    elif strategy == 24:
-        """Landmarks - Newest First Search Queue"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(GBFSSearchQueueNewestFirst)
-        controller.set_heuristic(Landmarks)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Landmarks-newest-first-results.csv'
-    elif strategy == 25:
-        """Hamming Distance with Tree Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
-    elif strategy == 26:
-        """Tree Distance with Landmarks Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualLandmarks)
-        controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
-    elif strategy == 27:
-        """Hamming Distance with Landmarks Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
-        controller.set_search_queue(SearchQueueGBFSDualLandmarks)
-        controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Hamming-Distance-seen-states-landmarks-tie-breaker-results.csv'
-    elif strategy == 28:
-        """Novelty - level1 - Checking for Novel Methods and Tasks"""
-        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
-        controller.set_search_queue(NoveltyGBFSQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Methods_Tasks-results.csv'
-    elif strategy == 29:
-        """Novelty - level1 - Checking for Novel Methods and Tasks - Oldest First"""
-        controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
-        controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        # controller.set_model(PandaVerifyModel)
-        # controller.set_progress_tracker(PandaVerifyFormatTracker)
-        file_name = 'results/Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
-    elif strategy == 30:
-        """Hamming Distance with Novelty Tie Breaker - Reset - Newest First"""
-        controller.set_solver(PartialOrderHammingNoveltySolver)
-        file_name = 'results/Hamming-Novelty-Reset-Newest.csv'
-    elif strategy == 31:
-        """Hamming Distance with Novelty Tie Breaker - No Reset - Newest First"""
-        controller.set_solver(PartialOrderHammingNoveltyNoResetSolver)
-        file_name = 'results/Hamming-Novelty-No-Reset-Newest.csv'
-    else:
-        raise ValueError('Unknown strategy code: {}'.format(strategy))
-
-    controller.parse_domain()
-    controller.parse_problem()
-
-    # Start Search
-    print(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-    setup_start_time = time.time()
-    controller.solver.solve(search=False)
-    setup_end_time = time.time()
-    setup_time = setup_end_time - setup_start_time
-    num_expansions = 0
-    res = None
-    solve_start_time = time.time()
-    while time.time() - solve_start_time < 1800 and not res:  # while time.time() - start_time < 305
-        res = controller.solver._search(True)
-        num_expansions += 1
-    solve_end_time = time.time()
-    solve_time = solve_end_time - solve_start_time
-
-    solved = True
-    if not res:
-        # Find the model with the most operations
-        solved = False
-        models = controller.solver.search_models.get_model_list()
-        if len(models) > 0:
-            res = models[0]
-            for m in models[1:]:
-                if m.get_num_operations_taken() > res.get_num_operations_taken():
-                    res = m
-        else:
-            res = None
-
-    # Find the percentage of facts in the final state
-    all_possible_facts, total_possible_pairs, total_actual_pairs = \
-        calculate_all_possible_facts_and_pairings(controller.domain, controller.problem, res)
-    if res is not None:
-        percentage_facts = (len(res.current_state.elements) / len(all_possible_facts)) * 100
-        percentage_pairs = (total_actual_pairs / total_possible_pairs) * 100
-    else:
-        percentage_facts = 'N/A'
-        percentage_pairs = 'N/A'
-
-    # Find percentage of novel states
-    if isinstance(controller.solver, PartialOrderNoveltySolver):
-        num_novel_states = controller.solver.num_novel_states
-        num_not_novel_states = controller.solver.num_not_novel_states
-        if num_novel_states + num_not_novel_states == 0:
-            percentage_novel_states = 0
-        else:
-            percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
-    else:
-        num_novel_states = 'N/A'
-        num_not_novel_states = 'N/A'
-        percentage_novel_states = 'N/A'
-
-    if res is not None:
-        model_elements = len(res.current_state.elements)
-    else:
-        model_elements = 'N/A'
-
-    if res is not None and isinstance(res, PandaVerifyModel) and isinstance(res.progress_tracker,
-                                                                            PandaVerifyFormatTracker) \
-            and sys.platform != "win32":
-        output_file_name = "{}.txt".format(strategy)
-        controller.output_result_file(res, output_file_name)
-        result = subprocess.run(
-            './pandaPIparser -C --verify {} {} output/{}'.format(domain_file_path, problem_file_path, output_file_name),
-            shell=True, capture_output=True, text=True)
-
-        output = ''.join(s for s in str(result.stdout) if 31 < ord(s) < 126)
-
-        if PANDAVERIFYSUCCESSFULLOUTPUT in output:
-            verified = True
-        else:
-            verified = False
-    else:
-        verified = 'N/A'
-
-    # Write to file
-    problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
-    write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time, setup_time,
-                  len(all_possible_facts), model_elements, percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, verified, file_name)
-
-
-def calculate_all_possible_facts_and_pairings(domain, problem, model):
-    # For each predicate in the domain
-    possible_facts = []
-    total_possible_pairs = 0
-    total_actual_pairs = 0
-    for predicate in domain.predicates:
-        predicate = domain.get_predicate(predicate)
-        parameter_options = []
-
-        # For each parameter get a list of possible objects
-        if predicate.parameters:
-            for param in predicate.parameters:
-                valid_obs = []
-                param_type = param.type
-                for ob in problem.get_all_objects():
-                    ob = problem.get_object(ob)
-                    type_satisfied = ParameterSelector.check_satisfies_type(param_type, ob)
-                    if type_satisfied:
-                        valid_obs.append(ob)
-                parameter_options.append(valid_obs)
-        else:
-            parameter_options.append([])
-
-        # Use itertools to get all combinations
-        all_param_combinations = list(itertools.product(*parameter_options))
-        predicate_all_combinations = []
-        for combination in all_param_combinations:
-            predicate_all_combinations.append(ProblemPredicate(predicate, list(combination)))
-
-        possible_facts += predicate_all_combinations
-
-    # Now calculate all possible pairs
-    total_possible_pairs = comb(len(possible_facts), 2)
-    if model is not None:
-        total_actual_pairs = comb(len(model.current_state.elements), 2)
-    else:
-        total_actual_pairs = 'N/A'
-
-    # Return all possible facts
-    return possible_facts, total_possible_pairs, total_actual_pairs
-
-
-def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_possible_facts, actual_facts,
-                  percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  percentage_novel_states, solved, verified, file_name):
-    if os.path.exists(file_name):
-        # If file exists open it and append
-        write_file = open(file_name, 'a')
-    else:
-        if '/' in file_name:
-            target_folder = file_name.split('/')[0]
-            if not os.path.exists(target_folder):
-                os.mkdir(target_folder)
-        # If file does not exist make one
-        write_file = open(file_name, 'w')
-        write_file.write(
-            'Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,' +
-            'actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
-    write_file.write(
-        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                                setup_time, all_possible_facts, actual_facts,
-                                                                percentage_facts,
-                                                                total_possible_pairs, total_actual_pairs,
-                                                                percentage_pairs,
-                                                                num_novel_states, num_not_novel_states,
-                                                                percentage_novel_states, str(verified),
-                                                                solved))
-    write_file.close()
+from ExperimentRunner import run_test
 
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument("strategy", metavar='S', type=int, nargs="?",
-                           help='Number corresponding to strategy required',
-                           default=None)
-    args = argparser.parse_args()
-    strategy = args.strategy
+    strategy = 30
 
-    if strategy is None:
-        argparser.error("Incorrect Usage. Strategy MUST be set!")
-
+    """
+    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
-    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
-    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
-    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p04.hddl", strategy)
@@ -1302,44 +849,43 @@ if __name__ == "__main__":
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile39.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile40.hddl", strategy)
     # Woodworking Problems
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/01--p01-complete.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/02--p02-part1.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/03--p02-part2.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/04--p02-part3.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/05--p02-part4.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/06--p02-complete.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/07--p03-part1.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/08--p03-part2.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/09--p03-complete.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/10--p04-part1.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/11.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/12.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/13.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/14.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/15.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/16.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/17.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/18.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/19.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/20.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/21.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/22.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/23.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/24.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/25.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/26.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/27.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/28.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/29.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/30.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/31.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/32.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/33.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/34.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/35.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/36.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/37.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/38.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/39.hddl", strategy)
-    run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/40.hddl", strategy)
-    """
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/01--p01-complete.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/02--p02-part1.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/03--p02-part2.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/04--p02-part3.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/05--p02-part4.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/06--p02-complete.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/07--p03-part1.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/08--p03-part2.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/09--p03-complete.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/10--p04-part1.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/11.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/12.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/13.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/14.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/15.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/16.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/17.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/18.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/19.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/20.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/21.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/22.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/23.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/24.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/25.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/26.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/27.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/28.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/29.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/30.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/31.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/32.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/33.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/34.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/35.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/36.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/37.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/38.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/39.hddl", strategy)
+    # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/40.hddl", strategy)

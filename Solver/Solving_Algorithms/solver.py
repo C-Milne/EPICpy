@@ -125,8 +125,10 @@ class Solver(ABC):
             return self._search()
 
     def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
-        return self.ModelClass(initial_state, subtasks, self.problem, waiting_subtasks,
-                               progress_tracker_class=progress_tracker_class, initial_model=True)
+        initial_model = self.ModelClass(initial_state, subtasks, self.problem, waiting_subtasks,
+                                        progress_tracker_class=progress_tracker_class, initial_model=True)
+        initial_model.current_state.initialise()
+        return initial_model
 
     def _search(self, step_control=False):
         """:parameter   - step_control  - If True, then loop will only execute once"""

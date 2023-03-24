@@ -5,44 +5,65 @@ from Internal_Representation.state import State, ProblemPredicate, Predicate
 
 class StateNovelty(State):
     MaxNoveltyLevel = 1
+    seen_elements = set()
+    seen_element_pairs = set()
 
     def __init__(self):
         super().__init__()
-        self._seen_elements = set()
-        self._seen_element_pairs = set()
-        self._element_hashes = []   # stores hashes of elements in the state. For levels of novelty > 1
+        self.element_hashes = []  # stores hashes of elements in the state. For levels of novelty > 1
+
+    def initialise(self):
+        StateNovelty.seen_elements = set()
+        StateNovelty.seen_element_pairs = set()
 
     def add_element(self, element: ProblemPredicate, check_presence=True) -> int:
-        assert type(element) == ProblemPredicate
         novel = None
-        add_to_state = True
-        if check_presence:
-            add_to_state = element not in self
+        add_to_state = self._add_element_check_add_to_state(element, check_presence)
+
         if add_to_state:
-            element_hash = hash(element)
-
-            if element_hash not in self._seen_elements:
-                novel = self.MaxNoveltyLevel
-                self._seen_elements.add(element_hash)
-
-            # TODO: When we come to do novelty for more than level 2 - maybe we should store combinations to save computing time
-            # TODO: If we do higher levels of novelty remember to update the diagram for the report
-            def _create_hash_list(element_hash_from_list):
-                return hash(frozenset([element_hash, *element_hash_from_list]))
-
-            for level in range(2, self.MaxNoveltyLevel + 1):
-                # Each combination of choosing level - 1 elements from the state elements
-                element_combos = list(combinations(self._element_hashes, level - 1))
-                level_hashes = set(map(_create_hash_list, element_combos))
-                initial_size = len(self._seen_element_pairs)
-                self._seen_element_pairs = self._seen_element_pairs.union(level_hashes)
-                if initial_size < len(self._seen_element_pairs) and not novel:
-                    novel = self.MaxNoveltyLevel + 1 - level
+            element_hash, novel = self._check_element_novelty(element)
 
             # Novelty procedure is ABOVE this
             self.elements.append(element)
             self._add_element_to_index(element)
-            self._element_hashes.append(element_hash)
+            self.element_hashes.append(element_hash)
+        return novel
+
+    def _add_element_check_add_to_state(self, element, check_presence) -> bool:
+        assert type(element) == ProblemPredicate
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        return add_to_state
+
+    def _check_element_novelty(self, element):
+        element_hash, novel = self._check_element_novelty_level1(element)
+        novel = self._check_element_novelty_other_levels(element_hash, novel)
+        return element_hash, novel
+
+    def _check_element_novelty_level1(self, element):
+        novel = None
+        element_hash = hash(element)
+
+        if element_hash not in StateNovelty.seen_elements:
+            novel = self.MaxNoveltyLevel
+            StateNovelty.seen_elements.add(element_hash)
+        return element_hash, novel
+
+    def _check_element_novelty_other_levels(self, element_hash, novel):
+        # TODO: When we come to do novelty for more than level 2 - maybe we should store combinations to save computing time
+        # TODO: If we do higher levels of novelty remember to update the diagram for the report
+        def _create_hash_list(element_hash_from_list):
+            return hash(frozenset([element_hash, *element_hash_from_list]))
+
+        for level in range(2, self.MaxNoveltyLevel + 1):
+            # Each combination of choosing level - 1 elements from the state elements
+            element_combos = list(combinations(self.element_hashes, level - 1))
+            level_hashes = set(map(_create_hash_list, element_combos))
+            initial_size = len(StateNovelty.seen_element_pairs)
+            StateNovelty.seen_element_pairs = StateNovelty.seen_element_pairs.union(level_hashes)
+            if initial_size < len(StateNovelty.seen_element_pairs) and not novel:
+                novel = self.MaxNoveltyLevel + 1 - level
         return novel
 
     def _remove_element_objects(self, predicate: Predicate, predicate_objects):
@@ -77,7 +98,7 @@ class StateNovelty(State):
         self._remove_from_element_hashes(index)
 
     def _remove_from_element_hashes(self, i):
-        self._element_hashes.pop(i)
+        self.element_hashes.pop(i)
 
     def load_from_default_state(self, state: State):
         for e in state.elements:
@@ -87,11 +108,7 @@ class StateNovelty(State):
         new_state = StateNovelty()
         new_state.elements = [*self.elements]
         new_state._index = copy.deepcopy(self._index)
-        new_state._seen_elements = set()
-        new_state._seen_elements.update(self._seen_elements)
-        new_state._seen_element_pairs = set()
-        new_state._seen_element_pairs.update(self._seen_element_pairs)
-        new_state._element_hashes = [*self._element_hashes]
+        new_state.element_hashes = [*self.element_hashes]
         return new_state
 
     def set_max_novelty_level(self, level: int):
