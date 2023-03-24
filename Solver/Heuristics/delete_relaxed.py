@@ -1,5 +1,6 @@
 import copy
 import sys
+import os
 import re
 from Solver.Heuristics.pruning import Pruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
@@ -45,11 +46,8 @@ class AltOperatorCondition(OperatorCondition):
     def _evaluate_children(self, param_dict, search_model, problem):
         children_eval = []
         if len(self.children) > 0 and (self.operator == "and" or self.operator == "or" or self.operator == "="):
-            try:
-                for child in self.children:
-                    children_eval.append(child.evaluate(param_dict, search_model, problem))
-            except Exception as e:
-                raise NotImplementedError
+            for child in self.children:
+                children_eval.append(child.evaluate(param_dict, search_model, problem))
         return children_eval
 
     def _evaluate_not(self, children_eval, param_dict, search_model, problem):
@@ -89,6 +87,7 @@ class AltOperatorCondition(OperatorCondition):
                 # TODO: Investigate this and make a fix
                 return False
             return True
+
 
 class AltPredicateCondition(PredicateCondition):
     def __init__(self, pred: Predicate, parameter_names: list):
@@ -189,6 +188,9 @@ class DeleteRelaxed(Pruning):
             if return_alt_state:
                 res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
                 assert type(res) == tuple and len(res) == 2
+
+                self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
+
                 res, final_alt_state = res
                 self.model_stores[model.model_number].ranking = res
                 return res, final_alt_state
@@ -204,6 +206,31 @@ class DeleteRelaxed(Pruning):
             return res
         else:
             return self.model_stores[model.model_number].ranking
+
+    def write_delete_relaxed_reachability_to_files(self):
+        if not os.path.exists('output'):
+            os.mkdir('output')
+
+        with open("output/DeleteRelaxedReachedActions.txt", 'w') as f:
+            action_list = list(self._found_actions)
+            action_list.sort()
+            for action in action_list:
+                f.write("\n{}".format(action))
+            f.close()
+
+        with open("output/DeleteRelaxedReachedMethods.txt", 'w') as f:
+            method_list = list(self._found_methods)
+            method_list.sort()
+            for method in method_list:
+                f.write("\n{}".format(method))
+            f.close()
+
+        with open('output/DeleteRelaxedReachedTasks.txt', 'w') as f:
+            task_list = list(self._found_tasks)
+            task_list.sort()
+            for task in task_list:
+                f.write("\n{}".format(task))
+            f.close()
 
     def _get_target_tasks(self, model):
         targets = []
@@ -358,11 +385,17 @@ class DeleteRelaxed(Pruning):
                 # Check if all subtasks have been applied
                 applicable = True
                 for s in method.subtasks.tasks:
-                    required_subtask_name = s.task.name
-                    for s_param in s.parameters:
-                        required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+                    # required_subtask_name = s.task.name
+                    # for s_param in s.parameters:
+                    #     required_subtask_name += '-{}'.format(param_option[s_param.name].name)
 
-                    if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
+                    param_option_list = [param_option[s_param.name] for s_param in s.parameters]
+
+                    # if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
+                    #     applicable = False
+                    #     break
+
+                    if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
                         applicable = False
                         break
 
@@ -373,6 +406,24 @@ class DeleteRelaxed(Pruning):
                                             method.task, method.subtasks, method.constraints)
                         applicable_methods.append((alt_method, param_option))
         return applicable_methods
+
+    def _check_for_executed_operation(self, operation_name, operation_param_list, operation_type, param_option, operation_parameters):
+        if operation_type == Action:
+            if not operation_name in self._used_action_configs.keys():
+                return False
+            if len(operation_param_list) == 0:
+                return True
+            for i in range(len(operation_param_list)):
+                if operation_param_list[i] not in self._used_action_configs[operation_name][i]:
+                    return False
+            return True
+        elif operation_type == Task:
+            required_subtask_name = operation_name
+            for s_param in operation_parameters:
+                required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+            return required_subtask_name in self._found_tasks
+        else:
+            raise TypeError('Unexpected type: {}'.format(str(operation_type)))
 
     def _generate_possible_methods_to_check_selection_mode(self):
         if len(self._found_actions_names) == 0:
