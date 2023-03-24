@@ -59,10 +59,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         param_list = self._expand_action_apply_pred_gen_param_list(eff, subtask)
 
         if eff.negated:
-            # Predicate needs to be removed
-            if (eff.predicate.name, [x.name for x in param_list]) not in added_predicates:
-                # If an action tries to add and remove the same predicate we don't delete anything
-                search_model.current_state.remove_element(eff.predicate, param_list)
+            self._expand_action_apply_pred_effect_remove(eff, param_list, added_predicates, search_model)
         else:
             # Predicate needs to be added
             new_predicate = ProblemPredicate(eff.predicate, param_list)
