@@ -192,7 +192,7 @@ class DeleteRelaxed(Pruning):
             if return_alt_state:
                 res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
 
-                self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
+                # self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
 
                 assert type(res) == tuple and len(res) == 2
                 res, final_alt_state = res
@@ -385,26 +385,19 @@ class DeleteRelaxed(Pruning):
         applicable_methods = []
         methods_to_check = self._generate_possible_methods_to_check_selection_mode()
         for method in methods_to_check:
-            if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
+            if method not in self._methods_no_actions and not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
                 continue
             param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
                 applicable = True
-                for s in method.subtasks.tasks:
-                    # required_subtask_name = s.task.name
-                    # for s_param in s.parameters:
-                    #     required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+                if method.subtasks:
+                    for s in method.subtasks.tasks:
+                        param_option_list = [param_option[s_param.name] for s_param in s.parameters]
 
-                    param_option_list = [param_option[s_param.name] for s_param in s.parameters]
-
-                    # if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
-                    #     applicable = False
-                    #     break
-
-                    if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
-                        applicable = False
-                        break
+                        if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
+                            applicable = False
+                            break
 
                 if applicable:
                     alt_method_name = self._generate_modifier_alt_name(method, param_option)
@@ -587,11 +580,15 @@ class DeleteRelaxed(Pruning):
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
             self.alt_domain.add_method(new_m)
+
+            # Generate Dictionary storing which methods rely on each action
             action_subtasks = False
-            for subtask in m.subtasks.tasks:
-                if type(subtask.task) == Action:
-                    action_subtasks = True
-                    self._add_to_methods_actions_mapping(subtask.task, new_m)
+            if m.subtasks:
+                for subtask in m.subtasks.tasks:
+                    if type(subtask.task) == Action:
+                        action_subtasks = True
+                        self._add_to_methods_actions_mapping(subtask.task, new_m)
+
             if not action_subtasks:
                 self._methods_no_actions.add(new_m)
 

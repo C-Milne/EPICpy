@@ -395,7 +395,12 @@ class Landmarks(SeenStatesPruning):
                     self._add_to_node(subT, node)
 
     def _expand_method(self, task, node):
-        subtasks = task.task.get_subtasks().get_tasks()
+        subtasks = task.task.get_subtasks()
+        if subtasks:
+            subtasks = task.task.get_subtasks().get_tasks()
+        else:
+            subtasks = []
+
         for mod in subtasks:
             mod = Subtask(mod.task, mod.parameters)
 
