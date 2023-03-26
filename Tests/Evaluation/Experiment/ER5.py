@@ -211,7 +211,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s02-3.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s02-4.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s03-0.hddl", strategy)
-    """
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s03-1.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s03-2.hddl", strategy)
     run_test("../../Examples/Elevator-Learned-ECAI-16/domain.hddl", "../../Examples/Elevator-Learned-ECAI-16/s03-3.hddl", strategy)
@@ -426,6 +425,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-13-4.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-13-5.hddl", strategy)
     # Hiking Problems
+    """
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p01.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p02.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p03.hddl", strategy)
