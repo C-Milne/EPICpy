@@ -82,6 +82,6 @@ class PartialOrderHammingNoveltySolver(PartialOrderNoveltySolver, Solver):
 
     def _get_novelty_score(self, hamming_score, search_model):
         if type(hamming_score) != int and (hamming_score is None or hamming_score == False):
-            return None     # This model will be pruned
+            return 0     # This model will be pruned
         novelty_score = search_model.current_state.check_novelty_not_checked_facts(hamming_score)
         return novelty_score
