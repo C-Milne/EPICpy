@@ -47,3 +47,7 @@ class StateSeparateNovelty(StateNovelty):
         new_state.elements = [*self.elements]
         new_state._index = copy.deepcopy(self._index)
         return new_state
+
+    def initialise(self):
+        super().initialise()
+        StateSeparateNovelty.score_seen_elements = {}
