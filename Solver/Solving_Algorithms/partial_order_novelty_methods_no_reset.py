@@ -17,10 +17,11 @@ class PartialOrderNoveltyMethodsNoResetSolver(PartialOrderNoveltyMethodsSolver):
         if type(addition.task) == Method:
             method_novelty = self._check_method_novelty(addition)
             current_novelty = model.ranking * -1
-            if method_novelty > 0 and current_novelty > 0:
-                self._num_novel_methods_novel_state += 1
-            else:
-                self._num_novel_method_not_novel_state += 1
+            if method_novelty > 0:
+                if current_novelty > 0:
+                    self.num_novel_methods_novel_state += 1
+                else:
+                    self.num_novel_method_not_novel_state += 1
             return max(method_novelty, current_novelty)
         else:
             return model.ranking * -1
