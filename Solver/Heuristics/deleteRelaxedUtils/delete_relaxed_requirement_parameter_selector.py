@@ -94,20 +94,24 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
         return self._convert_parameter_options_execution_ready(param_dict, len(given_requirements.keys()))
 
     def _delete_relaxed_get_objects_method(self, required_type, method, required_param_name):
+        """Find the objects which satisfy a parameter"""
         valid_options = []
         parameter_used_in_subtask = False
-        for subtask in method.subtasks.tasks:
-            if type(subtask.task) == Action:
-                for p_index in range(len(subtask.parameters)):
-                    if subtask.parameters[p_index].name == required_param_name:
-                        parameter_used_in_subtask = True
-                        potential_objects = self.delete_relaxed_module._used_action_configs[subtask.task.name][p_index]
-                        type_checked_potential_objects = set()
-                        for ob in potential_objects:
-                            if self.check_satisfies_type(required_type, ob):
-                                type_checked_potential_objects.add(ob)
-                        if len(type_checked_potential_objects) > 0:
-                            valid_options.append(type_checked_potential_objects)
+
+        # If the method has no subtasks we cannot find objects from the already used actions
+        if method.subtasks:
+            for subtask in method.subtasks.tasks:
+                if type(subtask.task) == Action:
+                    for p_index in range(len(subtask.parameters)):
+                        if subtask.parameters[p_index].name == required_param_name:
+                            parameter_used_in_subtask = True
+                            potential_objects = self.delete_relaxed_module._used_action_configs[subtask.task.name][p_index]
+                            type_checked_potential_objects = set()
+                            for ob in potential_objects:
+                                if self.check_satisfies_type(required_type, ob):
+                                    type_checked_potential_objects.add(ob)
+                            if len(type_checked_potential_objects) > 0:
+                                valid_options.append(type_checked_potential_objects)
 
         if not parameter_used_in_subtask:
             return self.solver.problem.get_objects_of_type(required_type)

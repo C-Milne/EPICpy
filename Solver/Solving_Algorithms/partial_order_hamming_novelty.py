@@ -30,6 +30,7 @@ class PartialOrderHammingNoveltySolver(PartialOrderNoveltySolver, Solver):
 
     def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
         new_state = StateSeparateNovelty()
+        new_state.initialise()
         new_state.set_max_novelty_level(self.max_novelty_level)
         new_state.load_from_default_state(initial_state)
         return self.ModelClass(new_state, subtasks, self.problem, waiting_subtasks,
@@ -82,6 +83,6 @@ class PartialOrderHammingNoveltySolver(PartialOrderNoveltySolver, Solver):
 
     def _get_novelty_score(self, hamming_score, search_model):
         if type(hamming_score) != int and (hamming_score is None or hamming_score == False):
-            return None     # This model will be pruned
+            return 0     # This model will be pruned
         novelty_score = search_model.current_state.check_novelty_not_checked_facts(hamming_score)
         return novelty_score

@@ -153,12 +153,16 @@ class DeleteRelaxed(Pruning):
         self.requirement_parameters_selector.presolving_processing(domain, problem)
         self.model_stores = {}
         self._methods_rely_actions = {}     # This stores the methods which rely on each action {Action: {Methods}}
+        self._actions_rely_pred = {}    # This stores the actions with use each predicate {Pred_name: {Actions}}
+        self._predicates_in_effect = set()
         self._found_actions = set()
         self._found_actions_names = set()
         self._used_action_configs = {}
         self._found_methods = set()
         self._found_tasks = set()
         self._methods_no_actions = set()
+        self._actions_no_facts = set()
+        self._previously_modified_facts = set()
 
     def ranking(self, model: DefaultModel, **kwargs):
         # Create duplicate state
@@ -187,10 +191,10 @@ class DeleteRelaxed(Pruning):
             targets = self._get_target_tasks(model)
             if return_alt_state:
                 res = self._calculate_distance(self.solver.reproduce_model(model), self.model_stores[model.model_number], alt_state, targets, True)
+
+                # self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
+
                 assert type(res) == tuple and len(res) == 2
-
-                self.write_delete_relaxed_reachability_to_files()   # TODO: Remove this
-
                 res, final_alt_state = res
                 self.model_stores[model.model_number].ranking = res
                 return res, final_alt_state
@@ -302,6 +306,8 @@ class DeleteRelaxed(Pruning):
         self._found_action_names = set()
         self._used_action_configs = {}
 
+        self._populate_previous_facts_state(model.current_state)
+
         if model_store.previous_modifiers is None:
             # If we have no previous modifiers we need to use requirement selection to determine the objects to use for modifiers
             modifier_selection_mode = True
@@ -363,7 +369,8 @@ class DeleteRelaxed(Pruning):
 
     def _calculate_applicable_modifiers_selection_mode_find_actions(self, model) -> list:
         applicable_actions = []
-        for action in self.alt_domain.get_all_actions():
+        actions_to_check = self._generate_possible_actions_to_check_selection_mode()
+        for action in actions_to_check:
             param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(action, {}, model)
             for param_option in param_options:
                 alt_action_name = self._generate_modifier_alt_name(action, param_option)
@@ -378,26 +385,19 @@ class DeleteRelaxed(Pruning):
         applicable_methods = []
         methods_to_check = self._generate_possible_methods_to_check_selection_mode()
         for method in methods_to_check:
-            if not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
+            if method not in self._methods_no_actions and not all([t.task.name in self._used_action_configs.keys() for t in method.subtasks.tasks if type(t.task) == Action]):
                 continue
             param_options = self.requirement_parameters_selector.delete_relaxed_get_potential_parameters(method, {}, model)
             for param_option in param_options:
                 # Check if all subtasks have been applied
                 applicable = True
-                for s in method.subtasks.tasks:
-                    # required_subtask_name = s.task.name
-                    # for s_param in s.parameters:
-                    #     required_subtask_name += '-{}'.format(param_option[s_param.name].name)
+                if method.subtasks:
+                    for s in method.subtasks.tasks:
+                        param_option_list = [param_option[s_param.name] for s_param in s.parameters]
 
-                    param_option_list = [param_option[s_param.name] for s_param in s.parameters]
-
-                    # if ProblemPredicate(self.alt_domain.get_predicate('U'), [self.get_create_object(required_subtask_name)]) not in model.current_state:
-                    #     applicable = False
-                    #     break
-
-                    if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
-                        applicable = False
-                        break
+                        if not self._check_for_executed_operation(s.task.name, param_option_list, type(s.task), param_option, s.parameters):
+                            applicable = False
+                            break
 
                 if applicable:
                     alt_method_name = self._generate_modifier_alt_name(method, param_option)
@@ -434,6 +434,22 @@ class DeleteRelaxed(Pruning):
         return_methods = set().union(*union_elements, self._methods_no_actions)
         return return_methods
 
+    def _generate_possible_actions_to_check_selection_mode(self):
+        if len(self._previously_modified_facts) == 0:
+            return self._actions_no_facts
+        elif len(self._previously_modified_facts) == 1:
+            return self._actions_rely_pred[next(iter(self._previously_modified_facts))].union(self._actions_no_facts)
+
+        union_elements = [self._actions_rely_pred[f] for f in self._previously_modified_facts if f in self._predicates_in_effect]
+
+        return_actions = set().union(*union_elements, self._actions_no_facts)
+        self._previously_modified_facts = set()
+        return return_actions
+
+    def _populate_previous_facts_state(self, state):
+        for fact in state._index.keys():
+            self._previously_modified_facts.add(fact)
+
     def _generate_modifier_alt_name(self, modifier, given_params):
         alt_name = modifier.name
         for p in modifier.parameters:
@@ -461,6 +477,7 @@ class DeleteRelaxed(Pruning):
                     ProblemPredicate(pred, [given_params[x] for x in e.parameters]))
             else:
                 model.current_state.add_element(ProblemPredicate(e.predicate, [given_params[x] for x in e.parameters]))
+                self._previously_modified_facts.add(e.predicate.name)
 
         # Add action name to state (U-actionName)
         prob_pred = ProblemPredicate(self.alt_domain.get_predicate("U"), [self.get_create_object(m.name)])
@@ -563,11 +580,15 @@ class DeleteRelaxed(Pruning):
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
             self.alt_domain.add_method(new_m)
+
+            # Generate Dictionary storing which methods rely on each action
             action_subtasks = False
-            for subtask in m.subtasks.tasks:
-                if type(subtask.task) == Action:
-                    action_subtasks = True
-                    self._add_to_methods_actions_mapping(subtask.task, new_m)
+            if m.subtasks:
+                for subtask in m.subtasks.tasks:
+                    if type(subtask.task) == Action:
+                        action_subtasks = True
+                        self._add_to_methods_actions_mapping(subtask.task, new_m)
+
             if not action_subtasks:
                 self._methods_no_actions.add(new_m)
 
@@ -576,12 +597,31 @@ class DeleteRelaxed(Pruning):
             new_action = Action(action.name, action.parameters, self._generate_alt_preconditions(action.preconditions), action.effects)
             new_action.requirements = action.requirements
             self.alt_domain.add_action(new_action)
+            action_facts = False
+
+            for condition_fact in action.preconditions.conditions:
+                if condition_fact != 'and':
+                    assert type(condition_fact) == list
+                    fact = condition_fact[0]
+                    action_facts = True
+                    self._add_to_actions_predicate_mapping(new_action, fact)
+
+            if not action_facts:
+                self._actions_no_facts.add(new_action)
 
     def _add_to_methods_actions_mapping(self, action, method):
         if action.name not in self._methods_rely_actions.keys():
             self._methods_rely_actions[action.name] = {method}
         else:
             self._methods_rely_actions[action.name].add(method)
+
+    def _add_to_actions_predicate_mapping(self, action, predicate_name: str):
+
+        if predicate_name not in self._predicates_in_effect:
+            self._actions_rely_pred[predicate_name] = {action}
+            self._predicates_in_effect.add(predicate_name)
+        else:
+            self._actions_rely_pred[predicate_name].add(action)
 
     def _generate_alt_preconditions(self, precondition):
         alt_precon = AltPrecondition(str(precondition.conditions))

@@ -35,6 +35,7 @@ from Solver.Solving_Algorithms.partial_order_novelty_light import PartialOrderNo
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods_no_reset import PartialOrderNoveltyMethodsNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
 from Solver.Solving_Algorithms.partial_order_hamming_novelty import PartialOrderHammingNoveltySolver
@@ -286,6 +287,14 @@ def run_test(domain_file_path, problem_file_path, strategy):
         """Hamming Distance with Novelty Tie Breaker - No Reset - Newest First"""
         controller.set_solver(PartialOrderHammingNoveltyNoResetSolver)
         file_name = 'results/Hamming-Novelty-No-Reset-Newest.csv'
+    elif strategy == 32:
+        """Novelty - level1 - Checking for Novel Method - No Reset"""
+        controller.set_solver(PartialOrderNoveltyMethodsNoResetSolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        # controller.set_model(PandaVerifyModel)
+        # controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Facts_Methods_No_Reset-results.csv'
+
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
@@ -348,9 +357,24 @@ def run_test(domain_file_path, problem_file_path, strategy):
     else:
         model_elements = 'N/A'
 
-    if res is not None and isinstance(res, PandaVerifyModel) and isinstance(res.progress_tracker,
-                                                                            PandaVerifyFormatTracker) \
-            and sys.platform != "win32":
+    # Find number of novel methods
+    if isinstance(controller.solver, PartialOrderNoveltyMethodsSolver):
+        num_novel_methods = controller.solver.num_novel_methods
+        num_not_novel_methods = controller.solver.num_not_novel_methods
+    else:
+        num_novel_methods = 'N/A'
+        num_not_novel_methods = 'N/A'
+
+    # Find number of novel methods with novel states
+    if isinstance(controller.solver, PartialOrderNoveltyMethodsNoResetSolver):
+        num_novel_method_not_novel_state = controller.solver.num_novel_method_not_novel_state
+        num_novel_methods_novel_state = controller.solver.num_novel_methods_novel_state
+    else:
+        num_novel_method_not_novel_state = 'N/A'
+        num_novel_methods_novel_state = 'N/A'
+
+    if res is not None and isinstance(res, PandaVerifyModel) and \
+            isinstance(res.progress_tracker, PandaVerifyFormatTracker) and sys.platform != "win32":
         output_file_name = "{}.txt".format(strategy)
         controller.output_result_file(res, output_file_name)
         result = subprocess.run(
@@ -371,6 +395,8 @@ def run_test(domain_file_path, problem_file_path, strategy):
     write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time, setup_time,
                   len(all_possible_facts), model_elements, percentage_facts,
                   total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
+                  num_novel_methods, num_not_novel_methods, num_novel_method_not_novel_state,
+                  num_novel_methods_novel_state,
                   percentage_novel_states, solved, verified, file_name)
 
 
@@ -417,8 +443,9 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
 
 
 def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_possible_facts, actual_facts,
-                  percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
+                  percentage_facts, total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states,
+                  num_not_novel_states, num_novel_methods, num_not_novel_methods,
+                  num_novel_method_not_novel_state, num_novel_methods_novel_state,
                   percentage_novel_states, solved, verified, file_name):
     if os.path.exists(file_name):
         # If file exists open it and append
@@ -432,16 +459,20 @@ def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_p
         write_file = open(file_name, 'w')
         write_file.write(
             'Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,' +
-            'actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,Verified,Solved')
+            'actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,num_novel_methods,'
+            'num_not_novel_methods,num_novel_method_not_novel_state,num_novel_methods_novel_state,Verified,Solved')
     write_file.write(
-        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                                setup_time, all_possible_facts, actual_facts,
-                                                                percentage_facts,
-                                                                total_possible_pairs, total_actual_pairs,
-                                                                percentage_pairs,
-                                                                num_novel_states, num_not_novel_states,
-                                                                percentage_novel_states, str(verified),
-                                                                solved))
+        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
+                                                                            setup_time, all_possible_facts,
+                                                                            actual_facts, percentage_facts,
+                                                                            total_possible_pairs, total_actual_pairs,
+                                                                            percentage_pairs,
+                                                                            num_novel_states, num_not_novel_states,
+                                                                            percentage_novel_states,
+                                                                            num_novel_methods, num_not_novel_methods,
+                                                                            num_novel_method_not_novel_state,
+                                                                            num_novel_methods_novel_state,
+                                                                            str(verified), solved))
     write_file.close()
 
 
