@@ -35,6 +35,7 @@ from Solver.Solving_Algorithms.partial_order_novelty_light import PartialOrderNo
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
+from Solver.Solving_Algorithms.partial_order_novelty_methods_only import PartialOrderNoveltyMethodsOnlySolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_no_reset import PartialOrderNoveltyMethodsNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods_tasks import PartialOrderNoveltyMethodsTasksSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2_no_reset import PartialOrderNoveltyLevelTwoNoResetSolver
@@ -294,7 +295,13 @@ def run_test(domain_file_path, problem_file_path, strategy):
         # controller.set_model(PandaVerifyModel)
         # controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods_No_Reset-results.csv'
-
+    elif strategy == 33:
+        """Novelty - Checking for Novel Method - ONLY - Newest First"""
+        controller.set_solver(PartialOrderNoveltyMethodsOnlySolver)
+        controller.set_search_queue(NoveltyGBFSQueue)
+        # controller.set_model(PandaVerifyModel)
+        # controller.set_progress_tracker(PandaVerifyFormatTracker)
+        file_name = 'results/Novelty_Methods_Only_Reset_Newest-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))
 
