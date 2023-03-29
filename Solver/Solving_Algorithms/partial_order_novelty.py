@@ -12,6 +12,7 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         self._setup_set_search_queue()
         self._setup_set_heuristic()
         self.max_novelty_level = 1
+
         self.num_novel_states = 0
         self.num_not_novel_states = 0
 

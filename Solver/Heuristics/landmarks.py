@@ -1,6 +1,8 @@
+import copy
 from Internal_Representation.task import Task
 from Internal_Representation.method import Method
 from Internal_Representation.subtasks import Subtask
+from Internal_Representation.state_novelty import StateNovelty
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, ProblemPredicate
@@ -245,7 +247,16 @@ class Landmarks(SeenStatesPruning):
 
     def presolving_processing(self, **kwargs) -> None:
         assert 'initial_model' in kwargs
-        self.calculate_reachability(kwargs['initial_model'])
+        initial_model = kwargs['initial_model']
+
+        if isinstance(initial_model.current_state, StateNovelty):
+            default_seen_elements = copy.copy(StateNovelty.seen_elements)
+
+        self.calculate_reachability(initial_model)
+
+        if isinstance(initial_model.current_state, StateNovelty):
+            StateNovelty.seen_elements = default_seen_elements
+
         root_node = AndNode('LandMarkRootNode')
         self.tree.add_root_node(root_node)
         initial_tasks = self.problem.get_subtasks()
