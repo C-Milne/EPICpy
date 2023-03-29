@@ -18,6 +18,16 @@ class StateSeparateNovelty(StateNovelty):
             self._add_element_to_index(element)
             self._not_checked_facts.append(element)
 
+    def _add_element_check_add_to_state(self, element, check_presence) -> bool:
+        assert type(element) == ProblemPredicate
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        else:
+            element_hash = hash(element)
+            StateNovelty.seen_elements.add(element_hash)
+        return add_to_state
+
     def check_novelty_not_checked_facts(self, hamming_score):
         novelty = 0
         for e in self._not_checked_facts:
@@ -37,6 +47,7 @@ class StateSeparateNovelty(StateNovelty):
         if element_hash not in StateSeparateNovelty.score_seen_elements[hamming_score]:
             novel = self.MaxNoveltyLevel
             StateSeparateNovelty.score_seen_elements[hamming_score].add(element_hash)
+        StateNovelty.seen_elements.add(element_hash)
         return novel
 
     def _remove_from_element_hashes(self, i):

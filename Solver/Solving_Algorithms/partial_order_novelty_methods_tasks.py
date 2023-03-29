@@ -21,6 +21,9 @@ class PartialOrderNoveltyMethodsTasksSolver(PartialOrderNoveltySolver):
             self._seen_methods.add(added_mod)
             if initial_size < len(self._seen_methods):
                 novelty = 1
+                self.num_novel_methods += 1
+            else:
+                self.num_not_novel_methods += 1
         else:
             # Type of addition is abstract task
             initial_size = len(self._seen_tasks)

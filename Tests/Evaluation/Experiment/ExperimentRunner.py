@@ -14,6 +14,7 @@ sys.path.append(os.getcwd())
 os.chdir(working_dir)
 from runner import Runner
 from Internal_Representation.problem_predicate import ProblemPredicate
+from Internal_Representation.state_novelty import StateNovelty
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBFSSearchQueueNewestFirst
@@ -354,26 +355,27 @@ def run_test(domain_file_path, problem_file_path, strategy):
             percentage_novel_states = 0
         else:
             percentage_novel_states = (num_novel_states / (num_novel_states + num_not_novel_states)) * 100
+        new_state = StateNovelty()
+        num_unique_facts = len(new_state.seen_elements)
+        num_novel_methods = controller.solver.num_novel_methods
+        num_not_novel_methods = controller.solver.num_not_novel_methods
+        print('here')
     else:
         num_novel_states = 'N/A'
         num_not_novel_states = 'N/A'
         percentage_novel_states = 'N/A'
+        num_unique_facts = 'N/A'
+        num_novel_methods = 'N/A'
+        num_not_novel_methods = 'N/A'
 
     if res is not None:
         model_elements = len(res.current_state.elements)
     else:
         model_elements = 'N/A'
 
-    # Find number of novel methods
-    if isinstance(controller.solver, PartialOrderNoveltyMethodsSolver):
-        num_novel_methods = controller.solver.num_novel_methods
-        num_not_novel_methods = controller.solver.num_not_novel_methods
-    else:
-        num_novel_methods = 'N/A'
-        num_not_novel_methods = 'N/A'
-
     # Find number of novel methods with novel states
-    if isinstance(controller.solver, PartialOrderNoveltyMethodsNoResetSolver):
+    if isinstance(controller.solver, PartialOrderNoveltyMethodsNoResetSolver) or \
+            isinstance(controller.solver, PartialOrderHammingNoveltyNoResetSolver):
         num_novel_method_not_novel_state = controller.solver.num_novel_method_not_novel_state
         num_novel_methods_novel_state = controller.solver.num_novel_methods_novel_state
     else:
@@ -399,12 +401,15 @@ def run_test(domain_file_path, problem_file_path, strategy):
 
     # Write to file
     problem_file_path_slashes = [i.start() for i in re.finditer('/', problem_file_path)]
-    write_to_file(problem_file_path[problem_file_path_slashes[-2] + 1:], num_expansions, solve_time, setup_time,
+    problem_file_name = problem_file_path[problem_file_path_slashes[-2] + 1:]
+
+    write_to_file(problem_file_name, num_expansions, solve_time, setup_time,
                   len(all_possible_facts), model_elements, percentage_facts,
-                  total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states, num_not_novel_states,
-                  num_novel_methods, num_not_novel_methods, num_novel_method_not_novel_state,
-                  num_novel_methods_novel_state,
-                  percentage_novel_states, solved, verified, file_name)
+                  total_possible_pairs, total_actual_pairs, percentage_pairs,
+                  num_novel_states, num_not_novel_states, percentage_novel_states,
+                  num_unique_facts, num_novel_methods, num_not_novel_methods,
+                  num_novel_method_not_novel_state, num_novel_methods_novel_state,
+                  solved, verified, file_name)
 
 
 def calculate_all_possible_facts_and_pairings(domain, problem, model):
@@ -449,11 +454,14 @@ def calculate_all_possible_facts_and_pairings(domain, problem, model):
     return possible_facts, total_possible_pairs, total_actual_pairs
 
 
-def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_possible_facts, actual_facts,
-                  percentage_facts, total_possible_pairs, total_actual_pairs, percentage_pairs, num_novel_states,
-                  num_not_novel_states, num_novel_methods, num_not_novel_methods,
+def write_to_file(problem_name, number_expansions, solve_time, setup_time,
+                  all_possible_facts, actual_facts, percentage_facts,
+                  total_possible_pairs, total_actual_pairs, percentage_pairs,
+                  num_novel_states, num_not_novel_states, percentage_novel_states,
+                  num_unique_facts,
+                  num_novel_methods, num_not_novel_methods,
                   num_novel_method_not_novel_state, num_novel_methods_novel_state,
-                  percentage_novel_states, solved, verified, file_name):
+                  solved, verified, file_name):
     if os.path.exists(file_name):
         # If file exists open it and append
         write_file = open(file_name, 'a')
@@ -465,21 +473,31 @@ def write_to_file(problem_name, number_expansions, solve_time, setup_time, all_p
         # If file does not exist make one
         write_file = open(file_name, 'w')
         write_file.write(
-            'Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,' +
-            'actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,num_novel_methods,'
-            'num_not_novel_methods,num_novel_method_not_novel_state,num_novel_methods_novel_state,Verified,Solved')
+            'Problem,number_expansions,solve_time,setup_time,' +
+            'all_facts,actual_facts,percentage_facts,possible_pairs,' +
+            'actual_pairs,percentage_pairs,' +
+            'num_novel_states,num_not_novel_states,percentage_novel_states,' +
+            'num_unique_facts,' +
+            'num_novel_methods,num_not_novel_methods,' +
+            'num_novel_method_not_novel_state,num_novel_methods_novel_state,' +
+            'Verified,Solved')
     write_file.write(
-        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions, solve_time,
-                                                                            setup_time, all_possible_facts,
-                                                                            actual_facts, percentage_facts,
-                                                                            total_possible_pairs, total_actual_pairs,
-                                                                            percentage_pairs,
-                                                                            num_novel_states, num_not_novel_states,
-                                                                            percentage_novel_states,
-                                                                            num_novel_methods, num_not_novel_methods,
-                                                                            num_novel_method_not_novel_state,
-                                                                            num_novel_methods_novel_state,
-                                                                            str(verified), solved))
+        "\n{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(problem_name, number_expansions,
+                                                                               solve_time, setup_time,
+                                                                               all_possible_facts,
+                                                                               actual_facts, percentage_facts,
+                                                                               total_possible_pairs,
+                                                                               total_actual_pairs,
+                                                                               percentage_pairs,
+                                                                               num_novel_states,
+                                                                               num_not_novel_states,
+                                                                               percentage_novel_states,
+                                                                               num_unique_facts,
+                                                                               num_novel_methods,
+                                                                               num_not_novel_methods,
+                                                                               num_novel_method_not_novel_state,
+                                                                               num_novel_methods_novel_state,
+                                                                               str(verified), solved))
     write_file.close()
 
 
