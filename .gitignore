@@ -2,3 +2,5 @@
 *.pyc
 .vscode/settings.json
 Tests/UnitTests/output/runner_test_basic_p1
+Tests/Evaluation/Experiment/slurms
+Tests/Evaluation/Experiment/output
