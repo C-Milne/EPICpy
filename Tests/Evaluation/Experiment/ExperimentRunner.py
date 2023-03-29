@@ -359,7 +359,6 @@ def run_test(domain_file_path, problem_file_path, strategy):
         num_unique_facts = len(new_state.seen_elements)
         num_novel_methods = controller.solver.num_novel_methods
         num_not_novel_methods = controller.solver.num_not_novel_methods
-        print('here')
     else:
         num_novel_states = 'N/A'
         num_not_novel_states = 'N/A'
