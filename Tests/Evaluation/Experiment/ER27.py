@@ -5,7 +5,6 @@ if __name__ == "__main__":
     strategy = 27
 
     """
-    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -21,6 +20,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p12.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p13.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p14.hddl", strategy)
+    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p15.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p16.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p17.hddl", strategy)
