@@ -376,10 +376,10 @@ if __name__ == "__main__":
     run_test("../../Examples/Entertainment/pfile07-domain.hddl", "../../Examples/Entertainment/pfile07.hddl", strategy)
     run_test("../../Examples/Entertainment/pfile08-domain.hddl", "../../Examples/Entertainment/pfile08.hddl", strategy)
     """
-    run_test("../../Examples/Entertainment/pfile09-domain.hddl", "../../Examples/Entertainment/pfile09.hddl", strategy)
-    run_test("../../Examples/Entertainment/pfile10-domain.hddl", "../../Examples/Entertainment/pfile10.hddl", strategy)
-    run_test("../../Examples/Entertainment/pfile11-domain.hddl", "../../Examples/Entertainment/pfile11.hddl", strategy)
-    run_test("../../Examples/Entertainment/pfile12-domain.hddl", "../../Examples/Entertainment/pfile12.hddl", strategy)
+    # run_test("../../Examples/Entertainment/pfile09-domain.hddl", "../../Examples/Entertainment/pfile09.hddl", strategy)
+    # run_test("../../Examples/Entertainment/pfile10-domain.hddl", "../../Examples/Entertainment/pfile10.hddl", strategy)
+    # run_test("../../Examples/Entertainment/pfile11-domain.hddl", "../../Examples/Entertainment/pfile11.hddl", strategy)
+    # run_test("../../Examples/Entertainment/pfile12-domain.hddl", "../../Examples/Entertainment/pfile12.hddl", strategy)
     # Freecell Problems
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-1.hddl", strategy)
     # run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-2.hddl", strategy)
