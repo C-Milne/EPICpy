@@ -30,13 +30,13 @@ if __name__ == "__main__":
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p22.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p23.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p24.hddl", strategy)
-    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p25.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p26.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p27.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p28.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p29.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p30.hddl", strategy)
+    """
     # Barman Problems
     """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl", strategy)
@@ -56,8 +56,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile15.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile16.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile17.hddl", strategy)
-    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile18.hddl", strategy)
+    """
     # run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile19.hddl", strategy)
     # run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile20.hddl", strategy)
     # Depots Problems
@@ -83,10 +83,10 @@ if __name__ == "__main__":
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p19.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p20.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p21.hddl", strategy)
-    """
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p22.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p23.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p24.hddl", strategy)
+    """
     # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p25.hddl", strategy)
     # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p26.hddl", strategy)
     # run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p27.hddl", strategy)
@@ -101,8 +101,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile04.hddl", strategy)
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile05.hddl", strategy)
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile06.hddl", strategy)
-    """
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile07.hddl", strategy)
+    """
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile08.hddl", strategy)
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile09.hddl", strategy)
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile10.hddl", strategy)
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth01.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth02.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth03.hddl", strategy)
-    """
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth04.hddl", strategy)
+    """
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth05.hddl", strategy)
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth06.hddl", strategy)
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth07.hddl", strategy)
@@ -171,8 +171,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p18.hddl", strategy)
     run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p19.hddl", strategy)
     run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p20.hddl", strategy)
-    """
     run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p21.hddl", strategy)
+    """
     # run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p22.hddl", strategy)
     # run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p23.hddl", strategy)
     # run_test("../../Examples/Blocksworld-GTOHP/domain.hddl", "../../Examples/Blocksworld-GTOHP/p24.hddl", strategy)
@@ -206,8 +206,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p20.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p21.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p22.hddl", strategy)
-    """
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p23.hddl", strategy)
+    """
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p24.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p25.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p26.hddl", strategy)
@@ -369,11 +369,11 @@ if __name__ == "__main__":
     """
     run_test("../../Examples/Entertainment/pfile01-domain.hddl", "../../Examples/Entertainment/pfile01.hddl", strategy)
     run_test("../../Examples/Entertainment/pfile02-domain.hddl", "../../Examples/Entertainment/pfile02.hddl", strategy)
-    """
     run_test("../../Examples/Entertainment/pfile03-domain.hddl", "../../Examples/Entertainment/pfile03.hddl", strategy)
     run_test("../../Examples/Entertainment/pfile04-domain.hddl", "../../Examples/Entertainment/pfile04.hddl", strategy)
-    # run_test("../../Examples/Entertainment/pfile05-domain.hddl", "../../Examples/Entertainment/pfile05.hddl", strategy)
-    # run_test("../../Examples/Entertainment/pfile06-domain.hddl", "../../Examples/Entertainment/pfile06.hddl", strategy)
+    """
+    run_test("../../Examples/Entertainment/pfile05-domain.hddl", "../../Examples/Entertainment/pfile05.hddl", strategy)
+    run_test("../../Examples/Entertainment/pfile06-domain.hddl", "../../Examples/Entertainment/pfile06.hddl", strategy)
     # run_test("../../Examples/Entertainment/pfile07-domain.hddl", "../../Examples/Entertainment/pfile07.hddl", strategy)
     # run_test("../../Examples/Entertainment/pfile08-domain.hddl", "../../Examples/Entertainment/pfile08.hddl", strategy)
     # run_test("../../Examples/Entertainment/pfile09-domain.hddl", "../../Examples/Entertainment/pfile09.hddl", strategy)
@@ -453,8 +453,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p08.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p09.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p10.hddl", strategy)
-    """
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p11.hddl", strategy)
+    """
     # run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p12.hddl", strategy)
     # run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p13.hddl", strategy)
     # run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p14.hddl", strategy)
@@ -529,8 +529,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-0.hddl", strategy)
-    """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-1.hddl", strategy)
+    """
     # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-0.hddl", strategy)
     # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-1.hddl", strategy)
     # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-0.hddl", strategy)
@@ -660,7 +660,9 @@ if __name__ == "__main__":
     # run_test("../../Examples/Monroe-Fully-Observable/pfile19-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile19.hddl", strategy)
     # run_test("../../Examples/Monroe-Fully-Observable/pfile20-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile20.hddl", strategy)
     # Monroe Partially Ob Problems
+    """
     run_test("../../Examples/Monroe-Partially-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile01.hddl", strategy)
+    """
     # run_test("../../Examples/Monroe-Partially-Observable/pfile02-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile02.hddl", strategy)
     # run_test("../../Examples/Monroe-Partially-Observable/pfile03-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile03.hddl", strategy)
     # run_test("../../Examples/Monroe-Partially-Observable/pfile04-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile04.hddl", strategy)
@@ -760,8 +762,8 @@ if __name__ == "__main__":
     """
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_01_001.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_02_001.hddl", strategy)
-    """
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_02_002.hddl", strategy)
+    """
     # run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_03_001.hddl", strategy)
     # run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_03_002.hddl", strategy)
     # run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_03_003.hddl", strategy)
