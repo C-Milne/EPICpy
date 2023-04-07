@@ -5,7 +5,8 @@ from Internal_Representation.subtasks import Subtask
 from Internal_Representation.state_novelty import StateNovelty
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
-from Solver.Heuristics.delete_relaxed import DeleteRelaxed, ProblemPredicate
+# from Solver.Heuristics.delete_relaxed import DeleteRelaxed, ProblemPredicate
+from Solver.Heuristics.delete_relaxed_before import DeleteRelaxed, ProblemPredicate
 
 
 class Node:
