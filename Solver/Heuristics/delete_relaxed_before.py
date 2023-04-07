@@ -4,7 +4,7 @@ import os
 import re
 from Solver.Heuristics.pruning import Pruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
-from Solver.Heuristics.deleteRelaxedUtils.delete_relaxed_requirement_parameter_selector import DeleteRelaxedRequirementSelection
+from Solver.Heuristics.deleteRelaxedUtils.delete_relaxed_requirement_parameter_selector_before import DeleteRelaxedRequirementSelection
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
