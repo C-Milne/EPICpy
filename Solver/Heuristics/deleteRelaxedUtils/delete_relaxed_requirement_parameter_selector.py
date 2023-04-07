@@ -1,5 +1,5 @@
 import re
-from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Modifier, Model, Method, Action
+from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Modifier, Model, Method, Action, Task
 
 
 class DeleteRelaxedRequirementSelection(RequirementSelection):
@@ -99,19 +99,38 @@ class DeleteRelaxedRequirementSelection(RequirementSelection):
         parameter_used_in_subtask = False
 
         # If the method has no subtasks we cannot find objects from the already used actions
-        if method.subtasks:
-            for subtask in method.subtasks.tasks:
-                if type(subtask.task) == Action:
-                    for p_index in range(len(subtask.parameters)):
-                        if subtask.parameters[p_index].name == required_param_name:
-                            parameter_used_in_subtask = True
-                            potential_objects = self.delete_relaxed_module._used_action_configs[subtask.task.name][p_index]
-                            type_checked_potential_objects = set()
-                            for ob in potential_objects:
-                                if self.check_satisfies_type(required_type, ob):
-                                    type_checked_potential_objects.add(ob)
-                            if len(type_checked_potential_objects) > 0:
-                                valid_options.append(type_checked_potential_objects)
+        if required_param_name not in self.delete_relaxed_module._methods_task_parameters[method.name]:
+            if method.subtasks:
+                for subtask in method.subtasks.tasks:
+                    if type(subtask.task) == Action:
+                        for p_index in range(len(subtask.parameters)):
+                            if subtask.parameters[p_index].name == required_param_name:
+                                parameter_used_in_subtask = True
+                                potential_objects = self.delete_relaxed_module._used_action_configs[subtask.task.name][p_index]
+                                type_checked_potential_objects = set()
+                                for ob in potential_objects:
+                                    if self.check_satisfies_type(required_type, ob):
+                                        type_checked_potential_objects.add(ob)
+                                if len(type_checked_potential_objects) > 0:
+                                    valid_options.append(type_checked_potential_objects)
+        else:
+            if method.subtasks:
+                for subtask in method.subtasks.tasks:
+                    if type(subtask.task) == Task:
+                        for p_index in range(len(subtask.parameters)):
+                            if subtask.parameters[p_index].name == required_param_name:
+                                parameter_used_in_subtask = True
+
+                                if subtask.task.name not in self.delete_relaxed_module._used_task_configs:
+                                    break
+
+                                potential_objects = self.delete_relaxed_module._used_task_configs[subtask.task.name][p_index]
+                                type_checked_potential_objects = set()
+                                for ob in potential_objects:
+                                    if self.check_satisfies_type(required_type, ob):
+                                        type_checked_potential_objects.add(ob)
+                                if len(type_checked_potential_objects) > 0:
+                                    valid_options.append(type_checked_potential_objects)
 
         if not parameter_used_in_subtask:
             return self.solver.problem.get_objects_of_type(required_type)

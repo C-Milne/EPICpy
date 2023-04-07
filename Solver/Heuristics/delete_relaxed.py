@@ -158,11 +158,13 @@ class DeleteRelaxed(Pruning):
         self._found_actions = set()
         self._found_actions_names = set()
         self._used_action_configs = {}
+        self._used_task_configs = {}
         self._found_methods = set()
         self._found_tasks = set()
         self._methods_no_actions = set()
         self._actions_no_facts = set()
         self._previously_modified_facts = set()
+        self._methods_task_parameters = {}
 
     def ranking(self, model: DefaultModel, **kwargs):
         # Create duplicate state
@@ -496,6 +498,13 @@ class DeleteRelaxed(Pruning):
             self._used_action_configs[action_default_name] = [set() for i in range(len(action.parameters))]
         for i in range(len(action.parameters)):
             self._used_action_configs[action_default_name][i].add(parameters_used[action.parameters[i].name])
+        # print('here')
+
+    def _record_applied_task(self, task, parameters_used):
+        if task.name not in self._used_task_configs.keys():
+            self._used_task_configs[task.name] = [set() for i in range(len(task.parameters))]
+        for i in range(len(task.parameters)):
+            self._used_task_configs[task.name][i].add(parameters_used[i])
 
     def _apply_method(self, m, model, targets, found_targets):
         # Add the name of the method to the state
@@ -509,8 +518,10 @@ class DeleteRelaxed(Pruning):
         self._found_methods.add(method_name)
 
         # Check if name of task this method expands is already in state
-        ob_names = self._get_objects_from_alt_modifier_name(m, True)
-        task_name = m.task['task'].name
+        used_obs = self._get_objects_from_alt_modifier_name(m)
+        ob_names = [o.name for o in used_obs]
+        applied_task = m.task['task']
+        task_name = applied_task.name
 
         for param_name in m.task['params']:
             try:
@@ -540,6 +551,7 @@ class DeleteRelaxed(Pruning):
             if task_string in targets:
                 found_targets.append(task_string)
             self._found_tasks.add(task_name)
+            self._record_applied_task(applied_task, used_obs)
 
     def get_create_object(self, ob_name):
         if ob_name in self.alt_problem.objects:
@@ -580,14 +592,22 @@ class DeleteRelaxed(Pruning):
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
             self.alt_domain.add_method(new_m)
+            self._methods_task_parameters[m.name] = set()
 
             # Generate Dictionary storing which methods rely on each action
             action_subtasks = False
             if m.subtasks:
+                m_params = {x.name for x in m.parameters}
+                print('here')
                 for subtask in m.subtasks.tasks:
                     if type(subtask.task) == Action:
                         action_subtasks = True
+                        if subtask.parameters:
+                            for p in subtask.parameters:
+                                m_params.discard(p.name)
                         self._add_to_methods_actions_mapping(subtask.task, new_m)
+                if len(m_params) > 0:
+                    self._methods_task_parameters[m.name] = m_params
 
             if not action_subtasks:
                 self._methods_no_actions.add(new_m)
@@ -599,9 +619,22 @@ class DeleteRelaxed(Pruning):
             self.alt_domain.add_action(new_action)
             action_facts = False
 
-            for condition_fact in action.preconditions.conditions:
+            skip_not = False
+            conditions = action.preconditions.conditions
+            if type(conditions) == str or all(type(x) == str for x in conditions):
+                conditions = [conditions]
+
+            for condition_fact in conditions:
+                if condition_fact == 'not':
+                    skip_not = True
+                    continue
+                elif skip_not:
+                    skip_not = False
+                    continue
                 if condition_fact != 'and':
                     assert type(condition_fact) == list
+                    if len(condition_fact) == 0:
+                        continue
                     fact = condition_fact[0]
                     action_facts = True
                     self._add_to_actions_predicate_mapping(new_action, fact)
