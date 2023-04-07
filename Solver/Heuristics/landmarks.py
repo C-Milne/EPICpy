@@ -286,7 +286,7 @@ class Landmarks(SeenStatesPruning):
         #     r.calculate_landmarks()
         # self.tree.root.calculate_landmarks()
         # self.tree.root.landmarks.remove('LandMarkRootNode')
-        non_calculated_nodes = list(self.tree.nodes.values())
+        # non_calculated_nodes = list(self.tree.nodes.values())
 
         # Set landmarks for initial facts
         for f in self.problem.initial_state.elements:
@@ -305,8 +305,8 @@ class Landmarks(SeenStatesPruning):
             leaf_node.calculate_landmarks()
 
             # Remove from non_calculated set - TODO: Remove this
-            if leaf_node in non_calculated_nodes:
-                non_calculated_nodes.remove(leaf_node)
+            # if leaf_node in non_calculated_nodes:
+            #     non_calculated_nodes.remove(leaf_node)
 
             # Calculate / Recalculate upwards nodes
             for r in leaf_node.required_by + leaf_node.provides:
