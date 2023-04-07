@@ -18,11 +18,11 @@ from Solver.Search_Queues.Greedy_Best_First_Search_Queue_Newest_First import GBF
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 
-# domain_file_path = "Tests/Examples/Rover/domain.hddl"
-# problem_file_path = "Tests/Examples/Rover/p10.hddl"
+domain_file_path = "Tests/Examples/Rover/domain.hddl"
+problem_file_path = "Tests/Examples/Rover/p11.hddl"
 
-domain_file_path = "Tests/Examples/Barman/domain.hddl"
-problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
+# domain_file_path = "Tests/Examples/Barman/domain.hddl"
+# problem_file_path = "Tests/Examples/Barman/pfile20.hddl"
 
 # domain_file_path = "Tests/Examples/Depots/domain.hddl"
 # problem_file_path = "Tests/Examples/Depots/p05.hddl"
@@ -87,7 +87,8 @@ result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.sp
 # output/runner-landmarks-profile5Rover5WithDeleteRelaxed7.csv
 # output/runner-tree-hamming_panda_verify6.csv
 # output/runner-tree-hamming-PO-light.csv
-with open('output/runner-landmarks-newest-barman4.csv', 'w+') as f:
+# output/runner-landmarks-newest-barman4.csv
+with open('output/runner-landmarks-profileRover11WithDeleteRelaxed.csv', 'w+') as f:
     # f=open(result.rsplit('.')[0]+'.csv','w')
     f.write(result)
     f.close()
