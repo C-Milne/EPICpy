@@ -1,0 +1,4 @@
+Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,num_unique_facts,num_novel_methods,num_not_novel_methods,num_novel_method_not_novel_state,num_novel_methods_novel_state,Verified,Solved
+Blocksworld-GTOHP/p28.hddl,19197,35481.011446237564,2.073479652404785,361800,884,0.2443338861249309,65449439100,390286,0.0005963167986874314,516,40,92.80575539568345,1400,9328,0,N/A,N/A,N/A,False
+Blocksworld-GTOHP/p29.hddl,48541,1818.478078365326,11.082308769226074,642400,1409,0.2193337484433375,206338558800,991936,0.00048073225177532844,1398,277,83.46268656716418,2832,23370,71,N/A,N/A,N/A,False
+Blocksworld-GTOHP/p30.hddl,63447,1800.443913936615,13.655332326889038,1003000,1725,0.1719840478564307,503003998500,1486950,0.0002956139522616538,1492,169,89.82540638169777,3228,30869,37,N/A,N/A,N/A,False
