@@ -110,7 +110,9 @@ class OrNode(Node):
 
     def calculate_landmarks(self):
         """The landmarks of an OrNode is the intersection of its requirements, union itself"""
-        assert any([r.landmarks_calculated for r in self.requires])
+        if len(self.requires) > 0:
+            assert any([r.landmarks_calculated for r in self.requires])
+
         # if self.landmarks_calculated:
         #     print('Duplicate Landmark Calculation: {}'.format(self.name))
         # else:
@@ -398,7 +400,7 @@ class Landmarks(SeenStatesPruning):
             for param_option in param_options:
                 subtask_name = method.name
                 for p in param_option:
-                    subtask_name += "-" + param_option[p].name
+                    subtask_name += "--" + param_option[p].name
 
                 if subtask_name in self.method_reachability:
                     subT = Subtask(method, method.parameters)

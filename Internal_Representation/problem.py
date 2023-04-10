@@ -87,6 +87,12 @@ class Problem:
             return None
         return self.subtasks.get_tasks()
 
+    def get_constant(self, ob_name) -> KeyError:
+        const = self.domain.get_constant(ob_name)
+        if const is None:
+            raise KeyError('Constant {} not found!'.format(ob_name))
+        return const
+
     def add_goal_conditions(self, cons):
         assert type(cons) == Precondition
         self.goal_conditions = cons

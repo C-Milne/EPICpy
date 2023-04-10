@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Hamming Novelty No Reset" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="GBFS Landmarks Assembly" type="PythonConfigurationType" factoryName="Python">
     <module name="4th-Year-Dissertation" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/AssemblyHierarchical/domain.hddl Tests/Examples/AssemblyHierarchical/genericLinearProblem_depth01.hddl -solverModName PartialOrderHammingNoveltyNoResetSolver -solverPath Solver/Solving_Algorithms/partial_order_hamming_novelty_no_reset.py" />
+    <option name="PARAMETERS" value="Tests/Examples/AssemblyHierarchical/domain.hddl Tests/Examples/AssemblyHierarchical/genericLinearProblem_depth01.hddl -heuModName Landmarks -heuPath Solver/Heuristics/landmarks.py -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
