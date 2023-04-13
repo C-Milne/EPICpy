@@ -761,6 +761,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_20.hddl", strategy)
     """
     # Transport
+    """
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile01.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile02.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile03.hddl", strategy)
@@ -801,6 +802,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile38.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile39.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile40.hddl", strategy)
+    """
     # Woodworking Problems
     # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/01--p01-complete.hddl", strategy)
     # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/02--p02-part1.hddl", strategy)
