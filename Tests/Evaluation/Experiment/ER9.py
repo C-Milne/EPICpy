@@ -365,7 +365,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Entertainment/pfile12-domain.hddl", "../../Examples/Entertainment/pfile12.hddl", strategy)
     """
     # Freecell Problems
+    """
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-1.hddl", strategy)
+    """
     """
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-2.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-3.hddl", strategy)
@@ -428,6 +430,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-13-5.hddl", strategy)
     """
     # Hiking Problems
+    """
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p01.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p02.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p03.hddl", strategy)
@@ -458,7 +461,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p28.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p29.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p30.hddl", strategy)
+    """
     # Logistics Problems
+    """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-04-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-04-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-04-2.hddl", strategy)
@@ -539,88 +544,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
-    # Minecraft Player Problems
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-003-003.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-003-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-003-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-004-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-004-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-003-005-005-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-004-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-004-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-004-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-004-005-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-005-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-005-005-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-006-006-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-007-007-007-007.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-008-008-008-008.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-009-009-009-009.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-010-010-010-010.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-011-011-011-011.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-012-012-012-012.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Player/domain.hddl", "../../Examples/Minecraft-Player/p-013-013-013-013.hddl", strategy)
-    # Minecraft Regular Problems
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-003-003-003.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-003-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-003-004-004-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-004-004-004.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-004-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-004-005-005-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-005-005-005.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-005-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-005-006-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-06.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-07.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-08.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-09.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-10.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-11.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-12.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-13.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-14.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-15.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-16.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-17.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-18.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-19.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-20.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-25.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-30.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-35.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-40.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-45.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-5-5-5-50.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-006-006-006.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-006-007.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-006-007-007-007.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-007-007-007.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-007-008.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-007-008-008-008.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-008-008-008.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-008-009.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-008-009-009-009.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-009-009-009-009.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-10.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-15.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-20.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-25.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-30.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-35.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-40.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-45.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-9-9-9-50.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-009-009-010.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-010-010-010-010.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-015-015-015-015.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-020-020-020-020.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-025-025-025-025.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-030-030-030-030.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-035-035-035-035.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-040-040-040-040.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-045-045-045-045.hddl", strategy)
-    # run_test("../../Examples/Minecraft-Regular/domain.hddl", "../../Examples/Minecraft-Regular/p-050-050-050-050.hddl", strategy)
+    """
     # Monroe Fully Ob Problems
+    """
     run_test("../../Examples/Monroe-Fully-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile01.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile02-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile02.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile03-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile03.hddl", strategy)
@@ -641,7 +567,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Monroe-Fully-Observable/pfile18-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile18.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile19-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile19.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile20-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile20.hddl", strategy)
+    """
     # Monroe Partially Ob Problems
+    """
     run_test("../../Examples/Monroe-Partially-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile01.hddl", strategy)
     run_test("../../Examples/Monroe-Partially-Observable/pfile02-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile02.hddl", strategy)
     run_test("../../Examples/Monroe-Partially-Observable/pfile03-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile03.hddl", strategy)
@@ -662,7 +590,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Monroe-Partially-Observable/pfile18-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile18.hddl", strategy)
     run_test("../../Examples/Monroe-Partially-Observable/pfile19-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile19.hddl", strategy)
     run_test("../../Examples/Monroe-Partially-Observable/pfile20-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile20.hddl", strategy)
+    """
     # Multi-Arm Blocksworld Problems
+    """
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_01_005.hddl", strategy)
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_01_010.hddl", strategy)
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_02_005.hddl", strategy)
@@ -736,7 +666,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_09_090.hddl", strategy)
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_10_095.hddl", strategy)
     run_test("../../Examples/Multiarm-Blocksworld/domain.hddl", "../../Examples/Multiarm-Blocksworld/pfile_10_100.hddl", strategy)
+    """
     # Robot Problems
+    """
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_01_001.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_02_001.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_02_002.hddl", strategy)
@@ -766,7 +698,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_120_240.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_130_260.hddl", strategy)
     run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_140_280.hddl", strategy)
-    run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_150_300.hddl", strategy)
+    """
+    # run_test("../../Examples/Robot/domain.hddl", "../../Examples/Robot/pfile_150_300.hddl", strategy)
     # Snake Problems
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb01.snake.hddl", strategy)
     run_test("../../Examples/Snake/domain.hddl", "../../Examples/Snake/pb02.snake.hddl", strategy)
