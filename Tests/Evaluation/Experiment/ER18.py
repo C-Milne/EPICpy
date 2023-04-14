@@ -84,7 +84,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p20.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p21.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p22.hddl", strategy)
-    """
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p23.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p24.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p25.hddl", strategy)
@@ -93,6 +92,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p28.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p29.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p30.hddl", strategy)
+    """
     # Factories Problems
     """
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile01.hddl", strategy)
@@ -101,9 +101,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile04.hddl", strategy)
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile05.hddl", strategy)
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile06.hddl", strategy)
-    """
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile07.hddl", strategy)
     run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile08.hddl", strategy)
+    """
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile09.hddl", strategy)
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile10.hddl", strategy)
     # run_test("../../Examples/Factories/domain.hddl", "../../Examples/Factories/pfile11.hddl", strategy)
@@ -122,9 +122,9 @@ if __name__ == "__main__":
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth02.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth03.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth04.hddl", strategy)
-    """
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth05.hddl", strategy)
     run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth06.hddl", strategy)
+    """
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth07.hddl", strategy)
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth08.hddl", strategy)
     # run_test("../../Examples/AssemblyHierarchical/domain.hddl", "../../Examples/AssemblyHierarchical/genericLinearProblem_depth09.hddl", strategy)
@@ -205,8 +205,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p19.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p20.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p21.hddl", strategy)
-    """
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p22.hddl", strategy)
+    """
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p23.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p24.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p25.hddl", strategy)
@@ -465,7 +465,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p18.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p19.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p20.hddl", strategy)
-    """
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p21.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p22.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p23.hddl", strategy)
@@ -476,6 +475,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p28.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p29.hddl", strategy)
     run_test("../../Examples/Hiking/domain.hddl", "../../Examples/Hiking/p30.hddl", strategy)
+    """
     # Logistics Problems
     """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-04-0.hddl", strategy)
@@ -515,7 +515,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-19-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-19-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-20-0.hddl", strategy)
-    """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-20-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-21-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-21-1.hddl", strategy)
@@ -526,44 +525,44 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-24-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-24-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-25-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-25-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-26-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-26-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-32-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-32-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-33-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-33-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-34-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-34-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-35-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-35-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-39-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-39-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-1.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-0.hddl", strategy)
-    # run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
+    """
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-25-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-26-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-26-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-27-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-28-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-29-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-30-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-31-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-32-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-32-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-33-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-33-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-34-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-34-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-35-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-35-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-39-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-39-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-1.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-0.hddl", strategy)
+    run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
     # Monroe Fully Ob Problems
     """
     run_test("../../Examples/Monroe-Fully-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile01.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile02-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile02.hddl", strategy)
-    """
     run_test("../../Examples/Monroe-Fully-Observable/pfile03-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile03.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile04-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile04.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile05-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile05.hddl", strategy)
@@ -582,6 +581,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Monroe-Fully-Observable/pfile18-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile18.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile19-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile19.hddl", strategy)
     run_test("../../Examples/Monroe-Fully-Observable/pfile20-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile20.hddl", strategy)
+    """
     # Monroe Partially Ob Problems
     """
     run_test("../../Examples/Monroe-Partially-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Partially-Observable/pfile01.hddl", strategy)
@@ -763,7 +763,6 @@ if __name__ == "__main__":
     # Transport
     """
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile01.hddl", strategy)
-    """
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile02.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile03.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile04.hddl", strategy)
@@ -803,6 +802,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile38.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile39.hddl", strategy)
     run_test("../../Examples/Transport/domain.hddl", "../../Examples/Transport/pfile40.hddl", strategy)
+    """
     # Woodworking Problems
     # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/01--p01-complete.hddl", strategy)
     # run_test("../../Examples/Woodworking/domain.hddl", "../../Examples/Woodworking/02--p02-part1.hddl", strategy)
