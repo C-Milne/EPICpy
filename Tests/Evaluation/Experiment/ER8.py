@@ -194,9 +194,9 @@ if __name__ == "__main__":
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p20.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p21.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p22.hddl", strategy)
-    """
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p23.hddl", strategy)
     run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p24.hddl", strategy)
+    """
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p25.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p26.hddl", strategy)
     # run_test("../../Examples/Childsnack/domain.hddl", "../../Examples/Childsnack/p27.hddl", strategy)
@@ -371,12 +371,12 @@ if __name__ == "__main__":
     # Freecell Problems
     """
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-1.hddl", strategy)
-    """
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-2.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-3.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-4.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-02-5.hddl", strategy)
     run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-03-1.hddl", strategy)
+    """
     # run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-03-2.hddl", strategy)
     # run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-03-3.hddl", strategy)
     # run_test("../../Examples/Freecell-Learned-ECAI-16/domain.hddl", "../../Examples/Freecell-Learned-ECAI-16/probfreecell-03-4.hddl", strategy)
@@ -537,7 +537,6 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-36-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-0.hddl", strategy)
-    """
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-37-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-38-1.hddl", strategy)
@@ -547,6 +546,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-40-1.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-0.hddl", strategy)
     run_test("../../Examples/Logistics-Learned-ECAI-16/domain.hddl", "../../Examples/Logistics-Learned-ECAI-16/probLOGISTICS-41-1.hddl", strategy)
+    """
     # Monroe Fully Ob Problems
     """
     run_test("../../Examples/Monroe-Fully-Observable/pfile01-domain.hddl", "../../Examples/Monroe-Fully-Observable/pfile01.hddl", strategy)
