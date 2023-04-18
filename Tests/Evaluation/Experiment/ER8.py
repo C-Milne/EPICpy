@@ -4,7 +4,7 @@ from ExperimentRunner import run_test
 if __name__ == "__main__":
     strategy = 8
 
-    
+    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -28,6 +28,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p20.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p21.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p22.hddl", strategy)
+    """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p23.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p24.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p25.hddl", strategy)

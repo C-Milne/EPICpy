@@ -116,7 +116,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Tree-Distance-seen-states-newest-first-results.csv'
     elif strategy == 8:
         """Hamming Distance (Seen States) - Newest First Search Queue"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
+        # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
@@ -331,7 +331,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
     num_expansions = 0
     res = None
     solve_start_time = time.time()
-    while time.time() - solve_start_time < 2000 and not res:
+    while time.time() - solve_start_time < 4000 and not res:
         res = controller.solver._search(True)
         num_expansions += 1
     solve_end_time = time.time()
