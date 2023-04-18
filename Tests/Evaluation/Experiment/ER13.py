@@ -4,7 +4,7 @@ from ExperimentRunner import run_test
 if __name__ == "__main__":
     strategy = 13
 
-    
+    """
     # Rover Problems
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
@@ -13,6 +13,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p05.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p06.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p07.hddl", strategy)
+    """
     # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p08.hddl", strategy)
     # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p09.hddl", strategy)
     # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p10.hddl", strategy)
@@ -38,11 +39,12 @@ if __name__ == "__main__":
     # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p29.hddl", strategy)
     # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p30.hddl", strategy)
     # Barman Problems
-    
+    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile01.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile02.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile03.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile04.hddl", strategy)
+    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile05.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile06.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile07.hddl", strategy)
@@ -61,12 +63,13 @@ if __name__ == "__main__":
     # run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile19.hddl", strategy)
     # run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile20.hddl", strategy)
     # Depots Problems
-    
+    """
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p01.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p02.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p03.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p04.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p05.hddl", strategy)
+    """
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p06.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p07.hddl", strategy)
     run_test("../../Examples/Depots/domain.hddl", "../../Examples/Depots/p08.hddl", strategy)
