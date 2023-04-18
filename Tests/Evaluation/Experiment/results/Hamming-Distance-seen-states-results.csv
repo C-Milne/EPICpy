@@ -1,0 +1,2 @@
+Problem,number_expansions,solve_time,setup_time,all_facts,actual_facts,percentage_facts,possible_pairs,actual_pairs,percentage_pairs,num_novel_states,num_not_novel_states,percentage_novel_states,num_unique_facts,num_novel_methods,num_not_novel_methods,num_novel_method_not_novel_state,num_novel_methods_novel_state,Verified,Solved
+Monroe-Fully-Observable/pfile02.hddl,1217004,23657.845163822174,0.0048427581787109375,7952,413,5.193661971830986,31613176,85078,0.2691219635762,0,12068,0.0,413,59250,828337,N/A,N/A,N/A,False
