@@ -64,257 +64,257 @@ def run_test(domain_file_path, problem_file_path, strategy):
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Distance-seen-states-results.csv'
     elif strategy == 2:
         """Seen States Pruning"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(SeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/seen-state-breadth-first-results.csv'
     elif strategy == 3:
         """Tree Distance (Seen States)"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Tree-Distance-seen-states-results.csv'
     elif strategy == 4:
         """Novelty - Level 1 - Reset to 0 after task or method expansion"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_reset-newest-results.csv'
     elif strategy == 5:
         """Tree Distance"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistance)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Tree-Distance-results.csv'
     elif strategy == 6:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_reset-TreeDis-results.csv'
     elif strategy == 7:
         """Tree Distance (Seen States) - Newest First Search Queue"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Tree-Distance-seen-states-newest-first-results.csv'
     elif strategy == 8:
         """Hamming Distance (Seen States) - Newest First Search Queue"""
         # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Distance-seen-states-newest-first-results.csv'
     elif strategy == 9:
         """Tree Distance with Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Tree-Distance-seen-states-Hamming-Distance-tie-breaker-results.csv'
     elif strategy == 10:
         """Novelty - Level 1 - No reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_No-Reset-results.csv'
     elif strategy == 11:
         """Novelty - Level 2 - Reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_level2_reset-results.csv'
     elif strategy == 12:
         """Novelty - level1 - Checking for Novel Method"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods-results.csv'
     elif strategy == 13:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - oldest first"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_reset-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Landmarks-results.csv'
     elif strategy == 15:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_reset-HamDis-results.csv'
     elif strategy == 16:
         """Novelty - Level 2 - No reset after task or method expansion"""
         controller.set_solver(PartialOrderNoveltyLevelTwoNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_level2_no_reset-results.csv'
     elif strategy == 17:
         """Novelty - level1 - Checking for Novel Method - Oldest First"""
         controller.set_solver(PartialOrderNoveltyMethodsSolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods_oldest_first-results.csv'
     elif strategy == 18:
         """Novelty - Level 1 - No Reset to 0 after task or method expansion - Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_no_reset-TreeDis-results.csv'
     elif strategy == 19:
         """Novelty - Level 1 - No Reset to 0 after task or method expansion - Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_no_reset-HamDis-results.csv'
     elif strategy == 20:
         """Novelty - Level 1 - Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltySolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_reset-Landmarks-results.csv'
     elif strategy == 21:
         """Novelty - Level 1 - No Reset to 0 after task or method expansion - Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyNoResetSolver)
         controller.set_search_queue(NoveltyTreeDistanceGBFSSearchQueue)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Only_no_reset-Landmarks-results.csv'
     elif strategy == 22:
         """Landmarks with Hamming Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Landmarks-Hamming-Distance-tie-breaker-results.csv'
     elif strategy == 23:
         """Landmarks with Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Landmarks-Tree-Distance-tie-breaker-results.csv'
     elif strategy == 24:
         """Landmarks - Newest First Search Queue"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueueNewestFirst)
         controller.set_heuristic(Landmarks)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Landmarks-newest-first-results.csv'
     elif strategy == 25:
         """Hamming Distance with Tree Distance Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualTreeDistance)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
     elif strategy == 26:
         """Tree Distance with Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Tree-Distance-seen-states-landmarks-tie-breaker-results.csv'
     elif strategy == 27:
         """Hamming Distance with Landmarks Tie Breaker"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(HammingDistanceSeenStatesPruning)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Distance-seen-states-landmarks-tie-breaker-results.csv'
     elif strategy == 28:
         """Novelty - level1 - Checking for Novel Methods and Tasks"""
         controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods_Tasks-results.csv'
     elif strategy == 29:
         """Novelty - level1 - Checking for Novel Methods and Tasks - Oldest First"""
         controller.set_solver(PartialOrderNoveltyMethodsTasksSolver)
         controller.set_search_queue(NoveltyGBFSOldestFirstQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods_Tasks_oldest_first-results.csv'
     elif strategy == 30:
         """Hamming Distance with Novelty Tie Breaker - Reset - Newest First"""
         controller.set_solver(PartialOrderHammingNoveltySolver)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Novelty-Reset-Newest.csv'
     elif strategy == 31:
         """Hamming Distance with Novelty Tie Breaker - No Reset - Newest First"""
         controller.set_solver(PartialOrderHammingNoveltyNoResetSolver)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Hamming-Novelty-No-Reset-Newest.csv'
     elif strategy == 32:
         """Novelty - level1 - Checking for Novel Method - No Reset"""
         controller.set_solver(PartialOrderNoveltyMethodsNoResetSolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Facts_Methods_No_Reset-results.csv'
     elif strategy == 33:
         """Novelty - Checking for Novel Method - ONLY - Newest First"""
         controller.set_solver(PartialOrderNoveltyMethodsOnlySolver)
         controller.set_search_queue(NoveltyGBFSQueue)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Novelty_Methods_Only_Reset_Newest-results.csv'
     elif strategy == 34:
         """Landmarks - No Reachability"""
         controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(LandmarksNoReachability)
-        controller.set_model(PandaVerifyModel)
-        controller.set_progress_tracker(PandaVerifyFormatTracker)
+        # controller.set_model(PandaVerifyModel)
+       #  controller.set_progress_tracker(PandaVerifyFormatTracker)
         file_name = 'results/Landmarks_No_Reachability-results.csv'
     else:
         raise ValueError('Unknown strategy code: {}'.format(strategy))

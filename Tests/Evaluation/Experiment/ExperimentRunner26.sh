@@ -6,9 +6,9 @@
 #SBATCH -o slurms/slurm.%j.out
 #SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --mem 12G
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
+#SBATCH --mem 20G
 
 date
 hostname
