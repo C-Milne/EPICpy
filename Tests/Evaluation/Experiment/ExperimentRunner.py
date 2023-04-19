@@ -92,7 +92,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Novelty_Facts_Only_reset-newest-results.csv'
     elif strategy == 5:
         """Tree Distance"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
+        # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(TreeDistance)
         controller.set_model(PandaVerifyModel)
