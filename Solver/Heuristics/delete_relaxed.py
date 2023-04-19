@@ -245,7 +245,8 @@ class DeleteRelaxed(Pruning):
 
     def _get_target_tasks(self, model):
         targets = []
-        next_mod = model.search_modifiers[0].task
+        task_network_modifiers = model.get_task_network()
+        next_mod = task_network_modifiers[0].task
         if type(next_mod) != Task:
             i = -1
             op = model.get_progress_tracker().operations_taken[i]
@@ -261,10 +262,7 @@ class DeleteRelaxed(Pruning):
             # We have all tasks
             pass
 
-        for m in model.search_modifiers:
-            if type(m.task) == Task:
-                targets.append("U-" + m.task.name + self._concat_param_object_names([m.given_params[x] for x in m.given_params]))
-        for m in model.waiting_subtasks:
+        for m in task_network_modifiers:
             if type(m.task) == Task:
                 targets.append("U-" + m.task.name + self._concat_param_object_names([m.given_params[x] for x in m.given_params]))
         return targets
@@ -601,7 +599,7 @@ class DeleteRelaxed(Pruning):
         for m in self.domain.get_all_methods():
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
-            self.alt_domain.add_method(new_m)
+            self.alt_domain.add_method(new_m, False)
 
             # Generate Dictionary storing which methods rely on each action
             method_subtasks = False

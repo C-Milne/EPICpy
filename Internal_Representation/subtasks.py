@@ -63,6 +63,9 @@ class Subtask:
             raise NotImplementedError
         return return_str
 
+    def __repr__(self):
+        return str(self)
+
 
 class Subtasks:
 
