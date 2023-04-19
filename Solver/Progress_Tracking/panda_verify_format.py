@@ -28,6 +28,12 @@ class DecompositionTracker:
                 new_decomp_tracker.add_subtask(v)
         return new_decomp_tracker
 
+    def __str__(self):
+        return '{}: {} -> {}'.format(self.task_id, self.task.name, self.method_decomp_task.name)
+
+    def __repr__(self):
+        return str(self)
+
 
 class PandaVerifyFormatTracker(SequentialTracker):
 

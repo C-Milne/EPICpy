@@ -44,3 +44,6 @@ class ProblemPredicate:
         for o in self.objects:
             print_string += " " + o.name
         return print_string
+
+    def __repr__(self):
+        return str(self)
