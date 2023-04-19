@@ -398,6 +398,8 @@ def run_test(domain_file_path, problem_file_path, strategy):
             isinstance(res.progress_tracker, PandaVerifyFormatTracker) and sys.platform != "win32":
         output_file_name = "{}.txt".format(strategy)
         controller.output_result_file(res, output_file_name)
+        # print('OUTPUT FILE NAME: {}'.format(output_file_name))
+        # print('VERIFYING')
         result = subprocess.run(
             './pandaPIparser -C --verify {} {} output/{}'.format(domain_file_path, problem_file_path, output_file_name),
             shell=True, capture_output=True, text=True)
@@ -408,6 +410,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
             verified = True
         else:
             verified = False
+        # print('VERIFIED: {}'.format(verified))
     else:
         verified = 'N/A'
 
@@ -525,9 +528,11 @@ if __name__ == "__main__":
         argparser.error("Incorrect Usage. Strategy MUST be set!")
 
     # Rover Problems
-    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
-    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
-    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+    # run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p01.hddl", strategy)
+
+    run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
     """
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p02.hddl", strategy)
     run_test("../../Examples/Rover/domain.hddl", "../../Examples/Rover/p03.hddl", strategy)

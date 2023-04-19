@@ -599,7 +599,7 @@ class DeleteRelaxed(Pruning):
         for m in self.domain.get_all_methods():
             new_m = Method(m.name, m.parameters, self._generate_alt_preconditions(m.preconditions), m.task, m.subtasks, m.constraints)
             new_m.requirements = m.requirements
-            self.alt_domain.add_method(new_m)
+            self.alt_domain.add_method(new_m, False)
 
             # Generate Dictionary storing which methods rely on each action
             method_subtasks = False
