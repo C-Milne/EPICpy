@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=ExperimentRunner11
+#SBATCH --job-name=VerifyRunner11
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH -o slurms/slurm.%j.err
 #SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --mem 16G
+#SBATCH --mem 24G
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
 
