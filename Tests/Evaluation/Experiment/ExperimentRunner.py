@@ -254,7 +254,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Hamming-Distance-seen-states-Tree-Distance-tie-breaker-results.csv'
     elif strategy == 26:
         """Tree Distance with Landmarks Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
+        # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualLandmarks)
         controller.set_heuristic(TreeDistanceSeenStatesPruning)
         controller.set_model(PandaVerifyModel)
