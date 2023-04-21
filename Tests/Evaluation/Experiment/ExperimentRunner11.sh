@@ -6,7 +6,7 @@
 #SBATCH -o slurms/slurm.%j.err
 #SBATCH -e slurms/slurm.%j.err
 #SBATCH --ntasks=1
-#SBATCH --mem 24G
+#SBATCH --mem 32G
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
 
