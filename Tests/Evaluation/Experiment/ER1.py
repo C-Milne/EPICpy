@@ -45,9 +45,7 @@ if __name__ == "__main__":
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile03.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile04.hddl", strategy)
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile05.hddl", strategy)
-    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile06.hddl", strategy)
-    """
     run_test("../../Examples/Barman/domain.hddl", "../../Examples/Barman/pfile07.hddl", strategy)
     """
     
@@ -747,9 +745,8 @@ if __name__ == "__main__":
     run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_06.hddl", strategy)
     run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_07.hddl", strategy)
     run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_08.hddl", strategy)
-    """
     run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_09.hddl", strategy)
-
+    """
     # run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_10.hddl", strategy)
     # run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_11.hddl", strategy)
     # run_test("../../Examples/Towers/domain.hddl", "../../Examples/Towers/pfile_12.hddl", strategy)
