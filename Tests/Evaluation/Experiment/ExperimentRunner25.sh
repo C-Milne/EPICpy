@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=ExperimentRunner25
+#SBATCH --job-name=VerifyRunner25
 #SBATCH --mail-user=u34cm18@abdn.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH -o slurms/slurm.%j.out
@@ -8,7 +8,7 @@
 #SBATCH --ntasks=1
 #SBATCH --time=170:00:00
 #SBATCH --partition=compute
-#SBATCH --mem 24G
+#SBATCH --mem 80G
 
 date
 hostname
