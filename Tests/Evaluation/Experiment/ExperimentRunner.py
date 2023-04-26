@@ -160,7 +160,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Novelty_Facts_Only_reset-Oldest-First-results.csv'
     elif strategy == 14:
         """Landmarks"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
+        # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(GBFSSearchQueue)
         controller.set_heuristic(Landmarks)
         controller.set_model(PandaVerifyModel)
