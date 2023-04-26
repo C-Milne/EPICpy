@@ -222,7 +222,7 @@ def run_test(domain_file_path, problem_file_path, strategy):
         file_name = 'results/Novelty_Facts_Only_no_reset-Landmarks-results.csv'
     elif strategy == 22:
         """Landmarks with Hamming Distance Tie Breaker"""
-        controller.set_solver(PartialOrderNoveltyLightSolver)
+        # controller.set_solver(PartialOrderNoveltyLightSolver)
         controller.set_search_queue(SearchQueueGBFSDualHammingDistance)
         controller.set_heuristic(Landmarks)
         controller.set_model(PandaVerifyModel)
