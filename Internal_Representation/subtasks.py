@@ -108,8 +108,8 @@ class Subtasks:
         assert not self.ordered
         """
         Kahns algorithm
-        L ← Empty list that will contain the sorted elements
-        S ← Set of all nodes with no incoming edge
+        L <- Empty list that will contain the sorted elements
+        S <- Set of all nodes with no incoming edge
         
         while S is not empty do
             remove a node n from S
