@@ -1,4 +1,0 @@
-(defproblem problem foralltest
-  ( (p y) (q x) (q y) (w y))
-  ((succeed))
-)
