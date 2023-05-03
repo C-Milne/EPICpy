@@ -1,6 +1,6 @@
 import warnings
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver, Model, \
-    Subtask, Action, Effects, ProblemPredicate, ForallCondition
+    Subtask, Action, Effects, ProblemPredicate, ForallCondition, Method
 from Internal_Representation.state_novelty import StateNovelty
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
@@ -12,8 +12,13 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         self._setup_set_search_queue()
         self._setup_set_heuristic()
         self.max_novelty_level = 1
+
         self.num_novel_states = 0
         self.num_not_novel_states = 0
+
+        self._seen_methods = set()
+        self.num_novel_methods = 0
+        self.num_not_novel_methods = 0
 
     def set_search_queue(self, search_queue):
         if issubclass(search_queue, NoveltyGBFSQueue):
@@ -37,7 +42,23 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
 
     def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
+        if type(addition.task) == Method:
+            self._check_method_novelty(addition)
         self.search_models.novelty_add(model, 0)
+
+    def _check_method_novelty(self, addition):
+        novelty = 0
+        added_method = hash((addition.task, tuple(addition.given_params.values())))
+        initial_size = len(self._seen_methods)
+        self._seen_methods.add(added_method)
+        if initial_size < len(self._seen_methods):
+            novelty = 1
+
+        if novelty > 0:
+            self.num_novel_methods += 1
+        else:
+            self.num_not_novel_methods += 1
+        return novelty
 
     def _add_model_to_search_queue_action(self, model, novelty):
         """Add model to search queue after expanding an action"""

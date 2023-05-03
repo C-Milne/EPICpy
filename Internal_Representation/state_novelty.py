@@ -102,7 +102,7 @@ class StateNovelty(State):
 
     def load_from_default_state(self, state: State):
         for e in state.elements:
-            self.add_element(e)
+            self.add_element(e, False)
 
     def reproduce(self):
         new_state = StateNovelty()

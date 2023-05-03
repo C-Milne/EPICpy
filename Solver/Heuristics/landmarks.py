@@ -1,6 +1,8 @@
+import copy
 from Internal_Representation.task import Task
 from Internal_Representation.method import Method
 from Internal_Representation.subtasks import Subtask
+from Internal_Representation.state_novelty import StateNovelty
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed, ProblemPredicate
@@ -108,7 +110,9 @@ class OrNode(Node):
 
     def calculate_landmarks(self):
         """The landmarks of an OrNode is the intersection of its requirements, union itself"""
-        assert any([r.landmarks_calculated for r in self.requires])
+        if len(self.requires) > 0:
+            assert any([r.landmarks_calculated for r in self.requires])
+
         # if self.landmarks_calculated:
         #     print('Duplicate Landmark Calculation: {}'.format(self.name))
         # else:
@@ -245,7 +249,16 @@ class Landmarks(SeenStatesPruning):
 
     def presolving_processing(self, **kwargs) -> None:
         assert 'initial_model' in kwargs
-        self.calculate_reachability(kwargs['initial_model'])
+        initial_model = kwargs['initial_model']
+
+        if isinstance(initial_model.current_state, StateNovelty):
+            default_seen_elements = copy.copy(StateNovelty.seen_elements)
+
+        self.calculate_reachability(initial_model)
+
+        if isinstance(initial_model.current_state, StateNovelty):
+            StateNovelty.seen_elements = default_seen_elements
+
         root_node = AndNode('LandMarkRootNode')
         self.tree.add_root_node(root_node)
         initial_tasks = self.problem.get_subtasks()
@@ -387,7 +400,7 @@ class Landmarks(SeenStatesPruning):
             for param_option in param_options:
                 subtask_name = method.name
                 for p in param_option:
-                    subtask_name += "-" + param_option[p].name
+                    subtask_name += "--" + param_option[p].name
 
                 if subtask_name in self.method_reachability:
                     subT = Subtask(method, method.parameters)

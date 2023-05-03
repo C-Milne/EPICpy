@@ -94,6 +94,8 @@ class PandaVerifyModel(Model):
         new_model.set_last_dispense(self.last_dispense)
         new_model.set_counter(self.id_counter)
         new_model.ranking = self.ranking
+        new_model.secondary_ranking = self.secondary_ranking
+        new_model.queue_location = self.queue_location
         new_model.set_parent_model_number(self.model_number)
         return new_model
 

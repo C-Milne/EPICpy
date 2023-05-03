@@ -1,5 +1,5 @@
 import warnings
-from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver, Subtask, Model, Effects
+from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver, Subtask, Model, Effects, Method
 from Solver.Solving_Algorithms.solver import Solver
 from Internal_Representation.state_separate_novelty import StateSeparateNovelty
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning, HammingDistance
@@ -57,6 +57,8 @@ class PartialOrderHammingNoveltySolver(PartialOrderNoveltySolver, Solver):
 
     def _add_model_to_search_queue(self, model, addition):
         """This is where models are added to the queue after expanding an abstract task or method"""
+        if type(addition.task) == Method:
+            self._check_method_novelty(addition)
         self.search_models.heu_novelty_add(model, 0, None)
 
     def _action_add_fact_to_state(self, new_predicate, novelty_score, search_model):

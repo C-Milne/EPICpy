@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p01.hddl -solverModName PartialOrderHammingNoveltyNoResetSolver -solverPath Solver/Solving_Algorithms/partial_order_hamming_novelty_no_reset.py" />
+    <option name="PARAMETERS" value="Tests/Examples/AssemblyHierarchical/domain.hddl Tests/Examples/AssemblyHierarchical/genericLinearProblem_depth01.hddl -solverModName PartialOrderHammingNoveltyNoResetSolver -solverPath Solver/Solving_Algorithms/partial_order_hamming_novelty_no_reset.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

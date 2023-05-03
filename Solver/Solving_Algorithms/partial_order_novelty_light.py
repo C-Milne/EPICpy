@@ -1,5 +1,5 @@
 import warnings
-from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
+from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver, Method
 from Solver.Solving_Algorithms.solver import Solver
 from Internal_Representation.state_novelty import StateNovelty
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
@@ -21,6 +21,8 @@ class PartialOrderNoveltyLightSolver(PartialOrderNoveltySolver, Solver):
         """This is where models are added to the queue after expanding an abstract task or method"""
         # with open("Model_Tracking.txt", 'a') as f:
         #     f.write("Adding model to queue after method or task: {}\n".format(model.model_number))  # TODO: Remove this
+        if type(addition.task) == Method:
+            self._check_method_novelty(addition)
         self.search_models.add(model)
 
     def _add_model_to_search_queue_action(self, model, novelty):
