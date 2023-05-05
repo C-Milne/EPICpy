@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Panda Verify Hamming Newest" type="PythonConfigurationType" factoryName="Python">
+    <module name="EPICpy" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
+    <option name="PARAMETERS" value="Tests/Examples/Rover/domain.hddl Tests/Examples/Rover/p04.hddl -w pandaVerifyOutputRover4.txt -progressTrackerName PandaVerifyFormatTracker -progressTrackerPath Solver/Progress_Tracking/panda_verify_format.py -modelModName PandaVerifyModel -modelPath Solver/Models/PandaVerifyModel.py -heuModName HammingDistance -heuPath Solver/Heuristics/hamming_distance.py -searchQueueName GBFSSearchQueueNewestFirst -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue_Newest_First.py" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>
