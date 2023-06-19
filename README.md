@@ -1,3 +1,8 @@
+# Welcome to EPICpy
+Extendable Planner with Interchangeable Components in Python
+
+There is a known issue with the unittests for this project in Linux based operating systems. These issues will be rectified come time.
+
 # Contents
 * [Setup](#setup)
 * [Running the planner](#running-the-planner)
@@ -41,11 +46,6 @@
 * [Bug Solving](#bug-solving)
 * [Demo Running Configurations](#demo-running-configurations)
 
-# Welcome to EPICpy
-Extendable Planner with Interchangeable Components in Python
-
-There is a known issue with the unittests for this project in Linux based operating systems. These issues will be rectified come time.
-
 # Setup
 This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
 
@@ -53,7 +53,7 @@ All other packages used by the system are included with Python as standard.
 
 This system has been tested with Python versions 3.9 & 3.10
 
-# Running the planner 
+# Running the planner
 There are two methods of running the planner, from the command line and by using the Runner class.
 
 ## Running from Command Line
@@ -157,7 +157,7 @@ All Search Queues are located within the **/Solver/Search_Queues** folder.
 
 ### Total Cost
 The SearchQueue class is the default Search Queue and orders models based on the total estimated cost to goal.
-The total cost is calculated as the cost thus far plus the estimated cost to goal which is provided by a heuristic. 
+The total cost is calculated as the cost thus far plus the estimated cost to goal which is provided by a heuristic.
 
 ### Greedy Best First Search (GBFS)
 The Greedy Best First Search queue orders models solely on the heuristic estimate.
@@ -171,7 +171,7 @@ Solving Algorithms can be found in the **/Solver/Solving_Algorithms** folder.
 
 ### Total Order Solver
 In total-order problems orderings or subtasks are final. As such sequences of
-subtasks can simply be iterated over and added to the task network during the expansion of Methods. 
+subtasks can simply be iterated over and added to the task network during the expansion of Methods.
 
 ### Partial Order Solver
 The Partial-Order Solver builds upon the functionality of the Total-Order Solver  by adding
@@ -282,7 +282,7 @@ When developing new interchangeable components specific classes need to be inher
 ## Heuristic
 Developed Heuristics need to inherit the Heuristic class found in the Solver/Heuristics/Heuristic.py file.
 There are some alternatives to inheriting the Heuristic class directly, the Pruning and NoPruning classes found in files Solver/Heuristics/pruning.py and Solver/Heuristics/no_pruning.py respectively.
-Both of these classes inherit from the Heuristic class. The Pruning Class contains functionality for basic model pruning that can be inherited by other heuristics. 
+Both of these classes inherit from the Heuristic class. The Pruning Class contains functionality for basic model pruning that can be inherited by other heuristics.
 The PartialOrderPruning Class from file Solver/Heuristics/partial_order_pruning.py provides the same functionality but for partial-order problems.
 
 ## Parameter Selector
@@ -302,8 +302,8 @@ python ./All_Tests.py
 ```
 
 # Bug Solving
-When attempting to debug the system it is recommended that a debugger with breakpoints is used. To aid in the debugging 
-process the search procedure can be manually controlled using a script. 
+When attempting to debug the system it is recommended that a debugger with breakpoints is used. To aid in the debugging
+process the search procedure can be manually controlled using a script.
 Below is a snippet of a test case from the file Tests/UnitTest/JSHOP_Solving_Tests.py:
 
 ```python
