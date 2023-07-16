@@ -71,7 +71,14 @@ class Modifier:
     def evaluate_preconditions_conditions_given_params(self, param_dict, search_model, problem) -> bool:
         if self.preconditions is None:
             return True
+        # TODO : Add a check for types here - current method checks the types given when executing an action (requirement selector fixes this issue)
         return self.preconditions.evaluate_given_params_conditions(param_dict, search_model, problem)
 
     def __str__(self):
         return self.name
+
+    def __repr__(self):
+        return str(self)
+
+    def __hash__(self):
+        return hash(self.name)

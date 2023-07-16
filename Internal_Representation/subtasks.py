@@ -1,3 +1,4 @@
+import copy
 from Internal_Representation.modifier import Modifier
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.Object import Object
@@ -5,33 +6,68 @@ from Internal_Representation.list_parameter import ListParameter
 from Internal_Representation.parameter import Parameter
 
 
-class Subtasks:
-    class Subtask:
-        def __init__(self, task, parameters=[]):
-            assert isinstance(task, Modifier) or type(task) == str
-            self.task = task
+class Subtask:
+    def __init__(self, task, parameters=[], **kwargs):
+        assert isinstance(task, Modifier) or type(task) == str
+        self.task = task
+        if not ('reproduce' in kwargs and kwargs['reproduce']):
             assert type(parameters) == list or type(parameters) == ListParameter
             if type(parameters) == list:
                 for p in parameters:
                     assert isinstance(p, Parameter)
-            self.parameters = parameters
-            self.given_params = {}
+        self.parameters = parameters
+        self.given_params = {}
+        self.root_task = False
 
-        def get_name(self) -> str:
-            return self.task.name
+    def get_name(self) -> str:
+        return self.task.name
 
-        def add_given_parameters(self, params: dict):
-            assert type(params) == dict
-            if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
-                for i in params:
-                    assert type(params[i]) == Object or type(params[i]) == ListParameter
-            self.given_params = params
+    def add_given_parameters(self, params: dict):
+        assert type(params) == dict
+        if not (len(params.keys()) == 1 and type(params[list(params.keys())[0]]) == ListParameter):
+            for i in params:
+                if not (type(params[i]) == Object or type(params[i]) == ListParameter):
+                    raise TypeError('Expected Type Object or ListParameter. But Received: {} of Value {}'.format(type(params[i]), params[i]))
+        self.given_params = params
 
-        def evaluate_preconditions(self, model, params, problem) -> bool:
-            if self.task.preconditions is None:
-                return True
-            else:
-                return self.task.preconditions.evaluate(params, model, problem)
+    def evaluate_preconditions(self, model, params, problem) -> bool:
+        if self.task.preconditions is None:
+            return True
+        else:
+            return self.task.preconditions.evaluate(params, model, problem)
+
+    def set_root_task(self, v: bool):
+        self.root_task = v
+
+    def reproduce(self):
+        new_subtask = Subtask(self.task, [*self.parameters], reproduce=True)
+        new_subtask.given_params = {}
+        for g in self.given_params:
+            new_subtask.given_params[g] = self.given_params[g]
+        new_subtask.root_task = self.root_task
+        return new_subtask
+
+    def __hash__(self):
+        given_params_values = tuple(self.given_params.values())
+        return hash((self.task.name, given_params_values))
+
+    def __str__(self):
+        return_str = self.task.name
+        if len(self.given_params) == len(self.parameters):
+            for p in self.task.parameters:
+                return_str += "-{}".format(self.given_params[p.name].name)
+        elif all([type(p) == Object for p in self.parameters]):
+            for o in self.parameters:
+                return_str += "-{}".format(o.name)
+        else:
+            raise NotImplementedError
+        return return_str
+
+    def __repr__(self):
+        return str(self)
+
+
+class Subtasks:
 
     def __init__(self, ordered: bool):
         self.tasks = []
@@ -49,7 +85,7 @@ class Subtasks:
             for p in parameters:
                 assert isinstance(p, Parameter)
 
-        subtask_to_add = self.Subtask(modifier, parameters)
+        subtask_to_add = Subtask(modifier, parameters)
         if label is not None:
             self.labelled_tasks[label] = subtask_to_add
         self.tasks.append(subtask_to_add)
@@ -66,16 +102,14 @@ class Subtasks:
         # Sub in tasks instead of task labels
         orderings = self._sub_tasks_for_labels(orderings)
         self.task_orderings = orderings
+        self.ordered = True
 
     def _create_orderings(self, orderings):
-        try:
-            assert not self.ordered
-        except:
-            raise ValueError
+        assert not self.ordered
         """
         Kahns algorithm
-        L ← Empty list that will contain the sorted elements
-        S ← Set of all nodes with no incoming edge
+        L <- Empty list that will contain the sorted elements
+        S <- Set of all nodes with no incoming edge
         
         while S is not empty do
             remove a node n from S
@@ -177,7 +211,7 @@ class Subtasks:
         for o in orderings:
             r_o = []
             for label in o:
-                if type(label) != Subtasks.Subtask:
+                if type(label) != Subtask:
                     r_o.append(self.labelled_tasks[label.name])
                 else:
                     r_o.append(label)
@@ -197,5 +231,20 @@ class Subtasks:
             l2.append(i)
         return l2
 
+    def reproduce(self):
+        new_subtasks = Subtasks(self.ordered)
+        new_subtasks.tasks = [t.reproduce() for t in self.tasks]
+        new_subtasks.labelled_tasks = {}
+        for t in self.labelled_tasks:
+            new_subtasks.labelled_tasks[t] = new_subtasks.tasks[self.tasks.index(self.labelled_tasks[t])]
+        new_subtasks.task_orderings = [*self.task_orderings]
+        return new_subtasks
+
     def __len__(self):
         return len(self.tasks)
+
+    def __str__(self):
+        return_str = ""
+        for i in self.tasks:
+            return_str += str(i)
+        return return_str

@@ -1,8 +1,6 @@
 import unittest
 from Tests.UnitTests.TestTools.rover_execution import execution_prep
 from Tests.UnitTests.TestTools.env_setup import env_setup
-from Internal_Representation.problem_predicate import ProblemPredicate
-from Solver.action_tracker import ActionTracker
 
 
 class JSHOPSolvingTests(unittest.TestCase):

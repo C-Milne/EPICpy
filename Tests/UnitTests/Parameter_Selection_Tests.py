@@ -1,6 +1,6 @@
 import unittest
 from Tests.UnitTests.TestTools.env_setup import env_setup
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
 
@@ -10,6 +10,7 @@ class ParameterSelectionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.basic_path_HDDL = "../Examples/Basic/"
         self.rover_path_HDDL = "../Examples/Rover/"
+        self.snake_path = "TestTools/Snake/"
 
     def test_select_all_parameters_basic_hddl(self):
         domain, problem, parser, solver = env_setup(True)
@@ -19,14 +20,14 @@ class ParameterSelectionTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                        '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     @unittest.skip
     def test_select_all_parameters_rover1_hddl(self):
@@ -45,3 +46,13 @@ class ParameterSelectionTests(unittest.TestCase):
         parser.parse_problem(self.rover_path_HDDL + "p01.hddl")
         res = solver.solve()
         self.assertNotEqual(None, res)
+
+    def test_requirements_forall_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        solver.set_parameter_selector(RequirementSelection)
+        parser.parse_domain(self.snake_path + "domain.hddl")
+        parser.parse_problem(self.snake_path + "problem.hddl")
+        solver.parameter_selector.presolving_processing(domain, problem)
+        method_requirements = domain.get_method('hunt_done').requirements
+        # self.assertEqual({'forall-A-1': {'foo': '?a'}}, method_requirements)
+        self.assertEqual({'forall-location-1': {'not': {'mouse-at': '?pos'}}}, method_requirements)

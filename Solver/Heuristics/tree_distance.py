@@ -3,8 +3,8 @@ from Solver.Heuristics.pruning import Pruning
 Task = sys.modules['Internal_Representation.task'].Task
 Method = sys.modules['Internal_Representation.method'].Method
 Action = sys.modules['Internal_Representation.action'].Action
-Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
-Model = sys.modules['Solver.model'].Model
+Subtask = sys.modules['Internal_Representation.subtasks'].Subtask
+Model = sys.modules['Solver.Models.default_model'].DefaultModel
 
 
 class Tree:
@@ -61,7 +61,7 @@ class TreeDistance(Pruning):
         self.tree = Tree()
 
     def ranking(self, model: Model) -> float:
-        res = sum(self.tree[x.task.name].distance for x in model.search_modifiers)
+        res = sum(self.tree[x].distance for x in model.get_names_of_task_network_modifiers())
         return res + sum(self.tree[x.task.name].distance for x in model.waiting_subtasks)
 
     def _calculate_distance_tasks(self, model: Model):
@@ -74,7 +74,7 @@ class TreeDistance(Pruning):
                 distance += self.tree.nodes[m.name].distance
         return distance
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         # Add all actions to tree
         for a in self.domain.get_all_actions():
             node = self.tree.add_node(a.name)

@@ -14,6 +14,9 @@ try:
     from Tests.UnitTests.Parameter_Selection_Tests import ParameterSelectionTests
     from Tests.UnitTests.Heuristic_Tests import HeuristicTests
     from Tests.UnitTests.Partial_Order_Tests import PartialOrderTests
+    from Tests.UnitTests.Progress_Tracker_Tests import ProgressTrackerTests
+    from Tests.UnitTests.State_Tests import StateTests
+    from Tests.UnitTests.Novelty_Tests import NoveltyTests
 except:
     original_cwd = os.getcwd()
     os.chdir("../..")
@@ -29,6 +32,9 @@ except:
     from Tests.UnitTests.Parameter_Selection_Tests import ParameterSelectionTests
     from Tests.UnitTests.Heuristic_Tests import HeuristicTests
     from Tests.UnitTests.Partial_Order_Tests import PartialOrderTests
+    from Tests.UnitTests.Progress_Tracker_Tests import ProgressTrackerTests
+    from Tests.UnitTests.State_Tests import StateTests
+    from Tests.UnitTests.Novelty_Tests import NoveltyTests
 
 """https://stackoverflow.com/questions/12011091/trying-to-implement-python-testsuite"""
 
@@ -45,6 +51,8 @@ def suite():
     test_suite.addTest(unittest.makeSuite(ParameterSelectionTests))
     test_suite.addTest(unittest.makeSuite(HeuristicTests))
     test_suite.addTest(unittest.makeSuite(PartialOrderTests))
+    test_suite.addTest(unittest.makeSuite(ProgressTrackerTests))
+    test_suite.addTest(unittest.makeSuite(NoveltyTests))
     return test_suite
 
 

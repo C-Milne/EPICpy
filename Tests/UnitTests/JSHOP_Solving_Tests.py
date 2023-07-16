@@ -1,9 +1,9 @@
 import unittest
-from Internal_Representation.precondition import Precondition
+from queue import PriorityQueue
 from Tests.UnitTests.TestTools.rover_execution import execution_prep
 from Tests.UnitTests.TestTools.env_setup import env_setup
 from Internal_Representation.problem_predicate import ProblemPredicate
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 
 class JSHOPSolvingTests(unittest.TestCase):
@@ -38,7 +38,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         self.assertEqual(['forall', ['?v'], [['p', '?v']], [['q', '?v'], ['q', '?v'], ['not', ['w', '?v']]]],
                          domain.methods['method0'].preconditions.conditions)
 
-        model = solver.search_models._Q.pop(0)
+        model = solver.search_models._Q.get()
         res = domain.methods['method0'].preconditions.evaluate({}, model, problem)
 
         # Test Running this example
@@ -50,7 +50,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         parser.parse_problem(self.forall_test_path + "problem.jshop")
         execution_prep(problem, solver)
 
-        model = solver.search_models._Q.pop(0)
+        model = solver.search_models._Q.get()
 
         method = domain.methods['method0']
         cons = method.preconditions.head
@@ -66,7 +66,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         execution_prep(problem, solver)
         solver.parameter_selector.presolving_processing(domain, problem)
 
-        model = solver.search_models._Q.pop(0)
+        model = solver.search_models._Q.get()
 
         # Test applying forall effect method
         self.assertIn(ProblemPredicate(domain.predicates['in'], [problem.objects['p3'], problem.objects['t2']]),
@@ -75,18 +75,18 @@ class JSHOPSolvingTests(unittest.TestCase):
         subT = model.search_modifiers.pop(0)
         solver._expand_task(subT, model)
 
-        model = solver.search_models._Q.pop(0)
+        model = solver.search_models._Q.get()
         subT = model.search_modifiers.pop(0)
         solver._expand_method(subT, model)
 
-        model = solver.search_models._Q.pop(0)
+        model = solver.search_models._Q.get()
         subT = model.search_modifiers.pop(0)
         solver._expand_task(subT, model)
 
         search_models = solver.search_models._Q
-        self.assertEqual(2, len(search_models))
+        self.assertEqual(2, len(search_models.queue))
 
-        model = search_models[0]
+        model = search_models.queue[0]
         self.assertEqual(2, len(model.search_modifiers))
         mod = model.search_modifiers[0]
         self.assertEqual(domain.methods['method2'], mod.task)
@@ -97,7 +97,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         self.assertEqual({'?x': problem.objects['city2'], '?y': problem.objects['city1'], '?t': problem.objects['t2']},
                          mod.given_params)
 
-        model = search_models[1]
+        model = search_models.queue[1]
         self.assertEqual(2, len(model.search_modifiers))
         mod = model.search_modifiers[0]
         self.assertEqual(domain.methods['method2'], mod.task)
@@ -117,13 +117,13 @@ class JSHOPSolvingTests(unittest.TestCase):
 
         self.assertNotEqual(None, res)
         self.assertIn(ActionTracker(domain.actions['!load'], {'?z': problem.objects['p1'], '?t': problem.objects['t2']}),
-                      res.actions_taken)
+                      res.get_progress_tracker().actions_taken)
         self.assertIn(
             ActionTracker(domain.actions['!load'], {'?z': problem.objects['p4'], '?t': problem.objects['t2']}),
-            res.actions_taken)
+            res.get_progress_tracker().actions_taken)
         self.assertIn(
             ActionTracker(domain.actions['!drive'], {'?t': problem.objects['t2'], '?x': problem.objects['city2'],
-                                                     '?y': problem.objects['city1']}), res.actions_taken)
+                                                     '?y': problem.objects['city1']}), res.get_progress_tracker().actions_taken)
         self.assertIn(ProblemPredicate(domain.predicates['at'], [problem.objects['p1'], problem.objects['city1']]),
                       res.current_state.elements)
         self.assertIn(ProblemPredicate(domain.predicates['at'], [problem.objects['p3'], problem.objects['city1']]),
@@ -149,8 +149,8 @@ class JSHOPSolvingTests(unittest.TestCase):
         res = solver.solve()
 
         self.assertNotEqual(None, res)
-        self.assertIn(ActionTracker(domain.actions['!drop'], {'?a': problem.objects['kiwi']}), res.actions_taken)
-        self.assertIn(ActionTracker(domain.actions['!pickup'], {'?a': problem.objects['banjo']}), res.actions_taken)
+        self.assertIn(ActionTracker(domain.actions['!drop'], {'?a': problem.objects['kiwi']}), res.get_progress_tracker().actions_taken)
+        self.assertIn(ActionTracker(domain.actions['!pickup'], {'?a': problem.objects['banjo']}), res.get_progress_tracker().actions_taken)
 
     def test_rover_execution_part_guided(self):
         domain, problem, parser, solver = env_setup(False)
@@ -164,8 +164,10 @@ class JSHOPSolvingTests(unittest.TestCase):
         solver._search(True)
         solver._search(True)
         solver._search(True)
-        solver.search_models._Q = [solver.search_models._Q[0]]
-        solver.search_models._Q[0].search_modifiers[0].given_params['?to'] = problem.objects['waypoint5']
+        model_to_add = solver.search_models._Q.queue[0]
+        solver.search_models._Q = PriorityQueue()
+        solver.search_models._Q.put(model_to_add)
+        solver.search_models._Q.queue[0].search_modifiers[0].given_params['?to'] = problem.objects['waypoint5']
         search_models = solver.search_models._Q
         solver._search(True)
         solver._search(True)

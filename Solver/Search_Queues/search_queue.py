@@ -1,5 +1,5 @@
-from Solver.model import Model
-from Internal_Representation.state import State
+from queue import PriorityQueue
+from Solver.Models.model import Model
 from Solver.Heuristics.Heuristic import Heuristic
 
 """
@@ -8,17 +8,20 @@ This SearchQueue ranks models using the A* principle (Cost thus far + estimated 
 
 
 class SearchQueue:
-    def __init__(self):
-        self._Q = []
+    # TODO: Turn this into a ABC class
+    def __init__(self, **kwargs):
+        self._Q = PriorityQueue()
         self._completed_models = []
         self.heuristic = None
+        self._queue_size = 0
+        self._total_added_models = 0
 
     def add_heuristic(self, heuristic):
         assert isinstance(heuristic, Heuristic)
         self.heuristic = heuristic
 
     def add(self, model):
-        if type(model) != Model:
+        if not isinstance(model, Model):
             raise TypeError("Invalid parameter type!\n"
                             "Expected Model got {}".format(type(model)))
 
@@ -36,37 +39,36 @@ class SearchQueue:
 
     def _add_model(self, model):
         res = self.heuristic.ranking(model)
-        ranking = len(model.operations_taken) + res
-
         if type(res) != int and (res is None or res == False):
             return  # Do not add to search queue
-        model.set_ranking(ranking)
 
-        added = False
-        i = 0
-        while i < len(self._Q):
-            if ranking < self._Q[i].get_ranking():
-                self._Q.insert(i, model)
-                added = True
-                break
-            i += 1
-        if not added:
-            self._Q.append(model)
+        ranking = self._calc_ranking(model, res)
+        model.set_ranking(ranking)
+        model.set_secondary_ranking(self._total_added_models)
+
+        self._Q.put(model)
+        self._total_added_models += 1
+        self._queue_size += 1
+
+    def _calc_ranking(self, model, heuristic_estimate):
+        return model.get_progress_tracker().get_num_operations_taken() + heuristic_estimate
 
     def clear_completed_models(self):
         self._completed_models = []
 
     def pop(self):
-        if len(self._Q) == 0:
+        if self._queue_size == 0:
             return None
-        return self._Q.pop(0)
+        self._queue_size -= 1
+        return self._Q.get()
 
     def clear(self):
-        self._Q = []
+        self._Q = PriorityQueue()
         self._completed_models = []
 
     def get_num_search_models(self):
-        return len(self._Q)
+        # TODO : Remove this function (use len instead)
+        return len(self)
 
     def get_num_completed_models(self):
         return len(self._completed_models)
@@ -74,5 +76,8 @@ class SearchQueue:
     def get_completed_models(self):
         return self._completed_models
 
+    def get_model_list(self):
+        return self._Q.queue
+
     def __len__(self):
-        return len(self._Q)
+        return self._queue_size

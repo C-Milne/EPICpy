@@ -5,7 +5,7 @@ from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.precondition import Precondition
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.task import Task
 from Internal_Representation.Object import Object
 from Internal_Representation.list_parameter import ListParameter
@@ -220,7 +220,7 @@ class Parser(ABC):
         https://github.com/pucrs-automated-planning/heuristic-planning/blob/master/pddl/pddl_parser.py"""
         with open(file_path, 'r') as f:
             # Remove single line comments
-            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
+            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE)
         # Tokenize
         stack = []
         sections = []
@@ -254,7 +254,11 @@ class Parser(ABC):
                     l = len(t.parameters)
                     while i < l:
                         if type(t.parameters[i]) == RegParameter:
-                            t.parameters[i] = self.problem.get_object(t.parameters[i].name)
+                            ob = self.problem.get_object(t.parameters[i].name)
+                            if ob:
+                                t.parameters[i] = ob
+                            else:
+                                t.parameters[i] = t.parameters[i].name
                         elif type(t.parameters[i]) == Object:
                             pass
                         elif type(t.parameters[i]) == ListParameter:
@@ -262,7 +266,7 @@ class Parser(ABC):
                         else:
                             raise AttributeError("Grounding process for subtask with type {} unknown".format(type(t.parameters[i])))
                         i += 1
-            elif type(item) == Subtasks.Subtask:
+            elif type(item) == Subtask:
                 # Parameters must be objects
                 i = 0
                 l = len(item.parameters)
@@ -271,6 +275,8 @@ class Parser(ABC):
                         ob = self.problem.get_object(item.parameters[i].name)
                         if ob is not None:
                             item.parameters[i] = ob
+                        else:
+                            item.parameters[i] = item.parameters[i].name
                     elif type(item.parameters[i]) == Object:
                         pass
                     else:
@@ -287,3 +293,6 @@ class Parser(ABC):
             else:
                 raise NotImplementedError("Functionality for post problem grounding of {} is not implemented".format(type(item)))
         self._requires_grounding = []
+        if self.problem.has_initial_task_network_parameters():
+            self.problem.ground_initial_subtasks()
+        self.problem.order_subtasks()

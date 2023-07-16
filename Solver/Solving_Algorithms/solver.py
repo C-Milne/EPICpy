@@ -1,12 +1,13 @@
 import sys
 from abc import ABC, abstractmethod, ABCMeta
-from Solver.model import Model
+from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 from Solver.Search_Queues.search_queue import SearchQueue
 from Internal_Representation.method import Method
 from Internal_Representation.action import Action, Effects
 from Internal_Representation.task import Task
 from Internal_Representation.reg_parameter import RegParameter
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.state import State
 from Internal_Representation.list_parameter import ListParameter
@@ -17,7 +18,12 @@ from Solver.Heuristics.pruning import Pruning
 
 """Space for importing parameter selection functions"""
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
-from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, Requirements
+from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection, \
+    Requirements  # Do not remove this import statement
+
+"""Space for importing progress_tracker classes"""
+from Solver.Progress_Tracking.progress_tracker import ProgressTracker
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 """Importing from sys modules"""
 Precondition = sys.modules['Internal_Representation.precondition'].Precondition
@@ -25,16 +31,19 @@ ForallCondition = sys.modules['Internal_Representation.conditions'].ForAllCondit
 
 
 class Solver(ABC):
+    ModelClass = DefaultModel
+
     def __init__(self, domain, problem):
         self.domain = domain
         self.problem = problem
 
-        self.search_models = SearchQueue()
+        self.search_models = SearchQueue(domain=self.domain, problem=self.problem, solver=self)
         heuristic = Pruning(self.domain, self.problem, self, self.search_models)
         self.search_models.add_heuristic(heuristic)
 
         self.parameter_selector = RequirementSelection(self)
         self._requirement_parameter_selector = RequirementSelection(self)
+        self.progress_tracker = SequentialTracker
         self.task_expansion_given_param_check = True
 
     def set_heuristic(self, heuristic):
@@ -51,18 +60,26 @@ class Solver(ABC):
 
     def set_search_queue(self, search_queue):
         if type(search_queue) == type or type(search_queue) == ABCMeta:
-            search_queue = search_queue()
-        assert isinstance(search_queue, SearchQueue)
+            search_queue = search_queue(domain=self.domain, problem=self.problem, solver=self)
+        assert isinstance(search_queue, SearchQueue) or isinstance(type(search_queue), type(SearchQueue))
         heu = self.search_models.heuristic
         self.search_models = search_queue
         self.search_models.add_heuristic(heu)
 
+    def set_model_class(self, model_class):
+        # TODO : Assert type here
+        Solver.ModelClass = model_class
+
+    def set_progress_tracker(self, progress_tracker):
+        assert issubclass(progress_tracker, ProgressTracker)
+        self.progress_tracker = progress_tracker
+
     def solve(self, **kwargs):
         self.parameter_selector.presolving_processing(self.domain, self.problem)
-        self.search_models.heuristic.presolving_processing()
         subtasks_orderings = self.problem.subtasks.get_task_orderings()
 
-        printed_subtasks = False
+        printed_subtasks = True  # Change this to False if we want to print the subtasks of the problem before searching
+        initialised_heuristic = False
 
         for subtasks in subtasks_orderings:
             list_subT = []
@@ -91,7 +108,11 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = Model(State.reproduce(self.problem.initial_state), list_subT, self.problem, waiting_subT)
+            initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT, self.progress_tracker)
+
+            if not initialised_heuristic:
+                initialised_heuristic = True
+                self.search_models.heuristic.presolving_processing(initial_model=initial_model)
 
             self.search_models.add(initial_model)
 
@@ -103,6 +124,12 @@ class Solver(ABC):
         if search != False:
             return self._search()
 
+    def _create_initial_model(self, initial_state, subtasks, waiting_subtasks, progress_tracker_class):
+        initial_model = self.ModelClass(initial_state, subtasks, self.problem, waiting_subtasks,
+                                        progress_tracker_class=progress_tracker_class, initial_model=True)
+        initial_model.current_state.initialise()
+        return initial_model
+
     def _search(self, step_control=False):
         """:parameter   - step_control  - If True, then loop will only execute once"""
         while True:
@@ -113,13 +140,16 @@ class Solver(ABC):
 
             # Check what needs to be done to this model
             next_modifier = search_model.get_next_modifier()
-            assert type(next_modifier) == Subtasks.Subtask
+            # print("Expanding: {} - {}".format(next_modifier.task.name, [x.name for x in next_modifier.given_params.values()]))   # TODO: Remove this
+            assert type(next_modifier) == Subtask
 
             if type(next_modifier.task) == Task:
                 self._expand_task(next_modifier, search_model)
             elif type(next_modifier.task) == Method:
                 self._expand_method(next_modifier, search_model)
             elif type(next_modifier.task) == Action:
+                # The model needs a reproduced state before changing its state through an action
+                search_model.current_state = search_model.current_state.reproduce()
                 self._expand_action(next_modifier, search_model)
             else:
                 raise NotImplementedError
@@ -127,18 +157,18 @@ class Solver(ABC):
             # Loop exit conditions
             if self.search_models.get_num_search_models() == 0 and self.search_models.get_num_completed_models() == 0:
                 return None
-            elif step_control:
-                break
             elif self.search_models.get_num_completed_models() > 0:
                 for m in self.search_models.get_completed_models():
                     eval = self.problem.evaluate_goal(m)
                     if eval is None or eval == True:
-                        m.num_models_used = Model.model_counter
+                        m.num_models_used = DefaultModel.model_counter
                         return m
                 self.search_models.clear_completed_models()
+            elif step_control:
+                break
 
     @abstractmethod
-    def _expand_task(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the task being expanded
         :param search_model: Model object the task is being applied to
@@ -147,7 +177,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_method(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the method being expanded
         :param search_model: Model object the method is being applied to
@@ -156,7 +186,7 @@ class Solver(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _expand_action(self, subtask: Subtasks.Subtask, search_model: Model):
+    def _expand_action(self, subtask: Subtask, search_model: DefaultModel):
         """
         :param subtask: Subtask object containing info in the action being expanded
         :param search_model: Model object the action is being applied to
@@ -194,18 +224,20 @@ class Solver(ABC):
                 i += 1
         return param_dict
 
-    def compute_derived_predicates(self, search_model: Model):
+    def compute_derived_predicates(self, search_model: DefaultModel):
         # Remove derived predicates from search model state
 
         # Check derived predicates
         for i in self.domain.derived_predicates:
             pred = self.domain.derived_predicates[i]
             assert len(pred.conditions) == len(pred.cond_requirements)
-            found_predicates = []   # Used to make sure only one of each combination of variables is selected
+            found_predicates = []  # Used to make sure only one of each combination of variables is selected
 
             for j in range(len(pred.conditions)):
                 # Choose variables
-                found_params = self._requirement_parameter_selector._find_satisfying_parameters(search_model, pred.cond_requirements[j])
+                found_params = self._requirement_parameter_selector._find_satisfying_parameters(search_model,
+                                                                                                pred.cond_requirements[
+                                                                                                    j])
                 for param_option in found_params:
                     # Evaluate predicate
                     result = pred.conditions[j].evaluate(param_option, search_model, self.problem)
@@ -251,7 +283,7 @@ class Solver(ABC):
 
     @staticmethod
     def reproduce_state(state):
-        return State.reproduce(state)
+        return state.reproduce()
 
     def reproduce_model(self, model, search_mods=None):
         """
@@ -259,36 +291,14 @@ class Solver(ABC):
         :param search_mods: List [Subtasks.Subtask]
         :return: Model
         """
-        if search_mods is None:
-            new_model = Model(State.reproduce(model.current_state),
-                  model.search_modifiers, self.problem, [])
-        else:
-            new_model = Model(State.reproduce(model.current_state),
-                              search_mods, self.problem, [])
-
-        i = 0
-        for i in model.waiting_subtasks:
-            new_model.waiting_subtasks.append(i)
-
-        new_model.populate_actions_taken(Model.reproduce_actions_taken(model))
-        new_model.populate_operations_taken(Model.reproduce_operations_list(model))
-        return new_model
+        return model.reproduce(self.problem, search_mods)
 
     @staticmethod
     def output(resulting_model: Model):
-        assert type(resulting_model) == Model or resulting_model is None
+        assert isinstance(resulting_model, Model) or resulting_model is None
 
         if not resulting_model is None:
-            print("\nActions Taken:")
-            for a in resulting_model.actions_taken:
-                print(a)
-            if len(resulting_model.actions_taken) == 0:
-                print("No Actions")
-
-            print("\nOperations Taken:")
-            for a in resulting_model.operations_taken:
-                print(a)
-
+            print(resulting_model.get_progress_tracker())
             # print("\nFinal State:")
             # print(resulting_model.current_state)
 

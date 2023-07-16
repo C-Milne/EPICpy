@@ -1,3 +1,4 @@
+import copy
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.Object import Object
@@ -8,12 +9,19 @@ class State:
         self._index = {}
         self.elements = []
 
-    def add_element(self, element: ProblemPredicate):
-        assert type(element) == ProblemPredicate
-        self.elements.append(element)
-        self.__add_element_to_index(element)
+    def initialise(self):
+        pass
 
-    def __add_element_to_index(self, element: ProblemPredicate):
+    def add_element(self, element: ProblemPredicate, check_presence=True):
+        assert type(element) == ProblemPredicate
+        add_to_state = True
+        if check_presence:
+            add_to_state = element not in self
+        if add_to_state:
+            self.elements.append(element)
+            self._add_element_to_index(element)
+
+    def _add_element_to_index(self, element: ProblemPredicate):
         name = element.predicate.name
         if name in self._index.keys():
             self._index[name].append(len(self.elements) - 1)
@@ -37,11 +45,11 @@ class State:
     def remove_element(self, predicate: Predicate, predicate_objects=None):
         assert type(predicate) == Predicate
         if predicate_objects is None or len(predicate_objects) == 0:
-            self.__remove_element_no_objects(predicate)
+            self._remove_element_no_objects(predicate)
         else:
-            self.__remove_element_objects(predicate, predicate_objects)
+            self._remove_element_objects(predicate, predicate_objects)
 
-    def __remove_element_objects(self, predicate: Predicate, predicate_objects):
+    def _remove_element_objects(self, predicate: Predicate, predicate_objects):
         """Params:  - predicate : Predicate
                     - predicate_objects : [Object] - List of objects taken as parameters"""
         predicate_indexes = self.get_indexes(predicate.name)
@@ -56,9 +64,9 @@ class State:
                 break
         # Adjust self._index
         if deletion:
-            self.__adjust_index_remove_element(predicate.name, i)
+            self._adjust_index_remove_element(predicate.name, i)
 
-    def __remove_element_no_objects(self, predicate: Predicate):
+    def _remove_element_no_objects(self, predicate: Predicate):
         """Params:  - predicate : Predicate"""
         index = self.get_indexes(predicate.name)
         assert len(index) == 1
@@ -68,9 +76,9 @@ class State:
         del self.elements[index]
 
         # Adjust self._index
-        self.__adjust_index_remove_element(predicate.name, index)
+        self._adjust_index_remove_element(predicate.name, index)
 
-    def __adjust_index_remove_element(self, identifier: str, index_removed: int):
+    def _adjust_index_remove_element(self, identifier: str, index_removed: int):
         assert type(identifier) == str and type(index_removed) == int
         # Remove deleted element from self._index
         if len(self._index[identifier]) == 1:
@@ -87,7 +95,10 @@ class State:
                 i += 1
 
     def check_if_predicate_value_exists(self, predicate: Predicate, obs: list) -> bool:
-        indexes = self.get_indexes(predicate.name)
+        try:
+            indexes = self.get_indexes(predicate.name)
+        except Exception as e:
+            raise NotImplementedError
         prob_pred = ProblemPredicate(predicate, obs)
         if indexes is None:
             return False
@@ -96,11 +107,10 @@ class State:
                 return True
         return False
 
-    @staticmethod
-    def reproduce(state):
+    def reproduce(self):
         returnState = State()
-        for e in state.elements:
-            returnState.add_element(e)
+        returnState.elements = [*self.elements]
+        returnState._index = copy.deepcopy(self._index)
         return returnState
 
     @staticmethod
@@ -135,6 +145,15 @@ class State:
     def __len__(self):
         return len(self.elements)
 
+    def __contains__(self, item: ProblemPredicate) -> bool:
+        indexes = self.get_indexes(item.predicate.name)
+        if not indexes:
+            return False
+        for i in indexes:
+            if self.elements[i] == item:
+                return True
+        return False
+
     def __str__(self):
         if len(self.elements) > 0:
             print_string = ""
@@ -144,3 +163,6 @@ class State:
         else:
             print_string = "State is empty."
         return print_string
+
+    def __hash__(self):
+        return hash(frozenset(self.elements))

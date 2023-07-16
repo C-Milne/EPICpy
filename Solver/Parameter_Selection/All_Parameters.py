@@ -5,7 +5,7 @@ Modifier = sys.modules["Internal_Representation.modifier"].Modifier
 Method = sys.modules["Internal_Representation.method"].Method
 Action = sys.modules["Internal_Representation.action"].Action
 Task = sys.modules["Internal_Representation.task"].Task
-Model = sys.modules["Solver.model"].Model
+Model = sys.modules["Solver.Models.default_model"].DefaultModel
 Object = sys.modules["Internal_Representation.Object"].Object
 ListParameter = sys.modules["Internal_Representation.list_parameter"].ListParameter
 Type = sys.modules["Internal_Representation.Type"].Type
@@ -26,6 +26,8 @@ class AllParameters(ParameterSelector):
             # Get all objects of that type
             if p.name not in parameter_options:
                 parameter_options[p.name] = []
+
+            # TODO: Optimise this - store which objects satisfy each type during problem parsing
             if p.type is not None:
                 for x in self.solver.problem.objects:
                     x = self.solver.problem.objects[x]

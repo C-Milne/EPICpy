@@ -9,7 +9,7 @@ from Internal_Representation.Object import Object
 from Parsers.parser import Parser
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.effects import Effects
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtask
 from Internal_Representation.problem_predicate import ProblemPredicate
 
 
@@ -127,7 +127,7 @@ class HDDLParser(Parser):
             i += 1
         action = Action(action_name, parameters, precon, effects)
         if precon_conditions is not None:
-            precon = self._parse_precondition(precon_conditions, action)
+            precon = self._parse_precondition(precon_conditions, parameters, action)
             action.add_preconditions(precon)
         return action
 
@@ -209,7 +209,7 @@ class HDDLParser(Parser):
                 precon_conditions = params[i + 1]
                 i += 1
             elif params[i] == ":constraints":
-                constraints = self._parse_precondition(params[i + 1])
+                constraints = self._parse_precondition(params[i + 1], parameters)
                 i += 1
             elif params[i] == ":task":
                 task_ob = self.domain.get_task(params[i + 1][0])
@@ -243,11 +243,11 @@ class HDDLParser(Parser):
 
         method = Method(method_name, parameters, precon, task, subtasks, constraints)
         if precon_conditions is not None:
-            precon = self._parse_precondition(precon_conditions, method)
+            precon = self._parse_precondition(precon_conditions, parameters, method)
             method.add_preconditions(precon)
         return method
 
-    def _parse_precondition(self, params, mod: Modifier = None) -> Precondition:
+    def _parse_precondition(self, params, modifier_parameters, mod: Modifier = None) -> Precondition:
         def __parse_conditions(parameters, parent=None):
             if type(parameters) == list and len(parameters) == 1 and type(parameters[0]) == list:
                 parameters = parameters[0]
@@ -308,7 +308,7 @@ class HDDLParser(Parser):
                         elif p == "forall":
                             if len(parameters) == 3:
                                 selector = parameters[1]
-                                satisfier = self._parse_precondition(parameters[2])
+                                satisfier = self._parse_precondition(parameters[2], modifier_parameters)
                             else:
                                 selector = parameters[1] + [self._parse_precondition(['and'] + parameters[2])]
                                 satisfier = self._parse_precondition(['and'] + parameters[3])
@@ -322,7 +322,11 @@ class HDDLParser(Parser):
                         raise TypeError("Unexpected type {}".format(type(p)))
                     i += 1
             elif type(parameters) == str:
-                return constraints.add_variable_condition(parameters, parent)
+                if parameters in modifier_parameters:  # TODO: Fix this, this refers to the parameters passed from a task to a method not any parameters
+                    # This means we have a constraint on a parameter passed to the modifier
+                    return constraints.add_variable_condition(parameters, parent)
+                # This means we care about the value of an object
+                return constraints.add_constant_object_condition(parameters, parent, self.problem)
             else:
                 raise TypeError("Unexpected type {}".format(type(parameters)))
 
@@ -332,13 +336,17 @@ class HDDLParser(Parser):
         else:
             given_params = None
         given_mod = mod
+        if not all([type(n) == str for n in modifier_parameters]):
+            modifier_parameters = [p.name for p in modifier_parameters]
         __parse_conditions(params)
         return constraints
 
     def _parse_constant(self, params):
         def __add_constants_to_problem(t=None):
             for c in new_constants:
-                self.problem.add_object(Object(c, t))
+                constant_object = Object(c, t)
+                self.problem.add_object(constant_object)
+                self.domain.add_constant(Object(c, t))
 
         i = 0
         l = len(params)
@@ -361,7 +369,7 @@ class HDDLParser(Parser):
 
     def _post_domain_parsing_grounding(self):
         for item in self._requires_grounding:
-            if type(item) == Subtasks.Subtask:
+            if type(item) == Subtask:
                 # Make sure item.task is a modifier and not a string
                 if type(item.task) != Modifier and type(item.task) == str:
                     retrieved = self.domain.get_modifier(item.task)
@@ -432,10 +440,15 @@ class HDDLParser(Parser):
                 self.problem.add_subtasks(subtasks)
                 self._requires_grounding.append(subtasks)
             elif lead == ":parameters":
-                if params.pop(0) != []:
-                    raise NotImplementedError
+                group = params.pop(0)
+                if group != []:
+                    while group:
+                        param_name = group.pop(0)
+                        group.pop(0)    # This is the '-' between the parameter name and type
+                        param_type_str = group.pop(0)
+                        self.problem.add_initial_task_network_parameter(param_name, param_type_str)
             elif lead == ":ordering":
-                self.problem.order_subtasks(params.pop(0))
+                self.problem.set_initial_subtask_ordering(params.pop(0))
                 ordered = True
             elif lead == ":constraints":
                 group = params.pop(0)
@@ -446,12 +459,13 @@ class HDDLParser(Parser):
 
         if not ordered_subtasks and not ordered:
             # We need to order the subtasks
-            self.problem.order_subtasks([])
+            self.problem.set_initial_subtask_ordering([])
+            self.problem.order_subtasks()
 
     def _parse_goal_state(self, params):
         if type(params) == list and len(params) == 1 and type(params[0]) == list and len(params[0]) > 1:
             params = params[0]
-        cons = self._parse_precondition(params)
+        cons = self._parse_precondition(params, [])
         self.problem.add_goal_conditions(cons)
     
     def _scan_tokens(self, file_path):

@@ -9,6 +9,7 @@ class ProblemPredicate:
                                 [object[waypoint1], object[waypoint0]]"""
         assert isinstance(predicate, Predicate)
         assert type(objects) == list
+
         for o in objects:
             try:
                 assert type(o) == Object
@@ -17,13 +18,22 @@ class ProblemPredicate:
 
         self.predicate = predicate
         self.objects = objects
+        self.ob_names = [o.name for o in objects]
+        self.name = predicate.name
+        for ob_name in self.ob_names:
+            self.name += "-{}".format(ob_name)
+
+    def __hash__(self):
+        return hash((self.predicate.name, tuple(self.ob_names)))
 
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        elif self.predicate != other.predicate:
-            return False
-        elif self.objects != other.objects:
+        # elif self.predicate != other.predicate:
+        #     return False
+        # elif self.objects != other.objects:
+        #     return False
+        elif self.name != other.name:
             return False
         return True
 
@@ -34,3 +44,6 @@ class ProblemPredicate:
         for o in self.objects:
             print_string += " " + o.name
         return print_string
+
+    def __repr__(self):
+        return str(self)

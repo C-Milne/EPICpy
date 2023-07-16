@@ -1,6 +1,6 @@
 import sys
 from Internal_Representation.conditions import Condition, PredicateCondition, OperatorCondition, VariableCondition, \
-    ForAllCondition, GoalPredicateCondition
+    ForAllCondition, GoalPredicateCondition, ConstantObjectCondition
 Predicate = sys.modules['Internal_Representation.predicate'].Predicate
 
 
@@ -10,6 +10,7 @@ class Precondition:
         self.conditions = conditions
         self.conditions_given_params = None # This is the conditions that only include parameters given by the task (not selected parameters)
         self._num_conditions = 0
+        self._positive_predicate_conditions = []
 
     def add_operator_condition(self, operator: str, parent: Condition) -> OperatorCondition:
         assert type(operator) == str
@@ -23,11 +24,19 @@ class Precondition:
         assert isinstance(parent, Condition) or parent is None
         con = PredicateCondition(pred, parameter_names)
         self._final_condition_addition_checks(con, parent)
+        if not type(parent) == OperatorCondition or parent.operator != 'not':
+            self._positive_predicate_conditions.append(con)
         return con
 
     def add_variable_condition(self, parameter_name: str, parent: Condition) -> VariableCondition:
         assert isinstance(parent, Condition) or parent is None
         con = VariableCondition(parameter_name)
+        self._final_condition_addition_checks(con, parent)
+        return con
+
+    def add_constant_object_condition(self, parameter_name: str, parent: Condition, problem) -> ConstantObjectCondition:
+        assert isinstance(parent, Condition) or parent is None
+        con = ConstantObjectCondition(parameter_name, problem)
         self._final_condition_addition_checks(con, parent)
         return con
 
@@ -96,6 +105,9 @@ class Precondition:
 
     def get_conditions(self):
         return self.conditions
+
+    def get_positive_predicate_conditions(self):
+        return self._positive_predicate_conditions
 
     @staticmethod
     def merge_dictionaries(a, b):

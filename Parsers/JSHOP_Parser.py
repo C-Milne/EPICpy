@@ -1,3 +1,4 @@
+import re
 from Parsers.parser import Parser
 from Internal_Representation.task import Task
 from Internal_Representation.method import Method
@@ -8,7 +9,7 @@ from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.Object import Object
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.list_parameter import ListParameter
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.derived_predicate import DerivedPredicate
 from Internal_Representation.parameter import Parameter
 from Solver.Solving_Algorithms.solver import Requirements
@@ -89,7 +90,7 @@ class JSHOPParser(Parser):
 
     def _post_domain_parsing_grounding(self):
         for item in self._requires_grounding:
-            if type(item) == Subtasks.Subtask:
+            if type(item) == Subtask:
                 if type(item.task) == str:
                     new_task = self.domain.get_modifier(item.task)
                     if new_task is None:
@@ -97,7 +98,7 @@ class JSHOPParser(Parser):
                     item.task = new_task
                 else:
                     continue
-            elif type(item) == tuple and len(item) == 2 and type(item[0]) == Subtasks.Subtask and type(item[1]) == list \
+            elif type(item) == tuple and len(item) == 2 and type(item[0]) == Subtask and type(item[1]) == list \
                     and all([isinstance(x, Parameter) for x in item[1]]):
                 subT = item[0]
                 params = item[1]
@@ -517,3 +518,31 @@ class JSHOPParser(Parser):
 
     def _parse_constant(self, *args):
         pass
+
+    def _scan_tokens(self, file_path):
+        """ Taken with permission from:
+        https://github.com/pucrs-automated-planning/heuristic-planning/blob/master/pddl/pddl_parser.py"""
+        with open(file_path, 'r') as f:
+            # Remove single line comments
+            str = re.sub(r';.*$', '', f.read(), flags=re.MULTILINE).lower()
+        # Tokenize
+        stack = []
+        sections = []
+        for t in re.findall(r'[()]|[^\s()]+', str):
+            if t == '(':
+                stack.append(sections)
+                sections = []
+            elif t == ')':
+                if stack:
+                    l = sections
+                    sections = stack.pop()
+                    sections.append(l)
+                else:
+                    raise Exception('Missing open parentheses')
+            else:
+                sections.append(t)
+        if stack:
+            raise Exception('Missing close parentheses')
+        if len(sections) != 1:
+            raise Exception('Malformed expression')
+        return sections[0]

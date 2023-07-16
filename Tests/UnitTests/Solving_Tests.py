@@ -1,21 +1,20 @@
 import unittest
-from Internal_Representation.precondition import Precondition
-from Solver.model import Model
-from Solver.Solving_Algorithms.solver import Solver
+from Solver.Models.default_model import DefaultModel
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Internal_Representation.subtasks import Subtasks
+from Internal_Representation.subtasks import Subtasks, Subtask
 from Internal_Representation.state import State
 from Internal_Representation.reg_parameter import RegParameter
-from Solver.action_tracker import ActionTracker
+from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
 import Tests.UnitTests.TestTools.rover_execution as RovEx
 from Tests.UnitTests.TestTools.env_setup import env_setup
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 
 class SolvingTests(unittest.TestCase):
@@ -28,6 +27,7 @@ class SolvingTests(unittest.TestCase):
         self.rover_path = "../Examples/IPC_Tests/Rover/"
         self.rover_col_path = "../Examples/Rover/"
         self.IPC_Tests_path = "../Examples/IPC_Tests/"
+        self.barman_path = "../Examples/Barman/"
 
     # def test_action_execution(self):
     #     domain = Domain(None)
@@ -150,16 +150,17 @@ class SolvingTests(unittest.TestCase):
     def test_action_execution_5(self):
         # Test Carrying out on action with one model and check the state of the others - Also check model state and _index
         domain, problem, solver = RovEx.setup()
-        solver.search_models._Q = [Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem) for i in range(7)]
-        for m in solver.search_models._Q:
+        for i in range(7):
+            solver.search_models._Q.put(DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem, progress_tracker_class=SequentialTracker))
+        for m in solver.search_models._Q.queue:
             m.ranking = 0
 
         # Execute action on model[7]
-        subT = Subtasks.Subtask(domain.actions['visit'], [RegParameter('?from')])
+        subT = Subtask(domain.actions['visit'], [RegParameter('?from')])
         subT.add_given_parameters({'?waypoint': problem.objects['waypoint3']})
-        solver._expand_action(subT, Model(State.reproduce(problem.initial_state), [problem.subtasks.get_tasks()[1]], problem))
+        solver._expand_action(subT, DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem))
 
-        search_models = solver.search_models._Q
+        search_models = solver.search_models._Q.queue
         self.assertEqual(8, len(search_models))
         for i in range(len(search_models) - 1):
             model = search_models[i]
@@ -201,32 +202,32 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem, progress_tracker_class=SequentialTracker)
         solver.search_models.add(initial_model)
 
         # Execute Step 1
         solver._search(True)
 
         # Expect task to be expanded
-        self.assertEqual(1, len(solver.search_models._Q))
-        self.assertEqual(1, len(solver.search_models._Q[0].search_modifiers))
+        self.assertEqual(1, len(solver.search_models))
+        self.assertEqual(1, len(solver.search_models._Q.queue[0].search_modifiers))
 
-        self.assertEqual(domain.methods['have_second'], solver.search_models._Q[0].search_modifiers[0].task)
+        self.assertEqual(domain.methods['have_second'], solver.search_models._Q.queue[0].search_modifiers[0].task)
 
         self.assertEqual(domain.predicates['have'],
-                         solver.search_models._Q[0].current_state.elements[0].predicate)
-        self.assertEqual(1, len(solver.search_models._Q[0].current_state.elements[0].objects))
-        self.assertEqual(problem.objects['kiwi'], solver.search_models._Q[0].current_state.elements[0].objects[0])
-        self.assertEqual(None, solver.search_models._Q[0].current_state.elements[0].objects[0].type)
+                         solver.search_models._Q.queue[0].current_state.elements[0].predicate)
+        self.assertEqual(1, len(solver.search_models._Q.queue[0].current_state.elements[0].objects))
+        self.assertEqual(problem.objects['kiwi'], solver.search_models._Q.queue[0].current_state.elements[0].objects[0])
+        self.assertEqual(None, solver.search_models._Q.queue[0].current_state.elements[0].objects[0].type)
 
         # Execute step 2
         solver._search(True)
 
         # Expect method to be expanded - should be tasks drop and pickup in the place of the method
-        self.assertEqual(1, len(solver.search_models._Q))
-        self.assertEqual(2, len(solver.search_models._Q[0].search_modifiers))
+        self.assertEqual(1, len(solver.search_models))
+        self.assertEqual(2, len(solver.search_models._Q.queue[0].search_modifiers))
 
-        model = solver.search_models._Q[0]
+        model = solver.search_models._Q.queue[0]
         self.assertEqual(domain.actions['drop'], model.search_modifiers[0].task)
         self.assertEqual(domain.actions['pickup'], model.search_modifiers[1].task)
 
@@ -240,8 +241,8 @@ class SolvingTests(unittest.TestCase):
         solver._search(True)
 
         # Expect the drop action to be carried out
-        self.assertEqual(1, len(solver.search_models._Q))
-        model = solver.search_models._Q[0]
+        self.assertEqual(1, len(solver.search_models))
+        model = solver.search_models._Q.queue[0]
         self.assertEqual(1, len(model.search_modifiers))
         self.assertEqual(domain.actions['pickup'], model.search_modifiers[0].task)
         self.assertEqual([], model.current_state.elements)
@@ -250,7 +251,7 @@ class SolvingTests(unittest.TestCase):
         solver._search(True)
 
         # Expect the pickup action to be carried out
-        self.assertEqual(0, len(solver.search_models._Q))
+        self.assertEqual(0, len(solver.search_models))
         self.assertEqual(1, len(solver.search_models._completed_models))
         model = solver.search_models._completed_models[0]
         self.assertEqual(0, len(model.search_modifiers))
@@ -268,14 +269,14 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_basic_execution_to(self):
         domain, problem, parser, solver = env_setup(True, False)
@@ -284,20 +285,20 @@ class SolvingTests(unittest.TestCase):
         res = solver.solve()
         self.assertNotEqual(None, res)
         self.assertEqual(ActionTracker(domain.tasks['swap'], {'?x': problem.objects['banjo'],
-                                                              '?y': problem.objects['kiwi']}), res.operations_taken[0])
+                                                              '?y': problem.objects['kiwi']}), res.get_progress_tracker().operations_taken[0])
         self.assertEqual(ActionTracker(domain.methods['have_second'], {'?x': problem.objects['banjo'],
                                                                         '?y': problem.objects['kiwi']}),
-                         res.operations_taken[1])
+                         res.get_progress_tracker().operations_taken[1])
         self.assertEqual(ActionTracker(domain.actions['drop'], {'?a': problem.objects['kiwi']}),
-                         res.operations_taken[2])
+                         res.get_progress_tracker().operations_taken[2])
         self.assertEqual(ActionTracker(domain.actions['pickup'], {'?a': problem.objects['banjo']}),
-                         res.operations_taken[3])
+                         res.get_progress_tracker().operations_taken[3])
 
     def test_compare_parameters(self):
         domain, problem, solver = RovEx.setup()
         solver.set_parameter_selector(RequirementSelection)
         RovEx.execution_prep(problem, solver)
-        model = solver.search_models._Q[0]
+        model = solver.search_models._Q.queue[0]
 
         response = solver.parameter_selector.compare_parameters(domain.methods['m_get_image_data_ordering_0'],
                                                                 model.search_modifiers[0].given_params)
@@ -331,10 +332,10 @@ class SolvingTests(unittest.TestCase):
     def test_rover_execution_beginning(self):
         domain, problem, solver = RovEx.setup()
         RovEx.execution_prep(problem, solver)
-        self.assertEqual(1, len(solver.search_models._Q))
-        model = solver.search_models._Q[0]
+        self.assertEqual(1, len(solver.search_models))
+        model = solver.search_models._Q.queue[0]
         self.assertEqual(3, len(model.search_modifiers) + len(model.waiting_subtasks))
-        self.assertEqual(Subtasks.Subtask, type(model.search_modifiers[0]))
+        self.assertEqual(Subtask, type(model.search_modifiers[0]))
         self.assertEqual(domain.tasks['get_image_data'], model.search_modifiers[0].task)
         self.assertEqual(2, len(model.search_modifiers[0].given_params))
         self.assertEqual(problem.objects['objective1'], model.search_modifiers[0].given_params['?objective'])
@@ -346,11 +347,11 @@ class SolvingTests(unittest.TestCase):
         solver.parameter_selector.presolving_processing(domain, problem)
         solver._search(True)
         # Check searchModels has 4 search nodes each with a different ?waypoint parameter
-        self.assertEqual(4, len(solver.search_models._Q))
+        self.assertEqual(4, len(solver.search_models))
         for i in range(4):
-            model = solver.search_models._Q[i]
+            model = solver.search_models._Q.queue[i]
             self.assertEqual(3, len(model.search_modifiers) + len(model.waiting_subtasks))
-            self.assertEqual(Subtasks.Subtask, type(model.search_modifiers[0]))
+            self.assertEqual(Subtask, type(model.search_modifiers[0]))
             self.assertEqual(domain.methods['m_get_image_data_ordering_0'], model.search_modifiers[0].task)
             self.assertEqual(problem.objects["waypoint" + str(i)], model.search_modifiers[0].given_params['?waypoint'])
 
@@ -367,7 +368,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -386,7 +387,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -442,12 +443,12 @@ class SolvingTests(unittest.TestCase):
         solver.search_models.clear()
         param_dict = solver._generate_param_dict(task.task, task.parameters)
         task.add_given_parameters(param_dict)
-        initial_model = Model(problem.initial_state, [task], problem)
+        initial_model = DefaultModel(problem.initial_state, [task], problem, progress_tracker_class=SequentialTracker)
         solver.search_models.add(initial_model)
 
         # Expand
         solver._search(True)
-        search_models = solver.search_models._Q
+        search_models = solver.search_models._Q.queue
 
         model = search_models[0]
         self.assertEqual(4, len(model.search_modifiers[0].given_params))
@@ -481,7 +482,7 @@ class SolvingTests(unittest.TestCase):
         for a in necessary_actions:
             print("Testing {}".format(a))
             found = False
-            for ac in res.actions_taken:
+            for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
                     found = True
                     break
@@ -502,3 +503,11 @@ class SolvingTests(unittest.TestCase):
 
         res = solver.solve()
         self.assertNotEqual(None, res)
+
+    def test_barman_1(self):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.barman_path + "domain.hddl")
+        parser.parse_problem(self.barman_path + "pfile01.hddl")
+
+        res = solver.solve()
+        self.assertIsNotNone(res)

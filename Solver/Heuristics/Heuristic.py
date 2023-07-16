@@ -7,13 +7,14 @@ class Heuristic(ABC):
         self.problem = problem
         self.solver = solver
         self.search_models = search_models
+        self._seen_states = set()
 
     @abstractmethod
     def ranking(self, model) -> float:
         raise NotImplementedError
 
     @abstractmethod
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         raise NotImplementedError
 
     @abstractmethod

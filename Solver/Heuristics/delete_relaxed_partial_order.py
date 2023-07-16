@@ -10,9 +10,9 @@ Subtasks = sys.modules['Internal_Representation.subtasks'].Subtasks
 Subtask = sys.modules['Internal_Representation.subtasks'].Subtasks.Subtask
 
 if 'Solver.Model' in sys.modules:
-    Model = sys.modules['Solver.model'].Model
+    Model = sys.modules['Solver.Models.model'].Model
 else:
-    from Solver.model import Model
+    from Solver.Models.default_model import DefaultModel
 
 if 'Internal_Representation.domain' in sys.modules:
     Domain = sys.modules['Internal_Representation.domain'].Domain
@@ -151,9 +151,9 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
         self.parameter_selector = AllParameters(self.solver)
         self.model_stores = {}
 
-    def ranking(self, model: Model) -> float:
+    def ranking(self, model: DefaultModel) -> float:
         # Create duplicate state
-        alt_state = State.reproduce(model.current_state)
+        alt_state = model.current_state.reproduce()
 
         if len(model.operations_taken) == 0 or type(model.operations_taken[-1].mod) == Action:
             prev_action = True
@@ -244,7 +244,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
                 obs.append(name[start:end])
         return obs
 
-    def _calculate_distance(self, model: Model, model_store: ModelStore, alt_state: State, targets: list) -> int:
+    def _calculate_distance(self, model: DefaultModel, model_store: ModelStore, alt_state: State, targets: list) -> int:
         model.current_state = alt_state
         iteration = 0
         modifiers = [x for x in model_store.previous_modifiers]
@@ -347,7 +347,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
             return True
         return False
 
-    def presolving_processing(self) -> None:
+    def presolving_processing(self, **kwargs) -> None:
         self.alt_domain = Domain(None)
         self.alt_problem = Problem(self.alt_domain)
         self.alt_domain.add_problem(self.alt_problem)
@@ -525,7 +525,7 @@ class DeleteRelaxedPartialOrder(PartialOrderPruning):
         return constraints
 
     def _generate_alt_problem(self):
-        self.alt_problem.initial_state = State.reproduce(self.problem.initial_state)
+        self.alt_problem.initial_state = self.problem.initial_state.reproduce()
 
         # Get objects
         obs = self.problem.get_all_objects()
