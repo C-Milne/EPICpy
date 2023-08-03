@@ -5,7 +5,7 @@ from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Internal_Representation.Object import Object
 from Internal_Representation.conditions import OperatorCondition, PredicateCondition
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from Tests.TestTools.env_setup import env_setup
 
 
 class HDDLParsingTests(unittest.TestCase):
