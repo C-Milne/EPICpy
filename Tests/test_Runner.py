@@ -220,37 +220,14 @@ optional arguments:
     def test_runner_command_line_heuname_only(self):
         # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
         os.chdir("../")
-        print('Starting')
 
         error_raised = False
         try:
-            # res = subprocess.check_output("python ./runner.py ../Examples/Basic/basic.hddl ../Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal",
-            #                               stderr=subprocess.PIPE)
-
-            # res = subprocess.run(
-            #     "python3 ./runner.py ../Examples/Basic/basic.hddl ../Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal",
-            #     check=True, capture_output=True, text=True).stdout
-
             res = subprocess.run(
                 [self.python_command, "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl", "-heuModName", "PredicateDistanceToGoal"],
                 check=True, capture_output=True, text=True).stdout
-
-            print('here')
         except Exception as e:
-            print('HANDLING SOME ERROR')
-
-            # if sys.platform == "win32":
-            #     print('IN HERE')
-            #     msg = e.stderr.decode("utf-8")
-            # else:
-                # msg = e.characters_written
-                # msg = str(e)
-                # msg = e.strerror
-                # msg = traceback.format_exc()
-
-            print('IN HERE')
             msg = e.stderr
-
             self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
