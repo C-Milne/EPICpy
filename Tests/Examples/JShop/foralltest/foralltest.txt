@@ -1,8 +1,0 @@
-3
-p
-q
-w
-1
-succeed
-1
-!do-something
