@@ -64,6 +64,11 @@ class RunnerTests(unittest.TestCase):
                  [D] [P]
 runner.py: error: Incorrect Usage."""
 
+        if sys.platform == "win32":
+            self.python_command = "python"
+        else:
+            self.python_command = "python3"
+
     def test_load_unknown_domain(self):
         # Test loading unknown domain file
         with self.assertRaises(FileNotFoundError) as error:
@@ -227,7 +232,7 @@ optional arguments:
             #     check=True, capture_output=True, text=True).stdout
 
             res = subprocess.run(
-                ["python3", "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl", "-heuModName", "PredicateDistanceToGoal"],
+                [self.python_command, "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl", "-heuModName", "PredicateDistanceToGoal"],
                 check=True, capture_output=True, text=True).stdout
 
             print('here')
@@ -313,7 +318,7 @@ optional arguments:
 
     def test_runner_command_line_parampath_or_paramname_only(self):
         # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
-        os.chdir("../..")
+        os.chdir("../")     # This takes us back to the root directory
 
         error_raised = False
         try:
