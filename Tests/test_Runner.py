@@ -1,6 +1,8 @@
 import subprocess
 import unittest
-import os, sys
+import os
+import sys
+import traceback
 from TestTools.env_setup import env_setup
 from runner import Runner
 from Internal_Representation.domain import Domain
@@ -38,16 +40,28 @@ class RunnerTests(unittest.TestCase):
         self.IPC_Tests_path = "../Examples/IPC_Tests/"
         os.chdir(self.original_dir)
 
-        self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-                 [-paramSelectPath PARAMSELECTPATH]\r
-                 [-searchQueueName SEARCHQUEUENAME]\r
-                 [-searchQueuePath SEARCHQUEUEPATH]\r
-                 [-progressTrackerName PROGRESSTRACKERNAME]\r
-                 [-progressTrackerPath PROGRESSTRACKERPATH]\r
-                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]\r
-                 [D] [P]\r
+#         self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
+#                  [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
+#                  [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
+#                  [-paramSelectPath PARAMSELECTPATH]\r
+#                  [-searchQueueName SEARCHQUEUENAME]\r
+#                  [-searchQueuePath SEARCHQUEUEPATH]\r
+#                  [-progressTrackerName PROGRESSTRACKERNAME]\r
+#                  [-progressTrackerPath PROGRESSTRACKERPATH]\r
+#                  [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]\r
+#                  [D] [P]\r
+# runner.py: error: Incorrect Usage."""
+
+        self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
+                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
+                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
+                 [-paramSelectPath PARAMSELECTPATH]
+                 [-searchQueueName SEARCHQUEUENAME]
+                 [-searchQueuePath SEARCHQUEUEPATH]
+                 [-progressTrackerName PROGRESSTRACKERNAME]
+                 [-progressTrackerPath PROGRESSTRACKERPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
+                 [D] [P]
 runner.py: error: Incorrect Usage."""
 
     def test_load_unknown_domain(self):
@@ -198,30 +212,54 @@ optional arguments:
   -O                    Flag to disable printing resulting plan
 """, output)
 
-    def test_runner_command_line_heupath_or_heuname_only(self):
+    def test_runner_command_line_heuname_only(self):
         # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
-        os.chdir("../..")
+        os.chdir("../")
+        print('Starting')
 
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py ../Examples/Basic/basic.hddl ../Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal",
-                                          stderr=subprocess.PIPE)
+            # res = subprocess.check_output("python ./runner.py ../Examples/Basic/basic.hddl ../Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal",
+            #                               stderr=subprocess.PIPE)
+
+            # res = subprocess.run(
+            #     "python3 ./runner.py ../Examples/Basic/basic.hddl ../Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal",
+            #     check=True, capture_output=True, text=True).stdout
+
+            res = subprocess.run(
+                ["python3", "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl", "-heuModName", "PredicateDistanceToGoal"],
+                check=True, capture_output=True, text=True).stdout
+
+            print('here')
         except Exception as e:
             print('HANDLING SOME ERROR')
+
+            # if sys.platform == "win32":
+            #     print('IN HERE')
+            #     msg = e.stderr.decode("utf-8")
+            # else:
+                # msg = e.characters_written
+                # msg = str(e)
+                # msg = e.strerror
+                # msg = traceback.format_exc()
+
+            print('IN HERE')
+            msg = e.stderr
+
+            self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\n", msg)
+            error_raised = True
+        self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
+
+    def test_runner_command_line_heupath_only(self):
+        error_raised = False
+        try:
+            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuPath Solver/Heuristics/hamming_distance.py",
+                                          stderr=subprocess.PIPE)
+        except Exception as e:
             msg = e.stderr.decode("utf-8")
             self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r\n", msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
-
-        # error_raised = False
-        # try:
-        #     res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuPath Solver/Heuristics/hamming_distance.py",
-        #                                   stderr=subprocess.PIPE)
-        # except Exception as e:
-        #     msg = e.stderr.decode("utf-8")
-        #     self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r\n", msg)
-        #     error_raised = True
-        # self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
     def test_runner_setting_heuristic_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
