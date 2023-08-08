@@ -1,5 +1,5 @@
 import unittest
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection

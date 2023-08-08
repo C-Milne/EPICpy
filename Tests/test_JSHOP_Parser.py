@@ -1,5 +1,5 @@
 import unittest
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Parsers.JSHOP_Parser import JSHOPParser
 from Internal_Representation.list_parameter import ListParameter
 from Internal_Representation.reg_parameter import RegParameter

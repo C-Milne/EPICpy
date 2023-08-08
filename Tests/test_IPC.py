@@ -1,7 +1,7 @@
 import unittest
 from Solver.Solving_Algorithms.solver import Solver
 from Solver.Heuristics.hamming_distance import HammingDistance
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 
 
 class IPCTests(unittest.TestCase):

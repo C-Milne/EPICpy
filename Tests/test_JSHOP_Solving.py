@@ -1,7 +1,7 @@
 import unittest
 from queue import PriorityQueue
-from Tests.UnitTests.TestTools.rover_execution import execution_prep
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.rover_execution import execution_prep
+from TestTools.env_setup import env_setup
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 

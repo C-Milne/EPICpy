@@ -1,6 +1,6 @@
 import unittest
 from queue import PriorityQueue
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning

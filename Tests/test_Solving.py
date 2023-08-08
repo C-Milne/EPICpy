@@ -12,8 +12,8 @@ from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
-import Tests.UnitTests.TestTools.rover_execution as RovEx
-from Tests.UnitTests.TestTools.env_setup import env_setup
+import TestTools.rover_execution as RovEx
+from TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 

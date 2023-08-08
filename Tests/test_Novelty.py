@@ -1,5 +1,5 @@
 import unittest
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Internal_Representation.state_novelty import StateNovelty
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.subtasks import Subtask

@@ -2,7 +2,6 @@ import subprocess
 import unittest
 import os
 import sys
-import traceback
 from TestTools.env_setup import env_setup
 from runner import Runner
 from Internal_Representation.domain import Domain
@@ -28,6 +27,7 @@ from output_plan_reader import read_plan, display_plan
 
 class RunnerTests(unittest.TestCase):
     original_dir = os.getcwd()
+    maxDiff = None
 
     def setUp(self) -> None:
         self.basic_domain_path = "../Examples/Basic/basic.hddl"
@@ -40,17 +40,17 @@ class RunnerTests(unittest.TestCase):
         self.IPC_Tests_path = "../Examples/IPC_Tests/"
         os.chdir(self.original_dir)
 
-#         self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
-#                  [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
-#                  [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
-#                  [-paramSelectPath PARAMSELECTPATH]\r
-#                  [-searchQueueName SEARCHQUEUENAME]\r
-#                  [-searchQueuePath SEARCHQUEUEPATH]\r
-#                  [-progressTrackerName PROGRESSTRACKERNAME]\r
-#                  [-progressTrackerPath PROGRESSTRACKERPATH]\r
-#                  [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]\r
-#                  [D] [P]\r
-# runner.py: error: Incorrect Usage."""
+        #         self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]\r
+        #                  [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]\r
+        #                  [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]\r
+        #                  [-paramSelectPath PARAMSELECTPATH]\r
+        #                  [-searchQueueName SEARCHQUEUENAME]\r
+        #                  [-searchQueuePath SEARCHQUEUEPATH]\r
+        #                  [-progressTrackerName PROGRESSTRACKERNAME]\r
+        #                  [-progressTrackerPath PROGRESSTRACKERPATH]\r
+        #                  [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]\r
+        #                  [D] [P]\r
+        # runner.py: error: Incorrect Usage."""
 
         self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
                  [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
@@ -101,7 +101,8 @@ runner.py: error: Incorrect Usage."""
         with self.assertRaises(Exception) as error:
             Runner(self.basic_domain_path)
         self.assertTrue("__init__() missing 1 required positional argument: 'problem_path'" == str(error.exception) or
-                        "Runner.__init__() missing 1 required positional argument: 'problem_path'" == str(error.exception))
+                        "Runner.__init__() missing 1 required positional argument: 'problem_path'" == str(
+            error.exception))
 
     @unittest.skip
     def test_load_incompatible_files(self):
@@ -123,9 +124,18 @@ runner.py: error: Incorrect Usage."""
         # self.assertEqual("File type not identified. (TestTools/fakeDomain2)", str(error.exception))
 
     def test_file_writing_command_line_args(self):
-        os.chdir("../..")
-        res = os.popen("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -w runner_test_basic_p1")
-        output = res.read()
+        os.chdir("../")
+
+        try:
+            res = subprocess.run(
+                [self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "Examples/Basic/pb1.hddl",
+                 "-w", "runner_test_basic_p1"],
+                check=True, capture_output=True, text=True).stdout
+        except Exception as e:
+            msg = e.stderr
+            print(msg)
+            res = None
+
         self.assertIn("""Actions Taken:
 drop - kiwi
 pickup - banjo
@@ -137,7 +147,7 @@ drop - kiwi
 pickup - banjo
 
 Search Models Created During Search: 3
-""", output)
+""", res)
         self.assertTrue(os.path.exists("output/runner_test_basic_p1"))
 
     def test_file_writing_and_reading(self):
@@ -156,24 +166,29 @@ Search Models Created During Search: 3
 
     def test_runner_command_line_incorrect_args(self):
         original_dir = os.getcwd()
-        os.chdir("../..")
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl -w runner_test_basic_p1",
-                                          stderr=subprocess.PIPE)
-            output, error = res.communicate()
+            res = subprocess.run(
+                [self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "-w", "runner_test_basic_p1"],
+                check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
+            msg = e.stderr
             # msg = msg[434:]   # This is for debugger inspection only
-            self.assertEqual(self.expected_error_message + " Correct usage 'python runner.py <domain.suffix> <problem.suffix>'\r\n", msg)
+            self.assertEqual(
+                self.expected_error_message + " Correct usage 'python runner.py <domain.suffix> <problem.suffix>'\n",
+                msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
         os.chdir(original_dir)
 
     def test_runner_command_line_help(self):
-        os.chdir("../..")
-        res = os.popen("python ./runner.py -h")
-        output = res.read()
+        os.chdir("../")
+
+        res = subprocess.run(
+            [self.python_command, "./runner.py", "-h"],
+            check=True, capture_output=True, text=True).stdout
+
         self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
                  [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
                  [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
@@ -189,7 +204,7 @@ positional arguments:
   D                     File path to Domain File
   P                     File path to Problem File
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -w W                  File path to Write Resulting Plan File
   -solverModName SOLVERMODNAME
@@ -215,7 +230,7 @@ optional arguments:
                         Name of Model Class
   -modelPath MODELPATH  File path to Model File
   -O                    Flag to disable printing resulting plan
-""", output)
+""", res)
 
     def test_runner_command_line_heuname_only(self):
         # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
@@ -224,22 +239,29 @@ optional arguments:
         error_raised = False
         try:
             res = subprocess.run(
-                [self.python_command, "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl", "-heuModName", "PredicateDistanceToGoal"],
+                [self.python_command, "./runner.py", "../Examples/Basic/basic.hddl", "../Examples/Basic/pb1.hddl",
+                 "-heuModName", "PredicateDistanceToGoal"],
                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
             msg = e.stderr
-            self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\n", msg)
+            self.assertEqual(
+                self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\n",
+                msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
     def test_runner_command_line_heupath_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuPath Solver/Heuristics/hamming_distance.py",
-                                          stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-heuPath", "Solver/Heuristics/hamming_distance.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            self.assertEqual(
+                self.expected_error_message + " Either both '-heuModName' and '-heuPath' need to be set or both need to be empty\n",
+                msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -247,22 +269,25 @@ optional arguments:
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_heuristic_from_file('HammingDistance', '../../Solver/Heuristics/hamming_distance.py')
+        controller.set_heuristic_from_file('HammingDistance',
+                                           '../Solver/Heuristics/hamming_distance.py')
         self.assertEqual(HammingDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
 
-        controller.set_heuristic_from_file('TreeDistance', '../../Solver/Heuristics/tree_distance.py')
+        controller.set_heuristic_from_file('TreeDistance',
+                                           '../Solver/Heuristics/tree_distance.py')
         self.assertEqual(TreeDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
 
     def test_runner_setting_heuristic_from_command_line(self):
         original_dir = os.getcwd()
-        os.chdir("../..")
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName HammingDistance"
-                                          "  -heuPath Solver/Heuristics/hamming_distance.py",
-                                          stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-heuModName", "HammingDistance", "-heuPath",
+                                  "Solver/Heuristics/hamming_distance.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr  # This is for debugger inspection only
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
@@ -272,10 +297,12 @@ optional arguments:
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_parameter_selector_from_file('AllParameters', '../../Solver/Parameter_Selection/All_Parameters.py')
+        controller.set_parameter_selector_from_file('AllParameters',
+                                                    '../Solver/Parameter_Selection/All_Parameters.py')
         self.assertEqual(AllParameters.__name__, type(controller.solver.parameter_selector).__name__)
 
-        controller.set_parameter_selector_from_file('RequirementSelection', '../../Solver/Parameter_Selection/Requirement_Selection.py')
+        controller.set_parameter_selector_from_file('RequirementSelection',
+                                                    '../Solver/Parameter_Selection/Requirement_Selection.py')
         self.assertEqual(RequirementSelection.__name__, type(controller.solver.parameter_selector).__name__)
 
     def test_runner_setting_parameter_selector_from_command_line(self):
@@ -283,91 +310,109 @@ optional arguments:
         os.chdir("../..")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -paramSelectName RequirementSelection"
-                                          " -paramSelectPath Solver/Parameter_Selection/Requirement_Selection.py",
-                                          stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "/Examples/Basic/pb1.hddl", "-paramSelectName", "RequirementSelection"
+                                                                                  "-paramSelectPath",
+                                  "Solver/Parameter_Selection/Requirement_Selection.py"],
+                                 stderr=subprocess.PIPE)
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr  # This is for debugger inspection only
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
         os.chdir(original_dir)
 
-    def test_runner_command_line_parampath_or_paramname_only(self):
+    def test_runner_command_line_paramname_only(self):
         # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
-        os.chdir("../")     # This takes us back to the root directory
+        os.chdir("../")  # This takes us back to the root directory
 
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -paramSelectName PredicateDistanceToGoal",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-paramSelectName", "PredicateDistanceToGoal"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            self.assertEqual(
+                self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\n",
+                msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
+    def test_runner_command_line_parampath_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -paramSelectPath Solver/Heuristics/hamming_distance.py",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Tests/Examples/Basic/pb1.hddl", "-paramSelectPath",
+                                  "Solver/Heuristics/hamming_distance.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            self.assertEqual(
+                self.expected_error_message + " Either both '-paramSelectName' and '-paramSelectPath' need to be set or both need to be empty\n",
+                msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
-    def test_runner_command_line_solverpath_or_solvername_only(self):
-        # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -heuModName PredicateDistanceToGoal -heuPath Solver/Heuristics/hamming_distance.py
-        os.chdir("../..")
-
+    def test_runner_command_line_solvername_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -solverModName PredicateDistanceToGoal",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-solverModName", "PredicateDistanceToGoal"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            expected_msg = self.expected_error_message + (" Either both '-solverModName' and '-solverPath' need to be "
+                                                          "set or both need to be empty\n")
+            self.assertEqual(expected_msg, msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
+    def test_runner_command_line_solverpath_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -solverPath Solver/Heuristics/hamming_distance.py",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-solverPath", "Solver/Heuristics/hamming_distance.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-solverModName' and '-solverPath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            expected_msg = self.expected_error_message + (" Either both '-solverModName' and '-solverPath' need to be "
+                                                          "set or both need to be empty\n")
+            self.assertEqual(expected_msg, msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
-    def test_runner_command_line_searchQueueName_or_searchQueuePath_only(self):
-        # Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py
-        os.chdir("../..")
-
+    def test_runner_command_line_searchQueueName_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -searchQueueName GBFSSearchQueue",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-searchQueueName", "GBFSSearchQueue"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            expected_msg = self.expected_error_message + (" Either both '-searchQueueName' and '-searchQueuePath' need "
+                                                          "to be set or both need to be empty\n")
+            self.assertEqual(expected_msg, msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
+    def test_runner_command_line_searchQueuePath_only(self):
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-searchQueuePath",
+                                  "Solver/Search_Queues/Greedy_Best_First_Search_Queue.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")
-            self.assertEqual(self.expected_error_message + " Either both '-searchQueueName' and '-searchQueuePath' need to be set or both need to be empty\r\n", msg)
+            msg = e.stderr
+            expected_msg = self.expected_error_message + (" Either both '-searchQueueName' and '-searchQueuePath' need "
+                                                          "to be set or both need to be empty\n")
+            self.assertEqual(expected_msg, msg)
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
@@ -375,19 +420,20 @@ optional arguments:
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_solver_from_file('TotalOrderSolver', '../../Solver/Solving_Algorithms/total_order.py')
+        controller.set_solver_from_file('TotalOrderSolver', '../Solver/Solving_Algorithms/total_order.py')
         self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
 
     def test_runner_setting_solver_from_command_line(self):
         original_dir = os.getcwd()
-        os.chdir("../..")
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl -solverModName TotalOrderSolver"
-                                          " -solverPath Solver/Solving_Algorithms/total_order.py",
-                                          stderr=subprocess.PIPE)
+            res = subprocess.run(
+                [self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "Examples/Basic/pb1.hddl",
+                 "-solverModName", "TotalOrderSolver", "-solverPath", "Solver/Solving_Algorithms/total_order.py"],
+                check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr  # This is for debugger inspection only
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
@@ -397,19 +443,21 @@ optional arguments:
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_search_queue_from_file('GBFSSearchQueue', '../../Solver/Search_Queues/Greedy_Best_First_Search_Queue.py')
+        controller.set_search_queue_from_file('GBFSSearchQueue',
+                                              '../Solver/Search_Queues/Greedy_Best_First_Search_Queue.py')
         self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
 
     def test_runner_setting_SearchQueue_from_command_line(self):
         original_dir = os.getcwd()
-        os.chdir("../..")
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output("python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
-                                          "-searchQueueName GBFSSearchQueue -searchQueuePath Solver/Search_Queues/Greedy_Best_First_Search_Queue.py",
-                                          stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-searchQueueName", "GBFSSearchQueue", "-searchQueuePath",
+                                  "Solver/Search_Queues/Greedy_Best_First_Search_Queue.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr  # This is for debugger inspection only
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
@@ -433,20 +481,22 @@ optional arguments:
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_progress_tracker_from_file('PandaVerifyFormatTracker', '../../Solver/Progress_Tracking/panda_verify_format.py')
+        controller.set_progress_tracker_from_file('PandaVerifyFormatTracker',
+                                                  '../Solver/Progress_Tracking/panda_verify_format.py')
         self.assertEqual(PandaVerifyFormatTracker.__name__, controller.solver.progress_tracker.__name__)
 
     def test_runner_setting_progressTracker_from_command_line(self):
         original_dir = os.getcwd()
-        os.chdir("../..")
+        os.chdir("../")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
-                "-progressTrackerName SequentialTracker -progressTrackerPath Solver/Progress_Tracking/sequential_progress_tracker.py",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([
+                self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "Examples/Basic/pb1.hddl",
+                "-progressTrackerName", "SequentialTracker", "-progressTrackerPath",
+                "Solver/Progress_Tracking/sequential_progress_tracker.py"],
+                check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr  # This is for debugger inspection only
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
@@ -460,7 +510,6 @@ optional arguments:
         controller.set_model_from_file('PandaVerifyModel',
                                        '../../Solver/Models/PandaVerifyModel.py')
         self.assertEqual(PandaVerifyModel.__name__, controller.solver.ModelClass.__name__)
-
 
     @unittest.skip
     def test_runner_setting_model_from_command_line(self):

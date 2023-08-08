@@ -1,6 +1,6 @@
 import unittest
-from Tests.UnitTests.TestTools.rover_execution import execution_prep
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.rover_execution import execution_prep
+from TestTools.env_setup import env_setup
 from Internal_Representation.subtasks import Subtasks
 from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
 

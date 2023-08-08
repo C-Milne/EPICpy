@@ -1,5 +1,5 @@
 import unittest
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Internal_Representation.state import State
 from Internal_Representation.predicate import Predicate
 from Internal_Representation.problem_predicate import ProblemPredicate

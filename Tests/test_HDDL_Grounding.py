@@ -10,7 +10,7 @@ from Internal_Representation.state import State
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.Object import Object
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
 
 

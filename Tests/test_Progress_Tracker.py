@@ -1,6 +1,6 @@
 import os.path
 import unittest
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from runner import Runner
