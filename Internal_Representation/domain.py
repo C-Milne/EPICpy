@@ -26,6 +26,8 @@ class Domain:
 
     def add_method(self, method, add_to_task=True):
         assert type(method) == Method
+        if method.name in self.methods:
+            raise NameError("Method Name 'swap_ob_1' is Already Assigned")
         self.methods[method.name] = method
         if not method.task is None and add_to_task:
             self._add_method_to_task(method, method.task['task'])

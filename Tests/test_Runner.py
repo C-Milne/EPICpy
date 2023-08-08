@@ -8,21 +8,6 @@ if current_dir.endswith('Tests'):
     os.chdir('..')
     sys.path.append(os.getcwd())
 
-print(os.getcwd())
-
-# current_dir = os.getcwd()
-# print(os.getcwd())
-# if current_dir.endswith('EPICpy'):
-#     # If we are in the project root, we need to import from the TestTools directory within the Tests directory
-#     os.chdir('Tests')
-#     sys.path.append(os.getcwd())
-#     os.chdir(current_dir)
-# elif current_dir.endswith('Tests'):
-#     # If we are in the Tests directory, we need to import the project root
-#     os.chdir('..')
-#     sys.path.append(os.getcwd())
-#     os.chdir(current_dir)
-
 from runner import Runner
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem

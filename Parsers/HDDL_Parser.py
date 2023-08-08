@@ -73,6 +73,7 @@ class HDDLParser(Parser):
         self._post_problem_parsing_grounding()
 
     """Methods for parsing domains"""
+
     def _parse_type(self, params):
         def _add_types_to_domain(t=None):
             for o in new_types:
@@ -136,6 +137,7 @@ class HDDLParser(Parser):
             if len(params) > 1:
                 return params[0], params[1:]
             return params[0], []
+
         i = 0
         l = len(params)
         effects = Effects()
@@ -192,7 +194,7 @@ class HDDLParser(Parser):
         i = 0
         l = len(params)
         method_name, parameters, precon, precon_conditions, task, subtasks, constraints = None, None, None, None, None, \
-                                                                                          None, None
+            None, None
 
         unordered_subtasks = False
 
@@ -200,7 +202,7 @@ class HDDLParser(Parser):
             if i == 0:
                 if type(params[i]) != str or params[i][0] == ":":
                     raise SyntaxError("Error with Method name. Must be a string not beginning with ':'."
-                         "\nPlease check your domain file.")
+                                      "\nPlease check your domain file.")
                 method_name = params[i]
             elif params[i] == ":parameters":
                 parameters = self._parse_parameters(params[i + 1])
@@ -212,9 +214,15 @@ class HDDLParser(Parser):
                 constraints = self._parse_precondition(params[i + 1], parameters)
                 i += 1
             elif params[i] == ":task":
-                task_ob = self.domain.get_task(params[i + 1][0])
+                task_name = params[i + 1][0]
+                if task is not None:
+                    # Task has already been set
+                    raise AttributeError("Attribute 'Task' has Already been set for the Method {}. "
+                                         "Please check your domain file.".format(task_name))
+
+                task_ob = self.domain.get_task(task_name)
                 if task_ob is None:
-                    raise KeyError("Task 'swap' is not defined. Please check your domain file.")
+                    raise KeyError("Task '{}' is not defined. Please check your domain file.".format(task_name))
                 elif len(params[i + 1]) == 1:
                     task = {"task": task_ob, "params": []}
                 else:
@@ -357,7 +365,8 @@ class HDDLParser(Parser):
                 v = params[i + 1]
                 const_type = self.domain.get_type(v)
                 if const_type is None or const_type == False:
-                    raise TypeError("Type {} not found when parsing constants. Please check your domain file.".format(v))
+                    raise TypeError(
+                        "Type {} not found when parsing constants. Please check your domain file.".format(v))
                 __add_constants_to_problem(const_type)
                 new_constants = []
                 i += 1
@@ -379,6 +388,7 @@ class HDDLParser(Parser):
         self._requires_grounding = []
 
     """Methods for parsing problems"""
+
     def _set_problem_name(self, params):
         if type(params) == list and len(params) == 1 and type(params[0]) == str:
             params = params[0]
@@ -403,6 +413,7 @@ class HDDLParser(Parser):
         def _add_objects_to_problem(t=None):
             for o in new_obs:
                 self.problem.add_object(Object(o, t))
+
         i = 0
         l = len(params)
         new_obs = []
@@ -444,7 +455,7 @@ class HDDLParser(Parser):
                 if group != []:
                     while group:
                         param_name = group.pop(0)
-                        group.pop(0)    # This is the '-' between the parameter name and type
+                        group.pop(0)  # This is the '-' between the parameter name and type
                         param_type_str = group.pop(0)
                         self.problem.add_initial_task_network_parameter(param_name, param_type_str)
             elif lead == ":ordering":
@@ -467,6 +478,6 @@ class HDDLParser(Parser):
             params = params[0]
         cons = self._parse_precondition(params, [])
         self.problem.add_goal_conditions(cons)
-    
+
     def _scan_tokens(self, file_path):
         return super(HDDLParser, self)._scan_tokens(file_path)
