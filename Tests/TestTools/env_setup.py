@@ -1,3 +1,14 @@
+import os
+import sys
+
+current_dir = os.getcwd()
+# print(current_dir)
+if current_dir.endswith('EPICpy/Tests'):
+    os.chdir('../')
+    sys.path.append(os.getcwd())
+    os.chdir(current_dir)
+# print(os.getcwd())
+
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
 from Parsers.HDDL_Parser import HDDLParser
