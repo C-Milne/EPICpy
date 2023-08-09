@@ -1,5 +1,13 @@
 import unittest
-from TestTools.env_setup import env_setup
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Tests.TestTools.env_setup import env_setup
 from Parsers.JSHOP_Parser import JSHOPParser
 from Internal_Representation.list_parameter import ListParameter
 from Internal_Representation.reg_parameter import RegParameter
@@ -8,12 +16,12 @@ from Internal_Representation.reg_parameter import RegParameter
 class JSHOPParsingTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.basic_path = "../Examples/JShop/basic/"
-        self.block_path = "../Examples/JShop/blocks/"
+        self.basic_path = "Examples/JShop/basic/"
+        self.block_path = "Examples/JShop/blocks/"
         # self.block_path = "Tests/Examples/JShop/blocks/"
-        self.forall_path = "../Examples/JShop/forall/"
-        self.rover_test_path = "TestTools/J-Rover/"
-        self.rover_path = "../Examples/JShop/rover/"
+        self.forall_path = "Examples/JShop/forall/"
+        self.rover_test_path = "Tests/TestTools/J-Rover/"
+        self.rover_path = "Examples/JShop/rover/"
 
     def test_parsing_basic_domain(self):
         domain, problem, parser, solver = env_setup(False)

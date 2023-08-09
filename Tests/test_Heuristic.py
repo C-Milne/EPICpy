@@ -1,6 +1,14 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from queue import PriorityQueue
-from TestTools.env_setup import env_setup
+from Tests.TestTools.env_setup import env_setup
 from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Heuristics.hamming_distance_seen_states import HammingDistanceSeenStatesPruning
 from Solver.Heuristics.tree_distance_seen_states import TreeDistanceSeenStatesPruning
@@ -23,11 +31,11 @@ from Internal_Representation.state import State
 
 class HeuristicTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.transport_path = "../Examples/IPC_Tests/transport01/"
-        self.rover_path = "../Examples/Rover/"
-        self.basic_path = "../Examples/Basic/"
-        self.depot_path = "../Examples/Depots/"
-        self.rover_PO_path = "../Examples/Partial_Order/Rover/"
+        self.transport_path = "Examples/IPC_Tests/transport01/"
+        self.rover_path = "Examples/Rover/"
+        self.basic_path = "Examples/Basic/"
+        self.depot_path = "Examples/Depots/"
+        self.rover_PO_path = "Examples/Partial_Order/Rover/"
         Model.model_counter = 0
 
     def test_tree_distance_preprocessing(self):

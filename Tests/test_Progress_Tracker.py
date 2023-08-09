@@ -1,6 +1,13 @@
-import os.path
+import os
+import sys
 import unittest
-from TestTools.env_setup import env_setup
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from runner import Runner
@@ -9,10 +16,10 @@ from runner import Runner
 class ProgressTrackerTests(unittest.TestCase):
 
     def setUp(self):
-        self.basic_path = "../Examples/Basic/basic.hddl"
-        self.basic_pb1_path = "../Examples/Basic/pb1.hddl"
-        self.rover_path = "../Examples/Rover/"
-        self.IPC_test_path = "../Examples/IPC_Tests/"
+        self.basic_path = "Examples/Basic/basic.hddl"
+        self.basic_pb1_path = "Examples/Basic/pb1.hddl"
+        self.rover_path = "Examples/Rover/"
+        self.IPC_test_path = "Examples/IPC_Tests/"
 
     def test_basic_pandaverify_output(self):
         domain, problem, parser, solver = env_setup(True, True)
@@ -23,7 +30,7 @@ class ProgressTrackerTests(unittest.TestCase):
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 drop kiwi
 2 pickup banjo
@@ -64,7 +71,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 root 0
 0 task1 -> donothing
@@ -78,7 +85,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 noop
 root 0
@@ -93,7 +100,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 noop f
 root 0
@@ -108,7 +115,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 0 noop
 root 0
@@ -122,7 +129,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 noop a
 root 0
@@ -137,7 +144,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 noop1
 2 noop2
@@ -162,7 +169,7 @@ root 0 3 6 9
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual("""==>
 1 noop b b
 root 0
@@ -178,7 +185,7 @@ root 0
 
         res = solver.solve()
 
-        print(res.progress_tracker)
+        # print(res.progress_tracker)
         self.assertEqual(
             """==>
 5 visit waypoint1

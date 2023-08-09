@@ -1,6 +1,14 @@
 import unittest
-from TestTools.rover_execution import execution_prep
-from TestTools.env_setup import env_setup
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Tests.TestTools.rover_execution import execution_prep
+from Tests.TestTools.env_setup import env_setup
 from Internal_Representation.subtasks import Subtasks
 from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
 
@@ -8,8 +16,8 @@ from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
 class PartialOrderTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.rover_path = "../Examples/Partial_Order/Rover/"
-        self.satelite_path = "../Examples/IPC_Tests/satellite01/"
+        self.rover_path = "Examples/Partial_Order/Rover/"
+        self.satelite_path = "Examples/IPC_Tests/satellite01/"
 
     def test_rover(self):
         domain, problem, parser, solver = env_setup(True)

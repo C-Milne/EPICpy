@@ -1,4 +1,12 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from Solver.Models.default_model import DefaultModel
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
 from Solver.Solving_Algorithms.total_order import TotalOrderSolver
@@ -12,144 +20,153 @@ from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Heuristics.no_pruning import NoPruning
 from Solver.Heuristics.hamming_distance import HammingDistance
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
-import TestTools.rover_execution as RovEx
-from TestTools.env_setup import env_setup
+import Tests.TestTools.rover_execution as RovEx
+from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 
 class SolvingTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.basic_domain_path = "../Examples/Basic/basic.hddl"
-        self.basic_pb1_path = "../Examples/Basic/pb1.hddl"
-        self.test_tools_path = "TestTools/"
-        self.blocksworld_path = "../Examples/Blocksworld/"
-        self.rover_path = "../Examples/IPC_Tests/Rover/"
-        self.rover_col_path = "../Examples/Rover/"
-        self.IPC_Tests_path = "../Examples/IPC_Tests/"
-        self.barman_path = "../Examples/Barman/"
+        self.basic_domain_path = "Examples/Basic/basic.hddl"
+        self.basic_pb1_path = "Examples/Basic/pb1.hddl"
+        self.test_tools_path = "Tests/TestTools/"
+        self.blocksworld_path = "Examples/Blocksworld/"
+        self.rover_path = "Examples/IPC_Tests/Rover/"
+        self.rover_col_path = "Examples/Rover/"
+        self.IPC_Tests_path = "Examples/IPC_Tests/"
+        self.barman_path = "Examples/Barman/"
 
-    # def test_action_execution(self):
-    #     domain = Domain(None)
-    #     problem = Problem(domain)
-    #     domain.add_problem(problem)
-    #
-    #     parser = HDDLParser(domain, problem)
-    #     parser.parse_domain(self.blocksworld_path + "domain.hddl")
-    #     parser.parse_problem(self.blocksworld_path + "pb1.hddl")
-    #
-    #     solver = Solver(domain, problem)
-    #     model = Model(solver.problem, solver, solver._available_modifiers)
-    #     action = domain.get_action("pickup") # b1
-    #
-    #     solver._Solver__execute(model, action, {'?b': problem.get_object("b1")})
-    #
-    #     # Check model.current_state.elements
-    #     self.assertEqual([['clear', 'b3'],['on-table', 'b2'], ['on', 'b3', 'b5'],
-    #     ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
-    #     ['goal_clear', 'b2'], ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
-    #     ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],['goal_on-table', 'b3'],
-    #     ['goal_on', 'b1', 'b3'], ['holding', 'b1']], model.current_state.elements)
-    #
-    #     # Check model.current_state._index
-    #     self.assertEqual({'clear': [0],'goal_clear': [5, 9],
-    #     'goal_on': [7, 8, 11],'goal_on-table': [6, 10],'on': [2, 3, 4],
-    #     'on-table': [1],'holding':[12]}, model.current_state._index)
-    #
-    # def test_action_execution_2(self):
-    #     domain = Domain(None)
-    #     problem = Problem(domain)
-    #     domain.add_problem(problem)
-    #
-    #     parser = HDDLParser(domain, problem)
-    #     parser.parse_domain(self.blocksworld_path + "domain.hddl")
-    #     parser.parse_problem(self.blocksworld_path + "pb1.hddl")
-    #
-    #     solver = Solver(domain, problem)
-    #     model = Model(solver.problem, solver, solver._available_modifiers)
-    #     action = domain.get_action("mark_done") # b3
-    #     solver._Solver__execute(model, action, {'?b': problem.get_object("b3")})
-    #
-    #     # Check elements list
-    #     expected_elements = ['hand-empty', ['clear', 'b3'],
-    #                       ['on-table', 'b2'], ['on', 'b3', 'b5'], ['on', 'b5', 'b4'],['on', 'b4', 'b2'],
-    #                       ['clear', 'b1'], ['on-table', 'b1'], ['goal_clear', 'b2'],['goal_on-table', 'b4'],
-    #                       ['goal_on', 'b2', 'b5'], ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],
-    #                       ['goal_on-table', 'b3'], ['goal_on', 'b1', 'b3'], ['done', 'b3']]
-    #     self.assertEqual(expected_elements, model.current_state.elements)
-    #
-    #     expected_index = {'hand-empty': [0], 'clear': [1, 6], 'goal_clear': [8, 12],
-    #                         'goal_on': [10, 11, 14], 'goal_on-table': [9, 13],
-    #                         'on': [3, 4, 5], 'on-table': [2, 7], 'done': [15]}
-    #     # Check _index dictionary
-    #     self.assertEqual(expected_index, model.current_state._index)
-    #
-    # def test_action_execution_3(self):
-    #     domain = Domain(None)
-    #     problem = Problem(domain)
-    #     domain.add_problem(problem)
-    #
-    #     parser = HDDLParser(domain, problem)
-    #     parser.parse_domain(self.blocksworld_path + "domain.hddl")
-    #     parser.parse_problem(self.blocksworld_path + "pb1.hddl")
-    #
-    #     solver = Solver(domain, problem)
-    #     model = Model(solver.problem, solver, solver._available_modifiers)
-    #
-    #     action = domain.get_action("pickup")  # b1
-    #     solver._Solver__execute(model, action, {'?b': problem.get_object("b1")})
-    #
-    #     action = domain.get_action("stack")
-    #     solver._Solver__execute(model, action, {'?top': problem.get_object("b1"),
-    #                                             '?bottom': problem.get_object("b3")})
-    #
-    #     # Check elements list
-    #     expected_elements = [['on-table', 'b2'], ['on', 'b3', 'b5'],
-    #     ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
-    #     ['goal_clear', 'b2'], ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
-    #     ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],['goal_on-table', 'b3'],
-    #     ['goal_on', 'b1', 'b3'], 'hand-empty', ['on', 'b1', 'b3'], ['clear', 'b1']]
-    #     self.assertEqual(expected_elements, model.current_state.elements)
-    #
-    #     expected_index = {'goal_clear': [4, 8],
-    #     'goal_on': [6, 7, 10],'goal_on-table': [5, 9],'on': [1, 2, 3, 12],
-    #     'on-table': [0], 'hand-empty':[11], 'clear':[13]}
-    #     # Check _index dictionary
-    #     self.assertEqual(expected_index, model.current_state._index)
-    #
-    # def test_action_execution_4(self):
-    #     domain = Domain(None)
-    #     problem = Problem(domain)
-    #     domain.add_problem(problem)
-    #
-    #     parser = HDDLParser(domain, problem)
-    #     parser.parse_domain(self.blocksworld_path + "domain.hddl")
-    #     parser.parse_problem(self.blocksworld_path + "pb1.hddl")
-    #
-    #     solver = Solver(domain, problem)
-    #     model = Model(solver.problem, solver, solver._available_modifiers)
-    #     action = domain.get_action("unstack")
-    #     solver._Solver__execute(model, action, {'?top': problem.get_object("b3"),
-    #                                             '?bottom' : problem.get_object("b5")})
-    #
-    #     # Check elements list
-    #     expected_elements = [['on-table', 'b2'], ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
-    #                          ['clear', 'b1'], ['on-table', 'b1'], ['goal_clear', 'b2'],
-    #                          ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
-    #                          ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],
-    #                          ['goal_on-table', 'b3'], ['goal_on', 'b1', 'b3'],
-    #                          ['holding', 'b3'], ['clear', 'b5']]
-    #     self.assertEqual(expected_elements, model.current_state.elements)
-    #
-    #     expected_index = {'clear': [3, 13], 'goal_clear': [5, 9],
-    #                       'goal_on': [7, 8, 11], 'goal_on-table': [6, 10],
-    #                       'on': [1, 2], 'on-table': [0, 4], 'holding': [12]}
-    #     # Check _index dictionary
-    #     self.assertEqual(expected_index, model.current_state._index)
+    @unittest.skip
+    def test_action_execution(self):
+        domain = Domain(None)
+        problem = Problem(domain)
+        domain.add_problem(problem)
+
+        parser = HDDLParser(domain, problem)
+        parser.parse_domain(self.blocksworld_path + "domain.hddl")
+        parser.parse_problem(self.blocksworld_path + "pb1.hddl")
+
+        solver = Solver(domain, problem)
+        model = Model(solver.problem, solver, solver._available_modifiers)
+        action = domain.get_action("pickup") # b1
+
+        solver._Solver__execute(model, action, {'?b': problem.get_object("b1")})
+
+        # Check model.current_state.elements
+        self.assertEqual([['clear', 'b3'],['on-table', 'b2'], ['on', 'b3', 'b5'],
+        ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
+        ['goal_clear', 'b2'], ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
+        ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],['goal_on-table', 'b3'],
+        ['goal_on', 'b1', 'b3'], ['holding', 'b1']], model.current_state.elements)
+
+        # Check model.current_state._index
+        self.assertEqual({'clear': [0],'goal_clear': [5, 9],
+        'goal_on': [7, 8, 11],'goal_on-table': [6, 10],'on': [2, 3, 4],
+        'on-table': [1],'holding':[12]}, model.current_state._index)
+
+    @unittest.skip
+    def test_action_execution_2(self):
+        domain = Domain(None)
+        problem = Problem(domain)
+        domain.add_problem(problem)
+
+        parser = HDDLParser(domain, problem)
+        parser.parse_domain(self.blocksworld_path + "domain.hddl")
+        parser.parse_problem(self.blocksworld_path + "pb1.hddl")
+
+        solver = Solver(domain, problem)
+        model = Model(solver.problem, solver, solver._available_modifiers)
+        action = domain.get_action("mark_done") # b3
+        solver._Solver__execute(model, action, {'?b': problem.get_object("b3")})
+
+        # Check elements list
+        expected_elements = ['hand-empty', ['clear', 'b3'],
+                          ['on-table', 'b2'], ['on', 'b3', 'b5'], ['on', 'b5', 'b4'],['on', 'b4', 'b2'],
+                          ['clear', 'b1'], ['on-table', 'b1'], ['goal_clear', 'b2'],['goal_on-table', 'b4'],
+                          ['goal_on', 'b2', 'b5'], ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],
+                          ['goal_on-table', 'b3'], ['goal_on', 'b1', 'b3'], ['done', 'b3']]
+        self.assertEqual(expected_elements, model.current_state.elements)
+
+        expected_index = {'hand-empty': [0], 'clear': [1, 6], 'goal_clear': [8, 12],
+                            'goal_on': [10, 11, 14], 'goal_on-table': [9, 13],
+                            'on': [3, 4, 5], 'on-table': [2, 7], 'done': [15]}
+        # Check _index dictionary
+        self.assertEqual(expected_index, model.current_state._index)
+
+    @unittest.skip
+    def test_action_execution_3(self):
+        domain = Domain(None)
+        problem = Problem(domain)
+        domain.add_problem(problem)
+
+        parser = HDDLParser(domain, problem)
+        parser.parse_domain(self.blocksworld_path + "domain.hddl")
+        parser.parse_problem(self.blocksworld_path + "pb1.hddl")
+
+        solver = Solver(domain, problem)
+        model = Model(solver.problem, solver, solver._available_modifiers)
+
+        action = domain.get_action("pickup")  # b1
+        solver._Solver__execute(model, action, {'?b': problem.get_object("b1")})
+
+        action = domain.get_action("stack")
+        solver._Solver__execute(model, action, {'?top': problem.get_object("b1"),
+                                                '?bottom': problem.get_object("b3")})
+
+        # Check elements list
+        expected_elements = [['on-table', 'b2'], ['on', 'b3', 'b5'],
+        ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
+        ['goal_clear', 'b2'], ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
+        ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],['goal_on-table', 'b3'],
+        ['goal_on', 'b1', 'b3'], 'hand-empty', ['on', 'b1', 'b3'], ['clear', 'b1']]
+        self.assertEqual(expected_elements, model.current_state.elements)
+
+        expected_index = {'goal_clear': [4, 8],
+        'goal_on': [6, 7, 10],'goal_on-table': [5, 9],'on': [1, 2, 3, 12],
+        'on-table': [0], 'hand-empty':[11], 'clear':[13]}
+        # Check _index dictionary
+        self.assertEqual(expected_index, model.current_state._index)
+
+    @unittest.skip
+    def test_action_execution_4(self):
+        domain = Domain(None)
+        problem = Problem(domain)
+        domain.add_problem(problem)
+
+        parser = HDDLParser(domain, problem)
+        parser.parse_domain(self.blocksworld_path + "domain.hddl")
+        parser.parse_problem(self.blocksworld_path + "pb1.hddl")
+
+        solver = Solver(domain, problem)
+        model = Model(solver.problem, solver, solver._available_modifiers)
+        action = domain.get_action("unstack")
+        solver._Solver__execute(model, action, {'?top': problem.get_object("b3"),
+                                                '?bottom' : problem.get_object("b5")})
+
+        # Check elements list
+        expected_elements = [['on-table', 'b2'], ['on', 'b5', 'b4'], ['on', 'b4', 'b2'],
+                             ['clear', 'b1'], ['on-table', 'b1'], ['goal_clear', 'b2'],
+                             ['goal_on-table', 'b4'],['goal_on', 'b2', 'b5'],
+                             ['goal_on', 'b5', 'b4'], ['goal_clear', 'b1'],
+                             ['goal_on-table', 'b3'], ['goal_on', 'b1', 'b3'],
+                             ['holding', 'b3'], ['clear', 'b5']]
+        self.assertEqual(expected_elements, model.current_state.elements)
+
+        expected_index = {'clear': [3, 13], 'goal_clear': [5, 9],
+                          'goal_on': [7, 8, 11], 'goal_on-table': [6, 10],
+                          'on': [1, 2], 'on-table': [0, 4], 'holding': [12]}
+        # Check _index dictionary
+        self.assertEqual(expected_index, model.current_state._index)
 
     def test_action_execution_5(self):
-        # Test Carrying out on action with one model and check the state of the others - Also check model state and _index
-        domain, problem, solver = RovEx.setup()
+        """Test Carrying out on action with one model and check the state of the others.
+        Also check model state and _index"""
+
+        domain, problem, parser, solver = env_setup(True, False)
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
+
         for i in range(7):
             solver.search_models._Q.put(DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem, progress_tracker_class=SequentialTracker))
         for m in solver.search_models._Q.queue:
@@ -295,11 +312,12 @@ class SolvingTests(unittest.TestCase):
                          res.get_progress_tracker().operations_taken[3])
 
     def test_compare_parameters(self):
-        domain, problem, solver = RovEx.setup()
-        solver.set_parameter_selector(RequirementSelection)
-        RovEx.execution_prep(problem, solver)
-        model = solver.search_models._Q.queue[0]
+        domain, problem, parser, solver = env_setup(True, False, parameter_selector=1)
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
+        solver.solve(search=False)
 
+        model = solver.search_models._Q.queue[0]
         response = solver.parameter_selector.compare_parameters(domain.methods['m_get_image_data_ordering_0'],
                                                                 model.search_modifiers[0].given_params)
         self.assertEqual(list, type(response))
@@ -310,9 +328,11 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(["?camera", "?rover", "?waypoint"], response[1])
 
     def test_finding_parameters(self):
-        domain, problem, solver = RovEx.setup()
-        solver.set_parameter_selector(RequirementSelection)
-        RovEx.execution_prep(problem, solver)
+        domain, problem, parser, solver = env_setup(True, False, parameter_selector=1)
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
+        solver.solve(search=False)
+
         solver.parameter_selector.presolving_processing(domain, problem)
         model = solver.search_models.pop()
         method = domain.methods['m_get_image_data_ordering_0']
@@ -330,8 +350,11 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(problem.objects['waypoint3'], found_params[3]['?waypoint'])
 
     def test_rover_execution_beginning(self):
-        domain, problem, solver = RovEx.setup()
-        RovEx.execution_prep(problem, solver)
+        domain, problem, parser, solver = env_setup(True, False)
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
+        solver.solve(search=False)
+
         self.assertEqual(1, len(solver.search_models))
         model = solver.search_models._Q.queue[0]
         self.assertEqual(3, len(model.search_modifiers) + len(model.waiting_subtasks))
@@ -342,8 +365,11 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(problem.objects['high_res'], model.search_modifiers[0].given_params['?mode'])
 
     def test_rover_execution_1(self):
-        domain, problem, solver = RovEx.setup()
-        RovEx.execution_prep(problem, solver)
+        domain, problem, parser, solver = env_setup(True, False)
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
+        solver.solve(search=False)
+
         solver.parameter_selector.presolving_processing(domain, problem)
         solver._search(True)
         # Check searchModels has 4 search nodes each with a different ?waypoint parameter
@@ -366,7 +392,7 @@ class SolvingTests(unittest.TestCase):
         rock_data = domain.actions['communicate_rock_data']
         necessary_actions = [image_data, soil_data, rock_data]
         for a in necessary_actions:
-            print("Testing {}".format(a))
+            # print("Testing {}".format(a))
             found = False
             for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
@@ -385,7 +411,7 @@ class SolvingTests(unittest.TestCase):
         rock_data = domain.actions['communicate_rock_data']
         necessary_actions = [image_data, soil_data, rock_data]
         for a in necessary_actions:
-            print("Testing {}".format(a))
+            # print("Testing {}".format(a))
             found = False
             for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
@@ -467,8 +493,8 @@ class SolvingTests(unittest.TestCase):
         domain.add_problem(problem)
 
         parser = HDDLParser(domain, problem)
-        parser.parse_domain("../Examples/IPC_Tests/Rover/rover-domain.hddl")
-        parser.parse_problem("../Examples/IPC_Tests/Rover/pfile01.hddl")
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
         # Initialise solver
         solver = TotalOrderSolver(domain, problem)
@@ -480,7 +506,7 @@ class SolvingTests(unittest.TestCase):
         rock_data = domain.actions['communicate_rock_data']
         necessary_actions = [image_data, soil_data, rock_data]
         for a in necessary_actions:
-            print("Testing {}".format(a))
+            # print("Testing {}".format(a))
             found = False
             for ac in res.get_progress_tracker().actions_taken:
                 if a == ac.mod:
@@ -494,8 +520,8 @@ class SolvingTests(unittest.TestCase):
         domain.add_problem(problem)
 
         parser = HDDLParser(domain, problem)
-        parser.parse_domain("../Examples/IPC_Tests/Rover/rover-domain.hddl")
-        parser.parse_problem("../Examples/IPC_Tests/Rover/pfile01.hddl")
+        parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
+        parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
         # Initialise solver
         solver = TotalOrderSolver(domain, problem)

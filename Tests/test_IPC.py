@@ -1,20 +1,28 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from Solver.Solving_Algorithms.solver import Solver
 from Solver.Heuristics.hamming_distance import HammingDistance
-from TestTools.env_setup import env_setup
+from Tests.TestTools.env_setup import env_setup
 
 
 class IPCTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.IPC_Tests_path = "../Examples/IPC_Tests/"
+        self.IPC_Tests_path = "Examples/IPC_Tests/"
 
     def test_1_empty_method(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_Tests_path + "test01_empty_method/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test01_empty_method/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
 
         self.assertEqual(0, len(plan.get_progress_tracker().actions_taken))
         self.assertEqual("State is empty.", str(plan.current_state))
@@ -25,7 +33,8 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test02_forall/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test02_forall/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertIsNotNone(plan)
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
 
@@ -34,7 +43,8 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test03_forall1/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test03_forall1/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken[0].parameters_used))
         self.assertEqual(problem.objects['f'], plan.get_progress_tracker().actions_taken[0].parameters_used['?b'])
@@ -44,7 +54,7 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test04_no_abstracts/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test04_no_abstracts/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
 
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
         self.assertEqual(1, len(plan.get_progress_tracker().operations_taken))
@@ -58,7 +68,8 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test05_constants_in_domain/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test05_constants_in_domain/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
         self.assertEqual(domain.actions['noop'], plan.get_progress_tracker().actions_taken[0].mod)
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken[0].parameters_used))
@@ -69,7 +80,8 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test06_synonymes/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test06_synonymes/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertEqual(8, len(plan.get_progress_tracker().actions_taken))
         for i in range(4):
             self.assertEqual(domain.actions['noop1'], plan.get_progress_tracker().actions_taken[i * 2].mod)
@@ -85,7 +97,8 @@ class IPCTests(unittest.TestCase):
             self.assertEqual(domain.types['A'], p.type)
 
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
         self.assertEqual(domain.actions['noop'], plan.get_progress_tracker().actions_taken[0].mod)
         self.assertEqual(2, len(plan.get_progress_tracker().actions_taken[0].parameters_used))
@@ -97,7 +110,7 @@ class IPCTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "satellite01/domain2.hddl")
         parser.parse_problem(self.IPC_Tests_path + "satellite01/1obs-1sat-1mod.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
 
         self.assertNotEqual(None, plan)
         self.assertEqual(5, len(plan.get_progress_tracker().actions_taken))
@@ -141,16 +154,16 @@ class IPCTests(unittest.TestCase):
 
         # I think this one is not solvable
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
+
         self.assertNotEqual(None, plan)
 
-    # @unittest.skip
     def test_um_translog01(self):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_Tests_path + "um-translog01/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "um-translog01/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
 
         self.assertNotEqual(None, plan)
         self.assertNotEqual(0, len(plan.get_progress_tracker().actions_taken))

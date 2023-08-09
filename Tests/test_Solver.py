@@ -1,10 +1,18 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from Solver.Models.default_model import DefaultModel
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Internal_Representation.state import State
 from Internal_Representation.task import Task
-from Tests.UnitTests.TestTools.env_setup import env_setup
+from Tests.TestTools.env_setup import env_setup
 
 
 class SolverTests(unittest.TestCase):

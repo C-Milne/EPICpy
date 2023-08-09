@@ -1,5 +1,13 @@
 import unittest
-from TestTools.env_setup import env_setup
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
@@ -8,9 +16,9 @@ from Solver.Parameter_Selection.Requirement_Selection import RequirementSelectio
 class ParameterSelectionTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.basic_path_HDDL = "../Examples/Basic/"
-        self.rover_path_HDDL = "../Examples/Rover/"
-        self.snake_path = "TestTools/Snake/"
+        self.basic_path_HDDL = "Examples/Basic/"
+        self.rover_path_HDDL = "Examples/Rover/"
+        self.snake_path = "Tests/TestTools/Snake/"
 
     def test_select_all_parameters_basic_hddl(self):
         domain, problem, parser, solver = env_setup(True)

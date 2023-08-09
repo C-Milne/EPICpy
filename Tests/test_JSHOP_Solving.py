@@ -1,19 +1,27 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from queue import PriorityQueue
-from TestTools.rover_execution import execution_prep
-from TestTools.env_setup import env_setup
+from Tests.TestTools.rover_execution import execution_prep
+from Tests.TestTools.env_setup import env_setup
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Solver.Progress_Tracking.action_tracker import ActionTracker
 
 
 class JSHOPSolvingTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.basic_path = "../Examples/JShop/basic/"
-        self.block_path = "../Examples/JShop/blocks/"
+        self.basic_path = "Examples/JShop/basic/"
+        self.block_path = "Examples/JShop/blocks/"
         # self.block_path = "Tests/Examples/JShop/blocks/"
-        self.forall_test_path = "../Examples/JShop/foralltest/"
-        self.forall_path = "../Examples/JShop/forall/"
-        self.rover_test_path = "TestTools/J-Rover/"
+        self.forall_test_path = "Examples/JShop/foralltest/"
+        self.forall_path = "Examples/JShop/forall/"
+        self.rover_test_path = "Tests/TestTools/J-Rover/"
 
     @unittest.skip
     def test_derived_predicate_processing_1(self):
@@ -177,7 +185,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         # solver._search(True)
         search_models = solver.search_models._Q
         self.assertNotEqual(None, res)
-        solver.output(res)
+        # solver.output(res)
 
     def test_rover_execution(self):
         domain, problem, parser, solver = env_setup(False)
@@ -189,7 +197,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         res = solver.solve()
         search_models = solver.search_models._Q
         self.assertNotEqual(None, res)
-        solver.output(res)
+        # solver.output(res)
 
     @unittest.skip
     def test_evaluating_goal_precondition(self):

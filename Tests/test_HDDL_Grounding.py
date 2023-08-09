@@ -1,5 +1,13 @@
 import unittest
-from Solver.Models.default_model import DefaultModel
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Solver.Models.default_model import DefaultModel, Model
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
@@ -10,21 +18,22 @@ from Internal_Representation.state import State
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.Object import Object
-from TestTools.env_setup import env_setup
+from Tests.TestTools.env_setup import env_setup
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
+from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
 
 class HDDLGroundingTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.basic_domain_path = "../Examples/Basic/basic.hddl"
-        self.basic_pb1_path = "../Examples/Basic/pb1.hddl"
-        self.basic_pb1_path_SHOP = "../Examples/Basic/pb1.shop"
-        self.test_tools_path = "TestTools/"
-        self.blocksworld_path = "../Examples/Blocksworld/"
-        self.rover_path = "../Examples/IPC_Tests/Rover/"
-        self.rover_col_path = "../Examples/Rover/"
-        self.IPC_Tests_path = "../Examples/IPC_Tests/"
+        self.basic_domain_path = "Examples/Basic/basic.hddl"
+        self.basic_pb1_path = "Examples/Basic/pb1.hddl"
+        self.basic_pb1_path_SHOP = "Examples/Basic/pb1.shop"
+        self.test_tools_path = "Tests/TestTools/"
+        self.blocksworld_path = "Examples/Blocksworld/"
+        self.rover_path = "Examples/IPC_Tests/Rover/"
+        self.rover_col_path = "Examples/Rover/"
+        self.IPC_Tests_path = "Examples/IPC_Tests/"
 
     def test_precondition_complex(self):
         domain, problem, parser, solver = env_setup(True)
@@ -99,6 +108,7 @@ class HDDLGroundingTests(unittest.TestCase):
         domain = Domain(None)
         problem = Problem(domain)
         domain.add_problem(problem)
+        Model.PROGRESS_TRACKER = SequentialTracker
 
         # Test preconditions
         parser = HDDLParser(domain, problem)
@@ -128,7 +138,9 @@ class HDDLGroundingTests(unittest.TestCase):
         parser.parse_domain(self.IPC_Tests_path + "test02_forall/domain.hddl")
         parser.parse_problem(self.IPC_Tests_path + "test02_forall/problem.hddl")
         plan = solver.solve()
-        solver.output(plan)
+
+        # solver.output(plan)
+
         self.assertIsNotNone(plan)
         self.assertEqual(1, len(plan.get_progress_tracker().actions_taken))
 

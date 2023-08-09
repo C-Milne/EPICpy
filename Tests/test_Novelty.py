@@ -1,5 +1,13 @@
 import unittest
-from TestTools.env_setup import env_setup
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
+from Tests.TestTools.env_setup import env_setup
 from Internal_Representation.state_novelty import StateNovelty
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Internal_Representation.subtasks import Subtask
@@ -8,7 +16,7 @@ from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltyS
 
 class NoveltyTests(unittest.TestCase):
     def setUp(self):
-        self.rover_path = "../Examples/Rover/"
+        self.rover_path = "Examples/Rover/"
 
     def test_novelty_state_add_element(self):
         # Check for example when true should be returned

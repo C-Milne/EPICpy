@@ -30,6 +30,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(PartialOrderTests))
     test_suite.addTest(unittest.makeSuite(ProgressTrackerTests))
     test_suite.addTest(unittest.makeSuite(NoveltyTests))
+    test_suite.addTest(unittest.makeSuite(StateTests))
     return test_suite
 
 

@@ -21,12 +21,14 @@ from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltyS
 from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrderNoveltyNoResetSolver
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
+from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
 
 
 def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Problem, Parser, PartialOrderSolver]:
     domain = Domain(None)
     problem = Problem(domain)
     domain.add_problem(problem)
+
     if HDDL:
         parser = HDDLParser(domain, problem)
     else:
@@ -49,6 +51,13 @@ def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Prob
             solver = PartialOrderNoveltyMethodsSolver(domain, problem)
         else:
             raise ValueError('Unknown solver code: {}'.format(solver_code))
+
+    if 'parameter_selector' in kwargs:
+        param_selector_code = int(kwargs['parameter_selector'])
+        if param_selector_code == 1:
+            solver.set_parameter_selector(RequirementSelection)
+        else:
+            raise ValueError('Unknown parameter selector code: {}'.format(param_selector_code))
 
     return domain, problem, parser, solver
 

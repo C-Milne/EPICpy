@@ -1,4 +1,12 @@
 import unittest
+import os
+import sys
+
+current_dir = os.getcwd()
+if current_dir.endswith('Tests'):
+    os.chdir('..')
+    sys.path.append(os.getcwd())
+
 from runner import Runner
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
@@ -11,14 +19,14 @@ from Tests.TestTools.env_setup import env_setup
 class HDDLParsingTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.basic_domain_path = "../Examples/Basic/basic.hddl"
-        self.basic_pb1_path = "../Examples/Basic/pb1.hddl"
-        self.basic_pb1_path_SHOP = "../Examples/Basic/pb1.shop"
-        self.test_tools_path = "TestTools/"
-        self.blocksworld_path = "../Examples/Blocksworld/"
-        self.rover_path = "../Examples/IPC_Tests/Rover/"
-        self.rover_col_path = "../Examples/Rover/"
-        self.IPC_Tests_path = "../Examples/IPC_Tests/"
+        self.basic_domain_path = "Examples/Basic/basic.hddl"
+        self.basic_pb1_path = "Examples/Basic/pb1.hddl"
+        self.basic_pb1_path_SHOP = "Examples/Basic/pb1.shop"
+        self.test_tools_path = "Tests/TestTools/"
+        self.blocksworld_path = "Examples/Blocksworld/"
+        self.rover_path = "Examples/IPC_Tests/Rover/"
+        self.rover_col_path = "Examples/Rover/"
+        self.IPC_Tests_path = "Examples/IPC_Tests/"
 
     def test_set_unknown_task_method(self):
         # Test again with task that is not defined at all
