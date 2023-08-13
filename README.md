@@ -253,6 +253,27 @@ python ./All_Tests.py
 ```
 ![All Unit Tests](./images/All_Tests.png)
 
+From the root directory of the project, the following command can be used to find and
+run all unit tests:
+```commandline
+python -m unittest discover ./Tests/
+```
+
+It is possible to run a particular unit test file, test class, or test using the 
+following command structure:
+```commandline
+python3 -m unittest Tests.<Test File Name>.<Test Class Name>.<Test Name>
+```
+
+Note: The above command can also be used from the **Tests** directory by omitting the 
+*Tests.* at the beginning of the command.
+
+An example of this is as follows:
+```commandline
+python3 -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
+```
+
+
 # System Evaluation
 System evaluation is composed in a similar manner to the unit tests. All evaluation files are contained in the Tests/Evaluation/Heuristic_Evaluation directory.
 From here all evaluation tests can be executed using the following command:
