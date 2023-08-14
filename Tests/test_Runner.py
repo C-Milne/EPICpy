@@ -110,9 +110,124 @@ runner.py: error: Incorrect Usage."""
         #     Runner("TestTools/fakeDomain2", self.basic_pb1_path)
         # self.assertEqual("File type not identified. (TestTools/fakeDomain2)", str(error.exception))
 
-    def test_file_writing_command_line_args(self):
-        # os.chdir("../")
+    def test_file_writing_and_reading(self):
+        if os.path.isfile("output/runner_test_basic_p1"):
+            os.remove("output/runner_test_basic_p1")
 
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.basic_domain_path)
+        parser.parse_problem(self.basic_pb1_path)
+        res = solver.solve()
+        Runner.output_result_file(res, "runner_test_basic_p1")
+        plan = read_plan("output/runner_test_basic_p1")
+
+        self.assertEqual(res.model_number, plan.model_number)
+        self.assertEqual(res.current_state, plan.current_state)
+
+    def test_runner_setting_heuristic_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_heuristic_from_file('HammingDistance',
+                                           'Solver/Heuristics/hamming_distance.py')
+        self.assertEqual(HammingDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
+
+        controller.set_heuristic_from_file('TreeDistance',
+                                           'Solver/Heuristics/tree_distance.py')
+        self.assertEqual(TreeDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
+
+    def test_runner_setting_solver_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_solver_from_file('TotalOrderSolver', 'Solver/Solving_Algorithms/total_order.py')
+        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+
+    def test_runner_setting_SearchQueue_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_search_queue_from_file('GBFSSearchQueue',
+                                              'Solver/Search_Queues/Greedy_Best_First_Search_Queue.py')
+        self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
+
+    def test_runner_setting_SearchQueue_from_command_line(self):
+        error_raised = False
+        msg = None
+        try:
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-searchQueueName", "GBFSSearchQueue", "-searchQueuePath",
+                                  "Solver/Search_Queues/Greedy_Best_First_Search_Queue.py"],
+                                 check=True, capture_output=True, text=True).stdout
+        except Exception as e:
+            msg = e.stderr
+            error_raised = True
+        self.assertFalse(error_raised, msg)
+
+    def test_runner_setting_heu_paramselec_solver_searchQueue(self):
+        controller = Runner(self.rover_col_path + "domain.hddl", self.rover_col_path + "p02.hddl")
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_solver(TotalOrderSolver)
+        controller.set_heuristic(DeleteRelaxed)
+        controller.set_parameter_selector(AllParameters)
+        controller.set_search_queue(GBFSSearchQueue)
+
+        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+        self.assertEqual(DeleteRelaxed.__name__, type(controller.solver.search_models.heuristic).__name__)
+        self.assertEqual(AllParameters.__name__, type(controller.solver.parameter_selector).__name__)
+        self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
+
+    def test_runner_setting_progressTracker_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_progress_tracker_from_file('PandaVerifyFormatTracker',
+                                                  'Solver/Progress_Tracking/panda_verify_format.py')
+        self.assertEqual(PandaVerifyFormatTracker.__name__, controller.solver.progress_tracker.__name__)
+
+    @unittest.skip
+    def test_runner_setting_model_from_path(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        controller.set_model_from_file('PandaVerifyModel',
+                                       '../../Solver/Models/PandaVerifyModel.py')
+        self.assertEqual(PandaVerifyModel.__name__, controller.solver.ModelClass.__name__)
+
+
+class RunnerCommandLineTests(unittest.TestCase):
+    original_dir = os.getcwd()
+    maxDiff = None
+
+    def setUp(self) -> None:
+        self.basic_domain_path = "Examples/Basic/basic.hddl"
+        self.basic_pb1_path = "Examples/Basic/pb1.hddl"
+        self.basic_pb1_path_SHOP = "Examples/Basic/pb1.shop"
+        self.test_tools_path = "TestTools/"
+        self.blocksworld_path = "Examples/Blocksworld/"
+        self.rover_path = "Examples/IPC_Tests/Rover/"
+        self.rover_col_path = "Examples/Rover/"
+        self.IPC_Tests_path = "Examples/IPC_Tests/"
+        os.chdir(self.original_dir)
+        self.expected_error_message = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
+                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
+                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
+                 [-paramSelectPath PARAMSELECTPATH]
+                 [-searchQueueName SEARCHQUEUENAME]
+                 [-searchQueuePath SEARCHQUEUEPATH]
+                 [-progressTrackerName PROGRESSTRACKERNAME]
+                 [-progressTrackerPath PROGRESSTRACKERPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
+                 [D] [P]
+runner.py: error: Incorrect Usage."""
+
+        if sys.platform == "win32":
+            self.python_command = "python"
+        else:
+            self.python_command = "python3"
+
+    def test_file_writing_command_line_args(self):
         try:
             res = subprocess.run(
                 [self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "Examples/Basic/pb1.hddl",
@@ -136,20 +251,6 @@ pickup - banjo
 Search Models Created During Search: 3
 """, res)
         self.assertTrue(os.path.exists("output/runner_test_basic_p1"))
-
-    def test_file_writing_and_reading(self):
-        if os.path.isfile("output/runner_test_basic_p1"):
-            os.remove("output/runner_test_basic_p1")
-
-        domain, problem, parser, solver = env_setup(True)
-        parser.parse_domain(self.basic_domain_path)
-        parser.parse_problem(self.basic_pb1_path)
-        res = solver.solve()
-        Runner.output_result_file(res, "runner_test_basic_p1")
-        plan = read_plan("output/runner_test_basic_p1")
-
-        self.assertEqual(res.model_number, plan.model_number)
-        self.assertEqual(res.current_state, plan.current_state)
 
     def test_runner_command_line_incorrect_args(self):
         error_raised = False
@@ -301,18 +402,6 @@ options:
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
-    def test_runner_setting_heuristic_from_path(self):
-        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_heuristic_from_file('HammingDistance',
-                                           'Solver/Heuristics/hamming_distance.py')
-        self.assertEqual(HammingDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
-
-        controller.set_heuristic_from_file('TreeDistance',
-                                           'Solver/Heuristics/tree_distance.py')
-        self.assertEqual(TreeDistance.__name__, type(controller.solver.search_models.heuristic).__name__)
-
     def test_runner_setting_heuristic_from_command_line(self):
         error_raised = False
         msg = None
@@ -440,13 +529,6 @@ options:
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
-    def test_runner_setting_solver_from_path(self):
-        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_solver_from_file('TotalOrderSolver', 'Solver/Solving_Algorithms/total_order.py')
-        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
-
     def test_runner_setting_solver_from_command_line(self):
         error_raised = False
         msg = None
@@ -460,49 +542,6 @@ options:
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, msg)
-
-    def test_runner_setting_SearchQueue_from_path(self):
-        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_search_queue_from_file('GBFSSearchQueue',
-                                              'Solver/Search_Queues/Greedy_Best_First_Search_Queue.py')
-        self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
-
-    def test_runner_setting_SearchQueue_from_command_line(self):
-        error_raised = False
-        msg = None
-        try:
-            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
-                                  "Examples/Basic/pb1.hddl", "-searchQueueName", "GBFSSearchQueue", "-searchQueuePath",
-                                  "Solver/Search_Queues/Greedy_Best_First_Search_Queue.py"],
-                                 check=True, capture_output=True, text=True).stdout
-        except Exception as e:
-            msg = e.stderr
-            error_raised = True
-        self.assertFalse(error_raised, msg)
-
-    def test_runner_setting_heu_paramselec_solver_searchQueue(self):
-        controller = Runner(self.rover_col_path + "domain.hddl", self.rover_col_path + "p02.hddl")
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_solver(TotalOrderSolver)
-        controller.set_heuristic(DeleteRelaxed)
-        controller.set_parameter_selector(AllParameters)
-        controller.set_search_queue(GBFSSearchQueue)
-
-        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
-        self.assertEqual(DeleteRelaxed.__name__, type(controller.solver.search_models.heuristic).__name__)
-        self.assertEqual(AllParameters.__name__, type(controller.solver.parameter_selector).__name__)
-        self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
-
-    def test_runner_setting_progressTracker_from_path(self):
-        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_progress_tracker_from_file('PandaVerifyFormatTracker',
-                                                  'Solver/Progress_Tracking/panda_verify_format.py')
-        self.assertEqual(PandaVerifyFormatTracker.__name__, controller.solver.progress_tracker.__name__)
 
     def test_runner_setting_progressTracker_from_command_line(self):
         error_raised = False
@@ -518,28 +557,15 @@ options:
             error_raised = True
         self.assertFalse(error_raised, msg)
 
-    @unittest.skip
-    def test_runner_setting_model_from_path(self):
-        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_model_from_file('PandaVerifyModel',
-                                       '../../Solver/Models/PandaVerifyModel.py')
-        self.assertEqual(PandaVerifyModel.__name__, controller.solver.ModelClass.__name__)
-
-    @unittest.skip
     def test_runner_setting_model_from_command_line(self):
-        original_dir = os.getcwd()
-        os.chdir("../..")
         error_raised = False
         try:
-            res = subprocess.check_output(
-                "python ./runner.py Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl "
-                "-modelModName PandaVerifyModel -modelPath Solver/Models/PandaVerifyModel.py",
-                stderr=subprocess.PIPE)
+            res = subprocess.run([self.python_command, "./runner.py", "Examples/Basic/basic.hddl",
+                                  "Examples/Basic/pb1.hddl", "-modelModName", "PandaVerifyModel", "-modelPath",
+                                  "Solver/Models/PandaVerifyModel.py"],
+                                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
-            msg = e.stderr.decode("utf-8")  # This is for debugger inspection only
+            msg = e.stderr
             print(msg)
             error_raised = True
         self.assertFalse(error_raised, "An Error Was Raised When Running the Command")
-        os.chdir(original_dir)
