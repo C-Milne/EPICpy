@@ -20,6 +20,3 @@ def setup() -> [Domain, Problem, Solver]:
     solver = PartialOrderSolver(domain, problem)
     return domain, problem, solver
 
-@deprecation.deprecated(details='Use env setup instead. See test_Solving for examples')
-def execution_prep(problem, solver) -> None:
-    solver.solve(search=False)

@@ -8,7 +8,6 @@ if current_dir.endswith('Tests'):
     sys.path.append(os.getcwd())
 
 from queue import PriorityQueue
-from Tests.TestTools.rover_execution import execution_prep
 from Tests.TestTools.env_setup import env_setup
 from Internal_Representation.problem_predicate import ProblemPredicate
 from Solver.Progress_Tracking.action_tracker import ActionTracker
@@ -30,7 +29,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(False)
         parser.parse_domain(self.block_path + "blocks")
         parser.parse_problem(self.block_path + "problem")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
 
         model = solver.search_models._Q.pop(0)
 
@@ -41,7 +40,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(False)
         parser.parse_domain(self.forall_test_path + "forall.jshop")
         parser.parse_problem(self.forall_test_path + "problem.jshop")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
 
         self.assertEqual(['forall', ['?v'], [['p', '?v']], [['q', '?v'], ['q', '?v'], ['not', ['w', '?v']]]],
                          domain.methods['method0'].preconditions.conditions)
@@ -56,7 +55,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(False)
         parser.parse_domain(self.forall_test_path + "forall.jshop")
         parser.parse_problem(self.forall_test_path + "problem.jshop")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
 
         model = solver.search_models._Q.get()
 
@@ -71,7 +70,8 @@ class JSHOPSolvingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(False)
         parser.parse_domain(self.forall_path + "forall.jshop")
         parser.parse_problem(self.forall_path + "problem.jshop")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
+
         solver.parameter_selector.presolving_processing(domain, problem)
 
         model = solver.search_models._Q.get()
@@ -165,7 +165,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         parser.parse_domain(self.rover_test_path + "rover.jshop")
         parser.parse_problem(self.rover_test_path + "problem.jshop")
 
-        execution_prep(problem, solver)
+        solver.solve(search=False)
         solver.parameter_selector.presolving_processing(domain, problem)
         # res = solver.solve()
 
@@ -192,7 +192,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         parser.parse_domain(self.rover_test_path + "rover.jshop")
         parser.parse_problem(self.rover_test_path + "problem.jshop")
 
-        execution_prep(problem, solver)
+        solver.solve(search=False)
         solver.parameter_selector.presolving_processing(domain, problem)
         res = solver.solve()
         search_models = solver.search_models._Q

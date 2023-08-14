@@ -7,7 +7,6 @@ if current_dir.endswith('Tests'):
     os.chdir('..')
     sys.path.append(os.getcwd())
 
-from Tests.TestTools.rover_execution import execution_prep
 from Tests.TestTools.env_setup import env_setup
 from Internal_Representation.subtasks import Subtasks
 from Solver.Heuristics.partial_order_pruning import PartialOrderPruning
@@ -30,7 +29,7 @@ class PartialOrderTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + "domain.hddl")
         parser.parse_problem(self.rover_path + "pfile01.hddl")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
         search_models = solver.search_models
         self.assertEqual(6, len(search_models))
 

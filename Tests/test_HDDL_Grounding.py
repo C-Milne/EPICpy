@@ -147,7 +147,7 @@ class HDDLGroundingTests(unittest.TestCase):
         problem.initial_state.remove_element(domain.predicates['foo'], [problem.objects['a']])
         solver = PartialOrderSolver(domain, problem)
         plan = solver.solve()
-        solver.output(plan)
+        # solver.output(plan)
         self.assertIsNone(plan)
 
     def test_precondition_and(self):

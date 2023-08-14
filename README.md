@@ -246,7 +246,8 @@ python ./output_plan_reader.py <Output File>
 ```
 
 # Running Unittests
-All the unittests can be run from the Tests/UnitTests directory using the following command:
+All the unittests can be run from the Tests/UnitTests directory using the following 
+command from within the **Tests** directory:
 
 ```commandline
 python ./All_Tests.py
@@ -262,7 +263,7 @@ python -m unittest discover ./Tests/
 It is possible to run a particular unit test file, test class, or test using the 
 following command structure:
 ```commandline
-python3 -m unittest Tests.<Test File Name>.<Test Class Name>.<Test Name>
+python -m unittest Tests.<Test File Name>.<Test Class Name>.<Test Name>
 ```
 
 Note: The above command can also be used from the **Tests** directory by omitting the 
@@ -270,7 +271,7 @@ Note: The above command can also be used from the **Tests** directory by omittin
 
 An example of this is as follows:
 ```commandline
-python3 -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
+python -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
 ```
 
 

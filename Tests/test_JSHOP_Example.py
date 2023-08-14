@@ -7,7 +7,6 @@ if current_dir.endswith('Tests'):
     os.chdir('..')
     sys.path.append(os.getcwd())
 
-from Tests.TestTools.rover_execution import execution_prep
 from Tests.TestTools.env_setup import env_setup
 
 
@@ -39,7 +38,7 @@ class JSHOPSolvingTests(unittest.TestCase):
         domain, problem, parser, solver = env_setup(False)
         parser.parse_domain(self.madrts_path + "madrts.jshop")
         parser.parse_problem(self.madrts_path + "problem.jshop")
-        execution_prep(problem, solver)
+        solver.solve(search=False)
 
         solver._Solver__search(True)
         solver._Solver__search(True)
