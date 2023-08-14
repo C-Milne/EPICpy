@@ -35,6 +35,7 @@ There is a known issue with the unittests for this project in Linux based operat
 * [Output](#output)
   * [Output Plan Reader](#output-plan-reader)
 * [Running Unittests](#running-unittests)
+  * [Code Coverage](#code-coverage)
 * [System Evaluation](#system-evaluation)
 * [Key File Paths](#key-file-paths)
 * [Directions for Future Improvements](#directions-for-future-improvements)
@@ -279,6 +280,27 @@ An example of this is as follows:
 python -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
 ```
 
+
+## Code Coverage
+Coverage of the code base can be run using the **coverage** package using the following command:
+```commandline
+coverage run -m unittest discover ./Tests/
+```
+
+To include checks on branching, the above command can be slightly modified as below:
+```commandline
+coverage run --branch -m unittest discover ./Tests/
+```
+
+To display the output of the coverage, the following command outputs the results as a html file:
+```commandline
+coverage html
+```
+
+While the following command outputs in the terminal:
+```commandline
+coverage report -m
+```
 
 # System Evaluation
 System evaluation is composed in a similar manner to the unit tests. All evaluation files are contained in the Tests/Evaluation/Heuristic_Evaluation directory.
