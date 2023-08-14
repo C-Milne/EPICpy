@@ -1,7 +1,10 @@
+import io
 import subprocess
 import unittest
+import unittest.mock
 import os
 import sys
+import io
 
 current_dir = os.getcwd()
 if current_dir.endswith('Tests'):
@@ -21,6 +24,7 @@ from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
+from Solver.Models.model import Model
 from Tools.output_plan_reader import read_plan, display_plan
 from Tests.TestTools.env_setup import env_setup
 
@@ -32,7 +36,8 @@ class RunnerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.basic_domain_path = "Examples/Basic/basic.hddl"
         self.basic_pb1_path = "Examples/Basic/pb1.hddl"
-        self.basic_pb1_path_SHOP = "Examples/Basic/pb1.shop"
+        self.basic_domain_path_JSHOP = "Examples/JShop/basic/basic.jshop"
+        self.basic_pb1_path_JSHOP = "Examples/JShop/basic/problem.jshop"
         self.test_tools_path = "TestTools/"
         self.blocksworld_path = "Examples/Blocksworld/"
         self.rover_path = "Examples/IPC_Tests/Rover/"
@@ -55,6 +60,8 @@ runner.py: error: Incorrect Usage."""
             self.python_command = "python"
         else:
             self.python_command = "python3"
+        Model.model_counter = 0
+
 
     def test_load_unknown_domain(self):
         # Test loading unknown domain file
@@ -91,12 +98,14 @@ runner.py: error: Incorrect Usage."""
                         "Runner.__init__() missing 1 required positional argument: 'problem_path'" == str(
             error.exception))
 
-    @unittest.skip
+    # @unittest.skip
     def test_load_incompatible_files(self):
         # Test loading incompatible files
         with self.assertRaises(TypeError) as error:
-            Runner(self.basic_domain_path, self.basic_pb1_path_SHOP)
-        self.assertEqual("Problem file type (shop) does not match domain file type (hddl)", str(error.exception))
+            controller = Runner(self.basic_domain_path, self.basic_pb1_path_JSHOP)
+            controller.parse_domain()
+            controller.parse_problem()
+        self.assertEqual("Problem file type (jshop) does not match domain file type (hddl)", str(error.exception))
 
     def test_load_unknown_file_type(self):
         # Test loading a txt file
@@ -105,10 +114,13 @@ runner.py: error: Incorrect Usage."""
             cont.parse_domain()
         self.assertEqual("Unknown descriptor type (txt)", str(error.exception))
 
-        # # Load file with no suffix
-        # with self.assertRaises(IOError) as error:
-        #     Runner("TestTools/fakeDomain2", self.basic_pb1_path)
-        # self.assertEqual("File type not identified. (TestTools/fakeDomain2)", str(error.exception))
+    # @unittest.skip
+    def test_load_no_file_type(self):
+        # Load file with no suffix
+        with self.assertRaises(TypeError) as error:
+            controller = Runner("Tests/TestTools/fakeDomain2", self.basic_pb1_path)
+            controller.parse_domain()
+        self.assertEqual("Unknown descriptor type (None)", str(error.exception))
 
     def test_file_writing_and_reading(self):
         if os.path.isfile("output/runner_test_basic_p1"):
@@ -123,6 +135,17 @@ runner.py: error: Incorrect Usage."""
 
         self.assertEqual(res.model_number, plan.model_number)
         self.assertEqual(res.current_state, plan.current_state)
+
+    def test_load_module_not_in_file(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        with self.assertRaises(ModuleNotFoundError) as error:
+            controller.set_heuristic_from_file('FakeDistance',
+                                           'Solver/Heuristics/hamming_distance.py')
+        self.assertEqual("Module with the name 'FakeDistance' was not found in the file "
+                         "'Solver/Heuristics/hamming_distance.py'", str(error.exception))
+
 
     def test_runner_setting_heuristic_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
@@ -141,6 +164,11 @@ runner.py: error: Incorrect Usage."""
         controller.parse_domain()
         controller.parse_problem()
         controller.set_solver_from_file('TotalOrderSolver', 'Solver/Solving_Algorithms/total_order.py')
+        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+
+    def test_runner_set_solver(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.set_solver(TotalOrderSolver(controller.domain, controller.problem))
         self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
 
     def test_runner_setting_SearchQueue_from_path(self):
@@ -186,14 +214,56 @@ runner.py: error: Incorrect Usage."""
                                                   'Solver/Progress_Tracking/panda_verify_format.py')
         self.assertEqual(PandaVerifyFormatTracker.__name__, controller.solver.progress_tracker.__name__)
 
-    @unittest.skip
     def test_runner_setting_model_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_model_from_file('PandaVerifyModel',
-                                       '../../Solver/Models/PandaVerifyModel.py')
+        controller.set_model_from_file('PandaVerifyModel', 'Solver/Models/PandaVerifyModel.py')
         self.assertEqual(PandaVerifyModel.__name__, controller.solver.ModelClass.__name__)
+
+    def test_runner_parse_jshop(self):
+        controller = Runner(self.basic_domain_path_JSHOP, self.basic_pb1_path_JSHOP)
+        controller.parse_domain()
+        controller.parse_problem()
+        self.assertEqual(2, len(controller.domain.actions))
+        self.assertEqual(2, len(controller.domain.methods))
+        self.assertEqual(1, len(controller.domain.tasks))
+
+    def test_set_early_precon_checker(self):
+        controller = Runner(self.basic_domain_path_JSHOP, self.basic_pb1_path_JSHOP)
+        controller.set_early_task_precon_checker(False)
+        self.assertEqual(False, controller.solver.task_expansion_given_param_check)
+
+    def test_runner_solving_basic(self):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        res = controller.solve()
+        self.assertIsNotNone(res, 'Plan not found')
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_output_basic(self, mock_stdout):
+        controller = Runner(self.basic_domain_path, self.basic_pb1_path)
+        controller.parse_domain()
+        controller.parse_problem()
+        res = controller.solve()
+
+        controller.output_result(res)
+
+        # self.assertEqual("Test", captured_output.getvalue())
+        self.assertEqual(mock_stdout.getvalue(), """
+Actions Taken:
+drop - kiwi
+pickup - banjo
+
+Operations Taken:
+swap - banjo kiwi
+have_second - banjo kiwi
+drop - kiwi
+pickup - banjo
+
+Search Models Created During Search: 3
+""")
 
 
 class RunnerCommandLineTests(unittest.TestCase):
