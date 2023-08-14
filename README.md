@@ -47,9 +47,14 @@ There is a known issue with the unittests for this project in Linux based operat
 * [Demo Running Configurations](#demo-running-configurations)
 
 # Setup
-This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
+This system requires Python to be installed. 
+Python downloads can be found [here](https://www.python.org/).
 
-All other packages used by the system are included with Python as standard.
+Packages that are required by the system can be found in the **requirements.txt** file.
+The packages defined in this file can be installed using the following command:
+```commandline
+pip install -r .\requirements.txt
+```
 
 This system has been tested with Python versions 3.9 & 3.10
 
