@@ -22,6 +22,8 @@ from Solver.Solving_Algorithms.partial_order_novelty_no_reset import PartialOrde
 from Solver.Solving_Algorithms.partial_order_novelty_level_2 import PartialOrderNoveltyLevelTwoSolver
 from Solver.Solving_Algorithms.partial_order_novelty_methods import PartialOrderNoveltyMethodsSolver
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
+from Solver.Models.model import Model
+from Solver.Models.default_model import DefaultModel
 
 
 def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Problem, Parser, PartialOrderSolver]:
@@ -59,6 +61,12 @@ def env_setup(HDDL: bool, partial_order: bool = True, **kwargs) -> [Domain, Prob
         else:
             raise ValueError('Unknown parameter selector code: {}'.format(param_selector_code))
 
+    if 'model_class' in kwargs:
+        raise NotImplementedError
+    else:
+        solver.set_model_class(DefaultModel)
+
+    Model.model_counter = 0
     return domain, problem, parser, solver
 
 
