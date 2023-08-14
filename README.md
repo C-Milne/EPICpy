@@ -47,9 +47,14 @@ There is a known issue with the unittests for this project in Linux based operat
 * [Demo Running Configurations](#demo-running-configurations)
 
 # Setup
-This system requires Python to be installed. Python downloads can be found [here](https://www.python.org/).
+This system requires Python to be installed. 
+Python downloads can be found [here](https://www.python.org/).
 
-All other packages used by the system are included with Python as standard.
+Packages that are required by the system can be found in the **requirements.txt** file.
+The packages defined in this file can be installed using the following command:
+```commandline
+pip install -r .\requirements.txt
+```
 
 This system has been tested with Python versions 3.9 & 3.10
 
@@ -246,12 +251,34 @@ python ./output_plan_reader.py <Output File>
 ```
 
 # Running Unittests
-All the unittests can be run from the Tests/UnitTests directory using the following command:
+All the unittests can be run from the Tests/UnitTests directory using the following 
+command from within the **Tests** directory:
 
 ```commandline
 python ./All_Tests.py
 ```
 ![All Unit Tests](./images/All_Tests.png)
+
+From the root directory of the project, the following command can be used to find and
+run all unit tests:
+```commandline
+python -m unittest discover ./Tests/
+```
+
+It is possible to run a particular unit test file, test class, or test using the 
+following command structure:
+```commandline
+python -m unittest Tests.<Test File Name>.<Test Class Name>.<Test Name>
+```
+
+Note: The above command can also be used from the **Tests** directory by omitting the 
+*Tests.* at the beginning of the command.
+
+An example of this is as follows:
+```commandline
+python -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
+```
+
 
 # System Evaluation
 System evaluation is composed in a similar manner to the unit tests. All evaluation files are contained in the Tests/Evaluation/Heuristic_Evaluation directory.
