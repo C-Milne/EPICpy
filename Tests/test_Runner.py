@@ -2,6 +2,7 @@ import io
 import subprocess
 import unittest
 import unittest.mock
+from unittest.mock import patch, mock_open
 import os
 import sys
 import io
@@ -62,7 +63,6 @@ runner.py: error: Incorrect Usage."""
             self.python_command = "python3"
         Model.model_counter = 0
 
-
     def test_load_unknown_domain(self):
         # Test loading unknown domain file
         with self.assertRaises(FileNotFoundError) as error:
@@ -98,7 +98,6 @@ runner.py: error: Incorrect Usage."""
                         "Runner.__init__() missing 1 required positional argument: 'problem_path'" == str(
             error.exception))
 
-    # @unittest.skip
     def test_load_incompatible_files(self):
         # Test loading incompatible files
         with self.assertRaises(TypeError) as error:
@@ -114,7 +113,6 @@ runner.py: error: Incorrect Usage."""
             cont.parse_domain()
         self.assertEqual("Unknown descriptor type (txt)", str(error.exception))
 
-    # @unittest.skip
     def test_load_no_file_type(self):
         # Load file with no suffix
         with self.assertRaises(TypeError) as error:
@@ -145,7 +143,6 @@ runner.py: error: Incorrect Usage."""
                                            'Solver/Heuristics/hamming_distance.py')
         self.assertEqual("Module with the name 'FakeDistance' was not found in the file "
                          "'Solver/Heuristics/hamming_distance.py'", str(error.exception))
-
 
     def test_runner_setting_heuristic_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
@@ -264,6 +261,43 @@ pickup - banjo
 
 Search Models Created During Search: 3
 """)
+
+    @patch('runner.open', new_callable=mock_open)
+    @patch('runner.os')
+    def test_output_result_file_no_output_dir(self, mock_os, mock_open_method):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.basic_domain_path)
+        parser.parse_problem(self.basic_pb1_path)
+        res = solver.solve()
+
+        mock_os.path.isdir.return_value = False
+
+        Runner.output_result_file(res, 'testing_output.txt')
+        mock_os.path.isdir.assert_called_once_with('output')
+        mock_os.mkdir.assert_called_once_with('output')
+
+        mock_open_method.assert_called_once_with('output/testing_output.txt', 'w')
+        handle = mock_open_method()
+        handle.write.assert_called_once_with(str(res.progress_tracker))
+        handle.close.assert_called_once()
+
+    @patch('runner.open', new_callable=mock_open)
+    def test_output_result_file_unknown_suffix(self, mock_open_method):
+        domain, problem, parser, solver = env_setup(True)
+        parser.parse_domain(self.basic_domain_path)
+        parser.parse_problem(self.basic_pb1_path)
+        res = solver.solve()
+
+        with self.assertRaises(ValueError) as error:
+            Runner.output_result_file(res, 'testing_output.unknownSuffix')
+        self.assertEqual("Output Suffix unknownSuffix not recognised", str(error.exception))
+
+    @patch('runner.os')
+    def test_check_file_exists(self, mock_os):
+        mock_os.path.exists.return_value = False
+        with self.assertRaises(FileNotFoundError) as error:
+            Runner._Runner__check_file_exists('fakePath.txt', None)
+        self.assertEqual("File fakePath.txt could not be found", str(error.exception))
 
 
 class RunnerCommandLineTests(unittest.TestCase):
