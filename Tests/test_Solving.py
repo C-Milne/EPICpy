@@ -23,6 +23,7 @@ from Solver.Parameter_Selection.Requirement_Selection import RequirementSelectio
 import Tests.TestTools.rover_execution as RovEx
 from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
+from Solver.Solving_Algorithms.solver import Solver
 
 
 class SolvingTests(unittest.TestCase):
