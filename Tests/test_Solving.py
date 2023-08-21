@@ -24,6 +24,7 @@ import Tests.TestTools.rover_execution as RovEx
 from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
+
 class SolvingTests(unittest.TestCase):
 
     def setUp(self) -> None:

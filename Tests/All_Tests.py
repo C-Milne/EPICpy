@@ -14,6 +14,7 @@ from test_Partial_Order import PartialOrderTests
 from test_Progress_Tracker import ProgressTrackerTests
 from test_State import StateTests
 from test_Novelty import NoveltyTests
+from test_problem import ProblemTests
 
 
 def suite():
@@ -32,6 +33,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(ProgressTrackerTests))
     test_suite.addTest(unittest.makeSuite(NoveltyTests))
     test_suite.addTest(unittest.makeSuite(StateTests))
+    test_suite.addTest(unittest.makeSuite(ProblemTests))
     return test_suite
 
 
