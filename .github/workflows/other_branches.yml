@@ -6,8 +6,6 @@ name: Last Push CI
 on:
  push:
    branches-ignore: [ main ]
- pull_request:
-   branches: [ '**' ]
 
 #on: [push, pull_request]
 
