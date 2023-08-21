@@ -7,7 +7,7 @@ on:
  push:
    branches-ignore: [ main ]
  pull_request:
-   branches-ignore: [ main ]
+   branches: [ '**' ]
 
 #on: [push, pull_request]
 
@@ -48,3 +48,27 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           # files: ./coverage.xml
           fail_ci_if_error: true
+
+  Run-on-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          ls -las
+          python -m pip install --upgrade pip
+          python -m pip install pytest pytest-cov deprecation
+
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+      - name: Test with pytest
+        run: |
+          pytest --cov
