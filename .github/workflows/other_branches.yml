@@ -68,7 +68,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest pytest-cov deprecation
 
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if ( -f requirements-dev.txt ); then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
           pytest --cov

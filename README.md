@@ -1,9 +1,7 @@
-**Main Branch:** 
-[![Main Branch Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml)
+[![Main Branch Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main_branch.yml/badge.svg?branch=main)](https://github.com/C-Milne/EPICpy/actions/workflows/main_branch.yml)
 [![codecov](https://codecov.io/gh/C-Milne/EPICpy/graph/badge.svg?token=U39O2JMS56)](https://codecov.io/gh/C-Milne/EPICpy)
 
-**Last push:**
-[![Last Push Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml)
+[![Last Push Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/other_branches.yml/badge.svg)](https://github.com/C-Milne/EPICpy/actions/workflows/other_branches.yml)
 
 
 # Welcome to EPICpy
