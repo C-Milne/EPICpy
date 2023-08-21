@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 from io import StringIO
-from test_Runner import RunnerTests
+from test_Runner import RunnerTests, RunnerCommandLineTests
 from test_HDDL_Parser import HDDLParsingTests
 from test_HDDL_Grounding import HDDLGroundingTests
 from test_Solving import SolvingTests
@@ -14,11 +14,13 @@ from test_Partial_Order import PartialOrderTests
 from test_Progress_Tracker import ProgressTrackerTests
 from test_State import StateTests
 from test_Novelty import NoveltyTests
+from test_problem import ProblemTests
 
 
 def suite():
     test_suite = unittest.TestSuite()
     test_suite.addTest(unittest.makeSuite(RunnerTests))
+    test_suite.addTest(unittest.makeSuite(RunnerCommandLineTests))
     test_suite.addTest(unittest.makeSuite(HDDLParsingTests))
     test_suite.addTest(unittest.makeSuite(HDDLGroundingTests))
     test_suite.addTest(unittest.makeSuite(JSHOPParsingTests))
@@ -31,6 +33,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(ProgressTrackerTests))
     test_suite.addTest(unittest.makeSuite(NoveltyTests))
     test_suite.addTest(unittest.makeSuite(StateTests))
+    test_suite.addTest(unittest.makeSuite(ProblemTests))
     return test_suite
 
 

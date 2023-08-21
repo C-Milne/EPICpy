@@ -1,7 +1,11 @@
+[![Main Branch Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main_branch.yml/badge.svg?)](https://github.com/C-Milne/EPICpy/actions/workflows/main_branch.yml)
+[![codecov](https://codecov.io/gh/C-Milne/EPICpy/graph/badge.svg?token=U39O2JMS56)](https://codecov.io/gh/C-Milne/EPICpy)
+
+[![Last Push Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/other_branches.yml/badge.svg)](https://github.com/C-Milne/EPICpy/actions/workflows/other_branches.yml)
+
+
 # Welcome to EPICpy
 Extendable Planner with Interchangeable Components in Python
-
-There is a known issue with the unittests for this project in Linux based operating systems. These issues will be rectified come time.
 
 # Contents
 * [Setup](#setup)
@@ -35,6 +39,7 @@ There is a known issue with the unittests for this project in Linux based operat
 * [Output](#output)
   * [Output Plan Reader](#output-plan-reader)
 * [Running Unittests](#running-unittests)
+  * [Code Coverage](#code-coverage)
 * [System Evaluation](#system-evaluation)
 * [Key File Paths](#key-file-paths)
 * [Directions for Future Improvements](#directions-for-future-improvements)
@@ -279,6 +284,52 @@ An example of this is as follows:
 python -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
 ```
 
+PyTest can also be used to run unit tests using the command:
+```commandline
+pytest
+```
+
+
+## Code Coverage
+Coverage of the code base can be run using the **coverage** package using the following command:
+```commandline
+coverage run -m unittest discover ./Tests/
+```
+
+To include checks on branching, the above command can be slightly modified as below:
+```commandline
+coverage run --branch -m unittest discover ./Tests/
+```
+
+To display the output of the coverage, the following command outputs the results as a html file:
+```commandline
+coverage html
+```
+
+While the following command outputs in the terminal:
+```commandline
+coverage report -m
+```
+
+Code coverage can also be acquired using PyTests coverage functionality using the command:
+```commandline
+pytest --cov
+```
+
+Or for a HTML report the command:
+```commandline
+pytest --cov --cov-report=html:coverage_re
+```
+
+To view the report using this method, run the command:
+```commandline
+python3 -m http.server
+```
+
+Then navigate to the url:
+```commandline
+http://0.0.0.0:8000/coverage_re/
+```
 
 # System Evaluation
 System evaluation is composed in a similar manner to the unit tests. All evaluation files are contained in the Tests/Evaluation/Heuristic_Evaluation directory.

@@ -59,6 +59,7 @@ class Runner:
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and name == module_name:
                 return obj
+        raise ModuleNotFoundError("Module with the name '{}' was not found in the file '{}'".format(module_name, file_path))
 
     def set_solver(self, solver: type(Solver)) -> None:
         if type(solver) == type or type(solver) == ABCMeta:
@@ -100,6 +101,7 @@ class Runner:
         self.solver.set_model_class(model_class)
 
     def set_early_task_precon_checker(self, v: bool) -> None:
+        """TODO: What does this do again??"""
         self.solver.task_expansion_given_param_check = v
 
     def solve(self) -> DefaultModel:
