@@ -326,6 +326,91 @@ class RunnerCommandLineTests(unittest.TestCase):
                  [D] [P]
 runner.py: error: Incorrect Usage."""
 
+        self.expected_help_menu_1 = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
+                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
+                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
+                 [-paramSelectPath PARAMSELECTPATH]
+                 [-searchQueueName SEARCHQUEUENAME]
+                 [-searchQueuePath SEARCHQUEUEPATH]
+                 [-progressTrackerName PROGRESSTRACKERNAME]
+                 [-progressTrackerPath PROGRESSTRACKERPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
+                 [D] [P]
+
+positional arguments:
+  D                     File path to Domain File
+  P                     File path to Problem File
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w W                  File path to Write Resulting Plan File
+  -solverModName SOLVERMODNAME
+                        Name of Solver Class
+  -solverPath SOLVERPATH
+                        File path to Solver File
+  -heuModName HEUMODNAME
+                        Name of Heuristic Class
+  -heuPath HEUPATH      File path to Heuristic File
+  -paramSelectName PARAMSELECTNAME
+                        Name of Parameter Selector Class
+  -paramSelectPath PARAMSELECTPATH
+                        File path to Parameter Selector File
+  -searchQueueName SEARCHQUEUENAME
+                        Name of SearchQueue Class
+  -searchQueuePath SEARCHQUEUEPATH
+                        File path to SearchQueue File
+  -progressTrackerName PROGRESSTRACKERNAME
+                        Name of Progress Tracker Class
+  -progressTrackerPath PROGRESSTRACKERPATH
+                        File path to Progress Tracker File
+  -modelModName MODELMODNAME
+                        Name of Model Class
+  -modelPath MODELPATH  File path to Model File
+  -O                    Flag to disable printing resulting plan
+"""
+        self.expected_help_menu_2 = """usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
+                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
+                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
+                 [-paramSelectPath PARAMSELECTPATH]
+                 [-searchQueueName SEARCHQUEUENAME]
+                 [-searchQueuePath SEARCHQUEUEPATH]
+                 [-progressTrackerName PROGRESSTRACKERNAME]
+                 [-progressTrackerPath PROGRESSTRACKERPATH]
+                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
+                 [D] [P]
+
+positional arguments:
+  D                     File path to Domain File
+  P                     File path to Problem File
+
+options:
+  -h, --help            show this help message and exit
+  -w W                  File path to Write Resulting Plan File
+  -solverModName SOLVERMODNAME
+                        Name of Solver Class
+  -solverPath SOLVERPATH
+                        File path to Solver File
+  -heuModName HEUMODNAME
+                        Name of Heuristic Class
+  -heuPath HEUPATH      File path to Heuristic File
+  -paramSelectName PARAMSELECTNAME
+                        Name of Parameter Selector Class
+  -paramSelectPath PARAMSELECTPATH
+                        File path to Parameter Selector File
+  -searchQueueName SEARCHQUEUENAME
+                        Name of SearchQueue Class
+  -searchQueuePath SEARCHQUEUEPATH
+                        File path to SearchQueue File
+  -progressTrackerName PROGRESSTRACKERNAME
+                        Name of Progress Tracker Class
+  -progressTrackerPath PROGRESSTRACKERPATH
+                        File path to Progress Tracker File
+  -modelModName MODELMODNAME
+                        Name of Model Class
+  -modelPath MODELPATH  File path to Model File
+  -O                    Flag to disable printing resulting plan
+"""
+
         if sys.platform == "win32":
             self.python_command = "python"
         else:
@@ -371,59 +456,6 @@ Search Models Created During Search: 3
             error_raised = True
         self.assertTrue(error_raised, "An Error Was not Raised When Running the Command")
 
-    @unittest.skipUnless(sys.platform.startswith('win'), "Requires Windows")
-    def test_runner_command_line_help_windows(self):
-        try:
-            res = subprocess.run([self.python_command, "./runner.py", "-h"],
-                                 check=True, capture_output=True, text=True).stdout
-        except Exception as e:
-            msg = e.stderr
-            raise RuntimeError(msg)
-
-        self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
-                 [-paramSelectPath PARAMSELECTPATH]
-                 [-searchQueueName SEARCHQUEUENAME]
-                 [-searchQueuePath SEARCHQUEUEPATH]
-                 [-progressTrackerName PROGRESSTRACKERNAME]
-                 [-progressTrackerPath PROGRESSTRACKERPATH]
-                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
-                 [D] [P]
-
-positional arguments:
-  D                     File path to Domain File
-  P                     File path to Problem File
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -w W                  File path to Write Resulting Plan File
-  -solverModName SOLVERMODNAME
-                        Name of Solver Class
-  -solverPath SOLVERPATH
-                        File path to Solver File
-  -heuModName HEUMODNAME
-                        Name of Heuristic Class
-  -heuPath HEUPATH      File path to Heuristic File
-  -paramSelectName PARAMSELECTNAME
-                        Name of Parameter Selector Class
-  -paramSelectPath PARAMSELECTPATH
-                        File path to Parameter Selector File
-  -searchQueueName SEARCHQUEUENAME
-                        Name of SearchQueue Class
-  -searchQueuePath SEARCHQUEUEPATH
-                        File path to SearchQueue File
-  -progressTrackerName PROGRESSTRACKERNAME
-                        Name of Progress Tracker Class
-  -progressTrackerPath PROGRESSTRACKERPATH
-                        File path to Progress Tracker File
-  -modelModName MODELMODNAME
-                        Name of Model Class
-  -modelPath MODELPATH  File path to Model File
-  -O                    Flag to disable printing resulting plan
-""", res)
-
-    @unittest.skipIf(sys.platform.startswith('win'), "This test is for linux based systems")
     def test_runner_command_line_help(self):
         try:
             res = subprocess.run([self.python_command, "./runner.py", "-h"],
@@ -432,48 +464,7 @@ optional arguments:
             msg = e.stderr
             raise RuntimeError(msg)
 
-        self.assertEqual("""usage: runner.py [-h] [-w W] [-solverModName SOLVERMODNAME]
-                 [-solverPath SOLVERPATH] [-heuModName HEUMODNAME]
-                 [-heuPath HEUPATH] [-paramSelectName PARAMSELECTNAME]
-                 [-paramSelectPath PARAMSELECTPATH]
-                 [-searchQueueName SEARCHQUEUENAME]
-                 [-searchQueuePath SEARCHQUEUEPATH]
-                 [-progressTrackerName PROGRESSTRACKERNAME]
-                 [-progressTrackerPath PROGRESSTRACKERPATH]
-                 [-modelModName MODELMODNAME] [-modelPath MODELPATH] [-O]
-                 [D] [P]
-
-positional arguments:
-  D                     File path to Domain File
-  P                     File path to Problem File
-
-options:
-  -h, --help            show this help message and exit
-  -w W                  File path to Write Resulting Plan File
-  -solverModName SOLVERMODNAME
-                        Name of Solver Class
-  -solverPath SOLVERPATH
-                        File path to Solver File
-  -heuModName HEUMODNAME
-                        Name of Heuristic Class
-  -heuPath HEUPATH      File path to Heuristic File
-  -paramSelectName PARAMSELECTNAME
-                        Name of Parameter Selector Class
-  -paramSelectPath PARAMSELECTPATH
-                        File path to Parameter Selector File
-  -searchQueueName SEARCHQUEUENAME
-                        Name of SearchQueue Class
-  -searchQueuePath SEARCHQUEUEPATH
-                        File path to SearchQueue File
-  -progressTrackerName PROGRESSTRACKERNAME
-                        Name of Progress Tracker Class
-  -progressTrackerPath PROGRESSTRACKERPATH
-                        File path to Progress Tracker File
-  -modelModName MODELMODNAME
-                        Name of Model Class
-  -modelPath MODELPATH  File path to Model File
-  -O                    Flag to disable printing resulting plan
-""", res)
+        self.assertTrue(res == self.expected_help_menu_1 or res == self.expected_help_menu_2)
 
     def test_runner_command_line_heuname_only(self):
         error_raised = False
