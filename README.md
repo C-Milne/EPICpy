@@ -1,7 +1,11 @@
+[![main](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/C-Milne/EPICpy/actions)
+
+[![Main Branch Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml)
+
+[![CI](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml)
+
 # Welcome to EPICpy
 Extendable Planner with Interchangeable Components in Python
-
-There is a known issue with the unittests for this project in Linux based operating systems. These issues will be rectified come time.
 
 # Contents
 * [Setup](#setup)
