@@ -24,6 +24,7 @@ import Tests.TestTools.rover_execution as RovEx
 from Tests.TestTools.env_setup import env_setup
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 from Solver.Solving_Algorithms.solver import Solver
+from Solver.Models.model import Model
 
 
 class SolvingTests(unittest.TestCase):
@@ -50,7 +51,7 @@ class SolvingTests(unittest.TestCase):
 
         solver = Solver(domain, problem)
         model = Model(solver.problem, solver, solver._available_modifiers)
-        action = domain.get_action("pickup") # b1
+        action = domain.get_action("pickup")    # b1
 
         solver._Solver__execute(model, action, {'?b': problem.get_object("b1")})
 
@@ -169,7 +170,9 @@ class SolvingTests(unittest.TestCase):
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
         for i in range(7):
-            solver.search_models._Q.put(DefaultModel(problem.initial_state.reproduce(), [problem.subtasks.get_tasks()[1]], problem, progress_tracker_class=SequentialTracker))
+            solver.search_models._Q.put(DefaultModel(problem.initial_state.reproduce(),
+                                                     [problem.subtasks.get_tasks()[1]], problem,
+                                                     progress_tracker_class=SequentialTracker))
         for m in solver.search_models._Q.queue:
             m.ranking = 0
 
