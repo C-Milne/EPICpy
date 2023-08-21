@@ -280,6 +280,11 @@ An example of this is as follows:
 python -m unittest test_Runner.RunnerTests.test_file_writing_command_line_args
 ```
 
+PyTest can also be used to run unit tests using the command:
+```commandline
+pytest
+```
+
 
 ## Code Coverage
 Coverage of the code base can be run using the **coverage** package using the following command:
@@ -300,6 +305,26 @@ coverage html
 While the following command outputs in the terminal:
 ```commandline
 coverage report -m
+```
+
+Code coverage can also be acquired using PyTests coverage functionality using the command:
+```commandline
+pytest --cov
+```
+
+Or for a HTML report the command:
+```commandline
+pytest --cov --cov-report=html:coverage_re
+```
+
+To view the report using this method, run the command:
+```commandline
+python3 -m http.server
+```
+
+Then navigate to the url:
+```commandline
+http://0.0.0.0:8000/coverage_re/
 ```
 
 # System Evaluation
