@@ -3,7 +3,6 @@
 [![codecov](https://codecov.io/gh/C-Milne/EPICpy/graph/badge.svg?token=U39O2JMS56)](https://codecov.io/gh/C-Milne/EPICpy)
 
 **Last push:**
-![Last Push Unit Tests](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?event=push)
 [![Last Push Unit Tests](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/C-Milne/EPICpy/actions/workflows/main.yml)
 
 
