@@ -108,7 +108,8 @@ class Solver(ABC):
                 waiting_subT = list_subT[1:]
                 list_subT = [list_subT[0]]
 
-            initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT, self.progress_tracker)
+            initial_model = self._create_initial_model(self.problem.initial_state.reproduce(), list_subT, waiting_subT,
+                                                       self.progress_tracker)
 
             if not initialised_heuristic:
                 initialised_heuristic = True

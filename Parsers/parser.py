@@ -268,6 +268,7 @@ class Parser(ABC):
                         i += 1
             elif type(item) == Subtask:
                 # Parameters must be objects
+                # TODO: This process is silly, why are we assigning to RegParameter classes then changing it? FIX THIS
                 i = 0
                 l = len(item.parameters)
                 while i < l:
