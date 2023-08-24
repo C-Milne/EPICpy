@@ -451,6 +451,9 @@ class HDDLParser(Parser):
                 self.problem.add_subtasks(subtasks)
                 self._requires_grounding.append(subtasks)
             elif lead == ":parameters":
+                """
+                See /Examples/Woodworking/00-p01-variant.hddl for example of this
+                """
                 group = params.pop(0)
                 if group != []:
                     while group:
