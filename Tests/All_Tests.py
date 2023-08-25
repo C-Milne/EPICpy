@@ -15,6 +15,7 @@ from test_Progress_Tracker import ProgressTrackerTests
 from test_State import StateTests
 from test_Novelty import NoveltyTests
 from test_problem import ProblemTests
+from test_tools_output_plan_reader import OutputPlanReaderTests
 
 
 def suite():
@@ -34,6 +35,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(NoveltyTests))
     test_suite.addTest(unittest.makeSuite(StateTests))
     test_suite.addTest(unittest.makeSuite(ProblemTests))
+    test_suite.addTest(unittest.makeSuite(OutputPlanReaderTests))
     return test_suite
 
 

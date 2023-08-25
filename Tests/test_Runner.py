@@ -1,4 +1,3 @@
-import io
 import subprocess
 import unittest
 import unittest.mock

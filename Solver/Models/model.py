@@ -123,3 +123,16 @@ class Model(ABC):
     def __lt__(self, other):
         return (self.ranking, self.secondary_ranking, self.queue_location) < (other.ranking, other.secondary_ranking, other.queue_location)
 
+    def equality_check(self, other) -> bool:
+        """The purpose of this method is to check if this object is equal to a given parameter.
+        The reason we are not using the built-in __eq__ method is that we only want this in depth level of 
+        checking to occur when directed as opposed to all the time."""
+        if not isinstance(other, Model):
+            return False
+        if not self.current_state == other.current_state:
+            return False
+        if not self.search_modifiers == other.search_modifiers:
+            return False
+        if not self.waiting_subtasks == other.waiting_subtasks:
+            return False
+        return True
