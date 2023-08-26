@@ -5,7 +5,7 @@ Predicate = sys.modules['Internal_Representation.predicate'].Predicate
 
 
 class Precondition:
-    def __init__(self, conditions: str):
+    def __init__(self, conditions: list[str]):
         self.head = None
         self.conditions = conditions
         self.conditions_given_params = None # This is the conditions that only include parameters given by the task (not selected parameters)

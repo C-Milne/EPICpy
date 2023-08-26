@@ -16,6 +16,7 @@ from test_State import StateTests
 from test_Novelty import NoveltyTests
 from test_problem import ProblemTests
 from test_tools_output_plan_reader import OutputPlanReaderTests
+from test_modifier import ModifierTests
 
 
 def suite():
@@ -36,6 +37,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(StateTests))
     test_suite.addTest(unittest.makeSuite(ProblemTests))
     test_suite.addTest(unittest.makeSuite(OutputPlanReaderTests))
+    test_suite.addTest(unittest.makeSuite(ModifierTests))
     return test_suite
 
 

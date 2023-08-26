@@ -1,25 +1,21 @@
 import sys
 from typing import List
-# from Internal_Representation.precondition import Precondition
+from Internal_Representation.precondition import Precondition
 from Internal_Representation.parameter import Parameter
-
-if 'Internal_Representation.precondition' in sys.modules:
-    Precondition = sys.modules['Internal_Representation.precondition'].Precondition
-else:
-    from Internal_Representation.precondition import Precondition
 
 
 class Modifier:
 
     def __init__(self, name, parameters: List[Parameter], preconditions: Precondition = None):
         assert type(name) == str
-        self.name = name
+        self.name = name    # TODO: Make this a property
         assert type(parameters) == list
         for p in parameters:
             assert isinstance(p, Parameter)
-        self.parameters = parameters
+        self.parameters = parameters    # TODO: Make this a property
         assert isinstance(preconditions, Precondition) or preconditions is None
-        self.preconditions = preconditions
+        self.preconditions = preconditions  # TODO: Make this a property
+        self.parameter_names = []
 
     def add_parameter(self, parameter: Parameter):
         assert isinstance(parameter, Parameter)
@@ -42,6 +38,7 @@ class Modifier:
         return self.preconditions
 
     def get_name(self):
+        # TODO: Why do we have this None check? The name should never be None
         if self.name is None:
             return 'Unknown'
         return self.name
