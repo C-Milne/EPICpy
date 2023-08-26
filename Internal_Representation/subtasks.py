@@ -9,7 +9,7 @@ from Internal_Representation.parameter import Parameter
 class Subtask:
     def __init__(self, task, parameters=[], **kwargs):
         assert isinstance(task, Modifier) or type(task) == str
-        self.task = task
+        self.task = task    # TODO: Make this a private attribute and use @property getter and setters
         if not ('reproduce' in kwargs and kwargs['reproduce']):
             assert type(parameters) == list or type(parameters) == ListParameter
             if type(parameters) == list:
@@ -70,7 +70,7 @@ class Subtask:
 class Subtasks:
 
     def __init__(self, ordered: bool):
-        self.tasks = []
+        self.tasks = []     # TODO: Rename this to subtasks
         self.labelled_tasks = {}
         self.task_orderings = []
         self.ordered = ordered

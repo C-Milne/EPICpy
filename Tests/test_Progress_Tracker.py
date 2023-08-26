@@ -22,7 +22,7 @@ class ProgressTrackerTests(unittest.TestCase):
         self.IPC_test_path = "Examples/IPC_Tests/"
 
     def test_basic_pandaverify_output(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_path)
         parser.parse_problem(self.basic_pb1_path)
         solver.set_model_class(PandaVerifyModel)
@@ -39,7 +39,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_basic_pandaverify_output_file(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_path)
         parser.parse_problem(self.basic_pb1_path)
         solver.set_model_class(PandaVerifyModel)
@@ -64,7 +64,7 @@ root 0
 <==""", file_contents)
 
     def test_ipc_test_1(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test01_empty_method/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test01_empty_method/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -78,7 +78,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_2(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test02_forall/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test02_forall/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -93,7 +93,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_3(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test03_forall1/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test03_forall1/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -108,7 +108,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_4(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test04_no_abstracts/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test04_no_abstracts/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -122,7 +122,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_5(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test05_constants_in_domain/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test05_constants_in_domain/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -137,7 +137,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_6(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test06_synonymes/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test06_synonymes/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -162,7 +162,7 @@ root 0 3 6 9
 <==""", str(res.progress_tracker))
 
     def test_ipc_test_7(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.IPC_test_path + "test07_arguments/domain.hddl")
         parser.parse_problem(self.IPC_test_path + "test07_arguments/problem.hddl")
         solver.set_model_class(PandaVerifyModel)
@@ -177,7 +177,7 @@ root 0
 <==""", str(res.progress_tracker))
 
     def test_rover_1_pandaverify_output(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + 'domain.hddl')
         parser.parse_problem(self.rover_path + 'p01.hddl')
         solver.set_model_class(PandaVerifyModel)
