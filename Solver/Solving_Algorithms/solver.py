@@ -141,7 +141,6 @@ class Solver(ABC):
 
             # Check what needs to be done to this model
             next_modifier = search_model.get_next_modifier()
-            # print("Expanding: {} - {}".format(next_modifier.task.name, [x.name for x in next_modifier.given_params.values()]))   # TODO: Remove this
             assert type(next_modifier) == Subtask
 
             if type(next_modifier.task) == Task:
@@ -195,6 +194,17 @@ class Solver(ABC):
         This method needs to be expanded to accommodate processing actions"""
         raise NotImplementedError
 
+    @property
+    @abstractmethod
+    def solvable_problem_types(self) -> list[str]:
+        """
+        :return: List of Strings, which determine which problems type the Solver can solve. For Example ['.hddl', ...]
+
+        We use this to limit what problem types can be solved with particular solvers to make the code within solvers
+        cleaner
+        """
+        raise NotImplementedError
+
     def _generate_param_dict(self, modifier, params):
         """
         :param modifier: Modifier
@@ -226,6 +236,7 @@ class Solver(ABC):
         return param_dict
 
     def compute_derived_predicates(self, search_model: DefaultModel):
+        # TODO: This is only used for solving JSHOP problems, move it out of this class
         # Remove derived predicates from search model state
 
         # Check derived predicates

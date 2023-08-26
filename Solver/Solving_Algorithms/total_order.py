@@ -1,5 +1,6 @@
+import warnings
 from Solver.Solving_Algorithms.solver import Solver
-from Solver.Solving_Algorithms.solver import DefaultModel
+from Solver.Solving_Algorithms.solver import DefaultModel, Model
 from Solver.Solving_Algorithms.solver import State
 from Solver.Solving_Algorithms.solver import Subtasks, Subtask
 from Solver.Solving_Algorithms.solver import ProblemPredicate
@@ -13,36 +14,46 @@ class TotalOrderSolver(Solver):
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
-    def _expand_task(self, subtask: Subtask, search_model: DefaultModel):
+    def _expand_task(self, subtask: Subtask, search_model: Model):
         if len(subtask.task.tasks) != 0:
-            for new_task in subtask.task.tasks:
-                self._expand_task(Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
-                                  self.reproduce_model(search_model))
+            self._expand_task_subtask_with_multiple_tasks(subtask, search_model)
         else:
-            # For each method, create a new search model
-            for method in subtask.task.methods:
-                # Check parameters for new_model
-                # Is all the required parameters present or do some need to be chosen
-                parameters = {}
-                i = 0
-                for k in subtask.given_params.keys():
-                    parameters[method.task['params'][i].name] = subtask.given_params[k]
-                    i += 1
+            self._expand_task_regular(subtask, search_model)
 
-                # Check if the given parameters satisfy preconditions that only use the given parameters
-                if self.task_expansion_given_param_check and not method.evaluate_preconditions_conditions_given_params(parameters, search_model, self.problem):
-                    continue
+    def _expand_task_subtask_with_multiple_tasks(self, subtask: Subtask, search_model: Model):
+        # TODO: When is this used? Give an example and document here
+        warnings.warn('Expanding task with multiple subtasks! Please document the problem being solved!')
+        for new_task in subtask.task.tasks:
+            self._expand_task(Subtask(new_task, self.reproduce_parameter_list(subtask.parameters)),
+                              self.reproduce_model(search_model))
 
-                param_options = self.parameter_selector.get_potential_parameters(method, parameters, search_model)
+    def _expand_task_regular(self, subtask: Subtask, search_model: Model):
+        """This is the regular expansion"""
+        # For each method, create a new search model
+        for method in subtask.task.methods:
+            # Check parameters for new_model
+            # Is all the required parameters present or do some need to be chosen
+            parameters = {}
+            i = 0
+            for k in subtask.given_params.keys():
+                parameters[method.task['params'][i].name] = subtask.given_params[k]
+                i += 1
 
-                for param_option in param_options:
-                    subT = Subtask(method, method.parameters)
-                    subT.add_given_parameters(param_option)
-                    # Create new model and add to search_models
-                    new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
-                    new_model.set_parent_model_number(search_model.get_model_number())
-                    new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
-                    self.search_models.add(new_model)
+            # Check if the given parameters satisfy preconditions that only use the given parameters
+            if self.task_expansion_given_param_check and not method.evaluate_preconditions_conditions_given_params(
+                    parameters, search_model, self.problem):
+                continue
+
+            param_options = self.parameter_selector.get_potential_parameters(method, parameters, search_model)
+
+            for param_option in param_options:
+                subT = Subtask(method, method.parameters)
+                subT.add_given_parameters(param_option)
+                # Create new model and add to search_models
+                new_model = self.reproduce_model(search_model, [subT] + search_model.search_modifiers)
+                new_model.set_parent_model_number(search_model.get_model_number())
+                new_model.add_operation(subtask.task, subtask.given_params, root=subtask.root_task)
+                self.search_models.add(new_model)
 
     def _expand_method(self, subtask: Subtask, search_model: DefaultModel):
         # Add actions to search model - with parameters
@@ -58,6 +69,7 @@ class TotalOrderSolver(Solver):
         search_mod.set_parent_model_number(mod_num)
         for mod in subtask_option:
             try:
+                # TODO: This try block is ugly, find when we need it and make a better fix
                 assert type(mod.task) == Action or type(mod.task) == Task
             except:
                 if mod.task is None:

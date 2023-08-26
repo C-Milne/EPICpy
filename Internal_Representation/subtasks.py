@@ -10,11 +10,14 @@ class Subtask:
     def __init__(self, task, parameters=[], **kwargs):
         assert isinstance(task, Modifier) or type(task) == str
         self.task = task
+
         if not ('reproduce' in kwargs and kwargs['reproduce']):
+            # If we are not reproducing an existing subtask we need to verify all the parameters beting passed
             assert type(parameters) == list or type(parameters) == ListParameter
             if type(parameters) == list:
                 for p in parameters:
                     assert isinstance(p, Parameter)
+
         self.parameters = parameters
         self.given_params = {}
         self.root_task = False

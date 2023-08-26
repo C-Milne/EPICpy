@@ -11,6 +11,7 @@ class Task(Modifier):
         self.methods.append(method)
 
     def add_task(self, t):
+        # TODO: Document when we need this - ideally this should be moved to its own class
         self.tasks.append(t)
 
     def evaluate_preconditions(self, *args):

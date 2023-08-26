@@ -9,11 +9,12 @@ from Parsers.HDDL_Parser import HDDLParser
 from Parsers.JSHOP_Parser import JSHOPParser
 from Solver.Solving_Algorithms.solver import Solver
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
+from Solver.Solving_Algorithms.partial_order_jshop import PartialOrderJshopSolver
 from Solver.Heuristics.Heuristic import Heuristic
 from Solver.Parameter_Selection.ParameterSelector import ParameterSelector
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
-from Solver.Models.default_model import DefaultModel
+from Solver.Models.default_model import DefaultModel, Model
 from Solver.Search_Queues.search_queue import SearchQueue
 from Solver.Progress_Tracking.sequential_progress_tracker import SequentialTracker
 
@@ -104,8 +105,18 @@ class Runner:
         """TODO: What does this do again??"""
         self.solver.task_expansion_given_param_check = v
 
-    def solve(self) -> DefaultModel:
+    def solve(self) -> Model:
+        # TODO: Here we need to add a check to ensure the solver being used can solve the type of problem given
+        self.verify_solver_problem_compatability()
         return self.solver.solve()
+
+    def verify_solver_problem_compatability(self):
+        if self.suffix in self.solver.solvable_problem_types:
+            return True
+        elif self.suffix == 'jshop' and isinstance(self.solver, PartialOrderSolver):
+            self.set_solver(PartialOrderJshopSolver)
+        raise TypeError('Solver {} is not compatible with problem type {}. Compatible problem types are: {}'.format(
+            type(self.solver), self.suffix, self.solver.solvable_problem_types))
 
     def output_result(self, search_result: DefaultModel) -> None:
         self.solver.output(search_result)

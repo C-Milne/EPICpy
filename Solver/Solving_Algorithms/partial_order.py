@@ -8,6 +8,8 @@ from Solver.Solving_Algorithms.solver import Effects
 
 
 class PartialOrderSolver(Solver):
+    solvable_problem_types = ['hddl']
+
     def __init__(self, domain, problem):
         super().__init__(domain, problem)
 
