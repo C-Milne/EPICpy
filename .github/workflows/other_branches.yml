@@ -24,11 +24,11 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Debugging Step
-        run: |
-          ls
-          cd main
-          ls
+#      - name: Debugging Step
+#        run: |
+#          ls
+#          cd main
+#          ls
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
