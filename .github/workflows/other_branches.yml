@@ -24,7 +24,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        ls -las
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest pytest-cov deprecation
         python -m pip install -r requirements.txt
