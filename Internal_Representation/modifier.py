@@ -11,8 +11,10 @@ class Modifier:
         self.name = name    # TODO: Make this a property
         assert type(parameters) == list
         for p in parameters:
+            # TODO: Replace this loop with 'all' operator
             assert isinstance(p, Parameter)
         self.parameters = parameters    # TODO: Make this a property
+
         assert isinstance(preconditions, Precondition) or preconditions is None
         self.preconditions = preconditions  # TODO: Make this a property
         self.parameter_names = []

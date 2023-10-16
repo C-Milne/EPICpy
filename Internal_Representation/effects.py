@@ -51,6 +51,13 @@ class Effects:
         self.effects.append(self.RunTimeEffect(parameter))
 
     def add_forall_effect(self, parameter: Parameter, preconditions: Precondition, effects, negated: bool):
+        """Params:  - parameter : The parameter being used across the effects in the forall statement -
+                                  "For all X in list"
+                    - preconditions : criteria for selecting objects to apply the for all effect with
+                    - effects : List of Effect objects
+                    - Negated : Are we checking for the presence of the facts or omission
+            Returns: None
+        """
         for_ef = self.ForAllEffect(parameter, preconditions, negated)
         for e in effects:
             assert isinstance(e, self.Effect)

@@ -8,14 +8,21 @@ from Internal_Representation.parameter import Parameter
 
 class Subtask:
     def __init__(self, task, parameters=[], **kwargs):
+        """
+        :params
+        task:
+        parameters:
+        """
         assert isinstance(task, Modifier) or type(task) == str
         self.task = task    # TODO: Make this a private attribute and use @property getter and setters
         if not ('reproduce' in kwargs and kwargs['reproduce']):
+            # TODO: Move this check to a new private method
             assert type(parameters) == list or type(parameters) == ListParameter
             if type(parameters) == list:
                 for p in parameters:
+                    # TODO: Replace this list with the 'all' operator
                     assert isinstance(p, Parameter)
-        self.parameters = parameters
+        self.parameters = parameters    # TODO: Make this a private attribute and use @property getter and setters
         self.given_params = {}
         self.root_task = False
 
@@ -38,6 +45,14 @@ class Subtask:
 
     def set_root_task(self, v: bool):
         self.root_task = v
+
+    def get_effects(self):
+        """
+        If the subtask is of type Action, return the effects of the action
+        """
+        if self.task.effects is None:
+            return None
+        return self.task.effects.effects
 
     def reproduce(self):
         new_subtask = Subtask(self.task, [*self.parameters], reproduce=True)

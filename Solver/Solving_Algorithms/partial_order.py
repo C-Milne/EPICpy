@@ -148,6 +148,7 @@ class PartialOrderSolver(Solver):
         return True
 
     def _expand_action_apply_actions(self, subtask, search_model):
+        # TODO: Rename this to _expand_action_apply_effects
         if not subtask.task.effects is None:
             added_predicates = []
             for eff in subtask.task.effects.effects:
