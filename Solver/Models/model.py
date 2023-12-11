@@ -83,6 +83,12 @@ class Model(ABC):
     def get_task_network(self):
         return self.search_modifiers + self.waiting_subtasks
 
+    def get_num_search_modifiers(self):
+        return len(self.search_modifiers)
+
+    def get_num_waiting_subtasks(self):
+        return len(self.waiting_subtasks)
+
     @abstractmethod
     def insert_modifier(self, modifier, index=0):
         raise NotImplementedError
