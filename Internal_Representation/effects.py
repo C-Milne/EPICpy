@@ -17,13 +17,16 @@ class Effects:
     class ForAllEffect:
         def __init__(self, parameter, precondition, negated):
             self.parameters = parameter
-            self.precondition = precondition
+            self.precondition = precondition   # TODO: Make this private
             self.effects = []
             self.negated = negated
 
         def add_effect(self, effect):
             assert isinstance(effect, Effects.Effect)
             self.effects.append(effect)
+
+        def get_precondition(self):
+            return self.precondition
 
     def __init__(self):
         self.effects = []

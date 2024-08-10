@@ -110,6 +110,9 @@ class Precondition:
     def get_positive_predicate_conditions(self):
         return self._positive_predicate_conditions
 
+    def get_head(self):
+        return self.head
+
     @staticmethod
     def merge_dictionaries(a, b):
         c = a.copy()

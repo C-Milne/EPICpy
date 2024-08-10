@@ -2,6 +2,7 @@ import warnings
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver, Model, \
     Subtask, Action, Effects, ProblemPredicate, ForallCondition, Method
 from Internal_Representation.state_novelty import StateNovelty
+from Internal_Representation.precondition import Precondition
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 
@@ -111,9 +112,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
 
     def _expand_action_apply_forall_effect_novelty(self, eff, subtask, search_model, novelty):
         # Get parameters
-        assert type(eff.precondition.head) == ForallCondition
-        obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
-        forall_var_name = eff.precondition.head.selected_variable
+        precondition_head = eff.get_precondition().get_head()
+        assert isinstance(precondition_head, ForallCondition)
+        obs = precondition_head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
+        forall_var_name = precondition_head.selected_variable
         # Iterate over found parameters
         for o in obs:
             for e in eff.effects:

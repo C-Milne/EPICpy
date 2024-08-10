@@ -1,5 +1,5 @@
 import unittest.mock
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock, Mock, PropertyMock
 import os
 import sys
 import io
@@ -22,6 +22,8 @@ from Internal_Representation.state import State
 from Internal_Representation.action import Action
 from Internal_Representation.reg_parameter import RegParameter
 from Internal_Representation.effects import Effects
+from Internal_Representation.precondition import Precondition
+from Internal_Representation.conditions import ForAllCondition
 from Parsers.HDDL_Parser import HDDLParser
 
 
@@ -72,7 +74,7 @@ class PartialOrderNoveltySolverTests(unittest.TestCase):
     @patch('Solver.Models.default_model')
     @patch('Internal_Representation.problem.Problem')
     @patch('Internal_Representation.domain.Domain')
-    def test_expand_action_apply_actions_For_All_Effect(self, mock_domain, mock_problem, mock_model):
+    def test_expand_action_apply_actions_with_For_All_Effect(self, mock_domain, mock_problem, mock_model):
         self.solver = PartialOrderNoveltySolver(mock_domain, mock_problem)
         self.solver._expand_action_apply_forall_effect_novelty = Mock(return_value=1)
 
@@ -100,3 +102,21 @@ class PartialOrderNoveltySolverTests(unittest.TestCase):
         with self.assertRaises(TypeError) as error:
             self.solver._expand_action_apply_actions(mock_subtask, mock_model)
         self.assertEqual('Type \'Action\' is not supported as an effect to apply in this method!', str(error.exception))
+
+    @patch('Solver.Models.default_model')
+    @patch('Internal_Representation.problem.Problem')
+    @patch('Internal_Representation.domain.Domain')
+    def test_expand_action_apply_forall_effect_novelty(self, mock_domain, mock_problem, mock_model):
+        self.solver = PartialOrderNoveltySolver(mock_domain, mock_problem)
+        mock_for_all_effect = Mock(spec=Effects.ForAllEffect)
+        mock_for_all_effect_precondition = Mock(spec=Precondition)
+        mock_for_all_effect_precondition_head = Mock(spec=ForAllCondition)
+
+        mock_for_all_effect.get_precondition.return_value = mock_for_all_effect_precondition
+        mock_for_all_effect_precondition.get_head.return_value = mock_for_all_effect_precondition_head
+
+        mock_subtask = Mock(spec=Subtask)
+
+        result = self.solver._expand_action_apply_forall_effect_novelty(mock_for_all_effect, mock_subtask, mock_model,
+                                                                        0)
+        self.assertEqual(1, 2)
