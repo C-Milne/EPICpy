@@ -9,7 +9,6 @@ if current_dir.endswith('Tests'):
 
 from Solver.Models.default_model import DefaultModel
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver
-from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Parsers.HDDL_Parser import HDDLParser
 from Internal_Representation.domain import Domain
 from Internal_Representation.problem import Problem
@@ -165,7 +164,7 @@ class SolvingTests(unittest.TestCase):
         """Test Carrying out on action with one model and check the state of the others.
         Also check model state and _index"""
 
-        domain, problem, parser, solver = env_setup(True, False)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
@@ -300,7 +299,7 @@ class SolvingTests(unittest.TestCase):
                          res.get_progress_tracker().operations_taken[3])
 
     def test_basic_execution_to(self):
-        domain, problem, parser, solver = env_setup(True, False)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.basic_domain_path)
         parser.parse_problem(self.basic_pb1_path)
         res = solver.solve()
@@ -316,7 +315,7 @@ class SolvingTests(unittest.TestCase):
                          res.get_progress_tracker().operations_taken[3])
 
     def test_compare_parameters(self):
-        domain, problem, parser, solver = env_setup(True, False, parameter_selector=1)
+        domain, problem, parser, solver = env_setup(True, parameter_selector=1)
         parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
         solver.solve(search=False)
@@ -332,7 +331,7 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(["?camera", "?rover", "?waypoint"], response[1])
 
     def test_finding_parameters(self):
-        domain, problem, parser, solver = env_setup(True, False, parameter_selector=1)
+        domain, problem, parser, solver = env_setup(True, parameter_selector=1)
         parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
         solver.solve(search=False)
@@ -354,7 +353,7 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(problem.objects['waypoint3'], found_params[3]['?waypoint'])
 
     def test_rover_execution_beginning(self):
-        domain, problem, parser, solver = env_setup(True, False)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
         solver.solve(search=False)
@@ -369,7 +368,7 @@ class SolvingTests(unittest.TestCase):
         self.assertEqual(problem.objects['high_res'], model.search_modifiers[0].given_params['?mode'])
 
     def test_rover_execution_1(self):
-        domain, problem, parser, solver = env_setup(True, False)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain("Examples/IPC_Tests/Rover/rover-domain.hddl")
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
         solver.solve(search=False)
@@ -405,7 +404,7 @@ class SolvingTests(unittest.TestCase):
             self.assertEqual(True, found)
 
     def test_rover_execution_complete_to(self):
-        domain, problem, parser, solver = env_setup(True, False)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + "rover-domain.hddl")
         parser.parse_problem(self.rover_path + "pfile01.hddl")
         solver.set_heuristic(NoPruning)
@@ -450,7 +449,7 @@ class SolvingTests(unittest.TestCase):
         parser = HDDLParser(domain, problem)
         parser.parse_domain(self.rover_col_path + "domain.hddl")
         parser.parse_problem(self.rover_col_path + "p01.hddl")
-        solver = TotalOrderSolver(domain, problem)
+        solver = PartialOrderSolver(domain, problem)
         plan = solver.solve()
         self.assertEqual(True, problem.evaluate_goal(plan))
 
@@ -501,7 +500,7 @@ class SolvingTests(unittest.TestCase):
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
         # Initialise solver
-        solver = TotalOrderSolver(domain, problem)
+        solver = PartialOrderSolver(domain, problem)
         solver.set_heuristic(NoPruning)
 
         res = solver.solve()
@@ -528,7 +527,7 @@ class SolvingTests(unittest.TestCase):
         parser.parse_problem("Examples/IPC_Tests/Rover/pfile01.hddl")
 
         # Initialise solver
-        solver = TotalOrderSolver(domain, problem)
+        solver = PartialOrderSolver(domain, problem)
         solver.set_heuristic(NoPruning)
 
         res = solver.solve()

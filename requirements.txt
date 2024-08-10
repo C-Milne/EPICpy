@@ -2,5 +2,6 @@
 deprecation
 pytest
 pytest-cov
+coverage
 
 ### Requirements with Version Specifiers ###

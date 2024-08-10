@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="DEMO 1: Basic " type="PythonConfigurationType" factoryName="Python">
-    <module name="4th-Year-Dissertation" />
+  <configuration default="false" name="JSHOP Blocks" type="PythonConfigurationType" factoryName="Python">
+    <module name="EPICpy" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Tests/Examples/Basic/basic.hddl Tests/Examples/Basic/pb1.hddl" />
+    <option name="PARAMETERS" value="Examples/JShop/blocks/blocks.jshop Examples/JShop/blocks/problem.jshop" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

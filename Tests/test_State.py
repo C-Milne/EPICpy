@@ -60,7 +60,7 @@ class StateTests(unittest.TestCase):
 
     def test_final_state_rover1_ham_gbfs_duplicates(self):
         # Run the rover 1 problem and check for available predicates (rover1 should only occur once)
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain(self.rover_path + "domain.hddl")
         parser.parse_problem(self.rover_path + "p01.hddl")
         solver.set_search_queue(GBFSSearchQueue)
@@ -70,7 +70,7 @@ class StateTests(unittest.TestCase):
         self.assertEqual(1, len(res.current_state.get_indexes('available')))
 
     def test_expanding_action_which_adds_and_removes_same_predicate(self):
-        domain, problem, parser, solver = env_setup(True, True)
+        domain, problem, parser, solver = env_setup(True)
         parser.parse_domain('Tests/TestTools/state_testing/domain1.hddl')
         parser.parse_problem('Tests/TestTools/state_testing/problem1.hddl')
         solver.set_search_queue(GBFSSearchQueue)

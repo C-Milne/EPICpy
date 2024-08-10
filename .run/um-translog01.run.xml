@@ -1,12 +1,12 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Rover" type="PythonConfigurationType" factoryName="Python">
-    <module name="4th-Year-Dissertation" />
+  <configuration default="false" name="um-translog01" type="PythonConfigurationType" factoryName="Python">
+    <module name="EPICpy" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="C:\Python39\python.exe" />
+    <option name="SDK_HOME" value="/usr/bin/python3" />
     <option name="SDK_NAME" value="Python 3.8" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="IS_MODULE_SDK" value="false" />
@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runner.py" />
-    <option name="PARAMETERS" value="Examples/Rover/domain.hddl Examples/Rover/p03.hddl" />
+    <option name="PARAMETERS" value="Tests/Examples/IPC_Tests/um-translog01/domain.hddl Tests/Examples/IPC_Tests/um-translog01/problem.hddl -w PandaVerifyOutput.txt -solverModName PartialOrderSolver -solverPath Solver/Solving_Algorithms/partial_order.py -heuModName NoPruning -heuPath Solver/Heuristics/no_pruning.py -paramSelectName AllParameters -paramSelectPath Solver/Parameter_Selection/All_Parameters.py -searchQueueName SearchQueue -searchQueuePath Solver/Search_Queues/search_queue.py -progressTrackerName PandaVerifyFormatTracker -progressTrackerPath Solver/Progress_Tracking/panda_verify_format.py -modelModName PandaVerifyModel -modelPath Solver/Models/PandaVerifyModel.py" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

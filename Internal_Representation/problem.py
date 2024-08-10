@@ -1,4 +1,7 @@
 import itertools
+
+import deprecation
+
 from Internal_Representation.Object import Object
 from Internal_Representation.state import State
 from Internal_Representation.Type import Type
@@ -53,13 +56,23 @@ class Problem:
             # If the subtasks are already ordered we dont need to order again
             return
         if len(self._subtasks_before_ordering) > 0:
-            full_orderings = []
-            for subtasks in self._subtasks_before_ordering:
-                subtasks.order_subtasks(self.initial_subtask_orderings)
-                full_orderings += subtasks.get_task_orderings()
-            self.subtasks.task_orderings = full_orderings
+            self.order_subtasks_with_before_ordering()
         else:
             self.subtasks.order_subtasks(self.initial_subtask_orderings)
+
+    @deprecation.deprecated(details='It it unknown what this does, as such it will be removed when deemed safe to do so')
+    def order_subtasks_with_before_ordering(self):
+        # TODO: Clean up this whole process with a new grounding class
+        """
+        self._subtasks_before_ordering is populated in the ground_initial_subtasks method which is initiated if there is
+        parameters defined for the initial task network.
+        An example problem with this is woodworking.
+        """
+        full_orderings = []
+        for subtasks in self._subtasks_before_ordering:
+            subtasks.order_subtasks(self.initial_subtask_orderings)
+            full_orderings += subtasks.get_task_orderings()
+        self.subtasks.task_orderings = full_orderings
 
     def set_initial_subtask_ordering(self, orderings):
         self.initial_subtask_orderings = orderings
@@ -112,13 +125,22 @@ class Problem:
             return False
         return True
 
-    def ground_initial_subtasks(self):
+    def _ground_initial_subtasks_calculate_parameter_combinations(self):
+        """
+        This method finds all combinations of objects to satisfy the parameters defined for an initial task network
+        See test_ground_initial_subtasks_calculate_parameter_combinations within test_problem for an example
+        """
         parameter_ordering = []
         for p in self._initial_task_network_parameters:
-            self._initial_task_network_parameters[p] = self.get_objects_of_type(self._initial_task_network_parameters[p])
+            self._initial_task_network_parameters[p] = self.get_objects_of_type(
+                self._initial_task_network_parameters[p])
             parameter_ordering.append(p)
         vals = list(self._initial_task_network_parameters.values())
         combs = list(itertools.product(*vals))
+        return parameter_ordering, combs
+
+    def ground_initial_subtasks(self):
+        parameter_ordering, combs = self._ground_initial_subtasks_calculate_parameter_combinations()
 
         for c in combs:
             # Reproduce self.subtasks
@@ -127,6 +149,6 @@ class Problem:
             for subtask in new_subtasks.tasks:
                 for p_i in range(len(subtask.parameters)):
                     p = subtask.parameters[p_i]
-                    if type(p) == str:
+                    if type(p) == str:  # TODO: In what case is this false??
                         subtask.parameters[p_i] = c[parameter_ordering.index(p)]
             self._subtasks_before_ordering.append(new_subtasks)

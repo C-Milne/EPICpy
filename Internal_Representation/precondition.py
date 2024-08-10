@@ -1,11 +1,12 @@
 import sys
+from typing import List
 from Internal_Representation.conditions import Condition, PredicateCondition, OperatorCondition, VariableCondition, \
     ForAllCondition, GoalPredicateCondition, ConstantObjectCondition
 Predicate = sys.modules['Internal_Representation.predicate'].Predicate
 
 
 class Precondition:
-    def __init__(self, conditions: str):
+    def __init__(self, conditions: List[str]):
         self.head = None
         self.conditions = conditions
         self.conditions_given_params = None # This is the conditions that only include parameters given by the task (not selected parameters)
@@ -108,6 +109,9 @@ class Precondition:
 
     def get_positive_predicate_conditions(self):
         return self._positive_predicate_conditions
+
+    def get_head(self):
+        return self.head
 
     @staticmethod
     def merge_dictionaries(a, b):

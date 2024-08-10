@@ -25,9 +25,10 @@ class SearchQueue:
             raise TypeError("Invalid parameter type!\n"
                             "Expected Model got {}".format(type(model)))
 
-        if len(model.search_modifiers) > 0:
+        model_num_search_modifiers = model.get_num_search_modifiers()
+        if model_num_search_modifiers > 0:
             self._add_model(model)
-        elif len(model.search_modifiers) == 0 and len(model.waiting_subtasks) > 0:
+        elif model_num_search_modifiers == 0 and model.get_num_waiting_subtasks() > 0:
             model.promote_waiting_subtask()
             if self.heuristic.task_milestone(model):
                 self._add_model(model)

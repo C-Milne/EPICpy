@@ -35,6 +35,7 @@ class PartialOrderSolver(Solver):
                     i += 1
 
                 # Check if the given parameters satisfy preconditions that only use the given parameters
+                # TODO: Remove this attribute, self.task_expansion_given_param_check - should always be true
                 if self.task_expansion_given_param_check and not method.evaluate_preconditions_conditions_given_params(
                         parameters, search_model, self.problem):
                     # Method not compatible with parameters given from task
@@ -52,49 +53,82 @@ class PartialOrderSolver(Solver):
                     self._add_model_to_search_queue(new_model, subtask)
 
     def _expand_method(self, subtask: Subtask, search_model: Model):
-        # Add actions to search model - with parameters
-        i = 0
+        """
+        params:
+        :subtask - the method being applied
+        :search_model - the model the method is being applied to
+
+        :returns: None
+
+        This function applies a given method to a given model.
+        For example the task network of the model would go from : [method, task1, ...]
+        To something like : [method_subtask1, method_subtask2, task1, ...]
+
+        All the subtasks added to the task network need to be grounded subtask_index.e. assigned objects as parameters
+        """
+        method_to_be_applied = subtask.task
+
         if subtask.task.subtasks is None:
             search_model.add_operation(subtask.task, subtask.given_params)
             self.search_models.add(search_model)
             return
 
         for subtask_option in subtask.task.subtasks.task_orderings:
-            search_mod = self.reproduce_model(search_model)
+            subtask_index = 0  # The index of the subtask being added to the task network
+            search_model = self.reproduce_model(search_model)
 
-            for mod in subtask_option:
-                if mod.task is None:
+            for method_subtask in subtask_option:
+                if method_subtask.task is None:
+                    # TODO: We should not have any subtasks that are empty. Is this check still used??
                     continue
-                assert type(mod.task) == Action or type(mod.task) == Task
+                assert type(method_subtask.task) == Action or type(method_subtask.task) == Task
 
-                mod = Subtask(mod.task, mod.parameters)
+                method_subtask = Subtask(method_subtask.task, method_subtask.parameters)
 
-                # Check parameter count
-                parameters = {}
-                param_keys = [p.name for p in mod.parameters]
-                action_keys = [p.name for p in mod.task.parameters]
-                if len(action_keys) > 0:
-                    for j in range(len(action_keys)):
-                        try:
-                            parameters[action_keys[j]] = subtask.given_params[param_keys[j]]
-                        except IndexError:
-                            pass
-                        except KeyError as e:
-                            if param_keys[j][0] != "?" and param_keys[j] in self.problem.objects:
-                                parameters[action_keys[j]] = self.problem.get_object(param_keys[j])
-                            else:
-                                raise KeyError(e)
-                else:
-                    for j in range(len(param_keys)):
-                        parameters[param_keys[j]] = subtask.given_params[param_keys[j]]
+                # TODO: Can we re-write this to pass parameters to subtasks without creating new dictionary - pass as a list
+                parameters = self._expand_method_check_parameters(method_subtask, subtask)
+                method_subtask.add_given_parameters(parameters)
 
-                mod.add_given_parameters(parameters)
+                # Add method_subtask to search_model
+                search_model.insert_modifier(method_subtask, subtask_index)
+                subtask_index += 1
+            search_model.add_operation(subtask.task, subtask.given_params)
+            self._add_model_to_search_queue(search_model, subtask)
 
-                # Add mod to search_model
-                search_mod.insert_modifier(mod, i)
-                i += 1
-            search_mod.add_operation(subtask.task, subtask.given_params)
-            self._add_model_to_search_queue(search_mod, subtask)
+    def _expand_method_check_parameters(self, method_subtask, subtask):
+        # Check parameter count
+        parameters = {}
+
+        """
+        If we have a method with the parameters: [?from, ?x, ?s]
+        And pass the following parameters to a subtask: [?x, ?from]
+        And the subtask renames the parameters: [?x, ?to]
+        """
+
+        parameter_names_required_from_method = [p.name for p in method_subtask.parameters]
+        subtask_parameter_names = [p.name for p in method_subtask.task.parameters]
+
+        if len(subtask_parameter_names) > 0:
+            # If we have parameters to pass
+            for j in range(len(subtask_parameter_names)):
+                try:
+                    # TODO: This try block is bad code and needs to be removed and rewritten
+                    # TODO: check if the object we need is a constant - this is the keyerror block
+                    parameters[subtask_parameter_names[j]] = subtask.given_params[parameter_names_required_from_method[j]]
+                except IndexError:
+                    # TODO: What is this for?
+                    pass
+                except KeyError as e:
+                    if parameter_names_required_from_method[j][0] != "?" and parameter_names_required_from_method[j] in self.problem.objects:
+                        parameters[subtask_parameter_names[j]] = self.problem.get_object(parameter_names_required_from_method[j])
+                    else:
+                        raise KeyError(e)
+        else:
+            # No parameters to pass??
+            for j in range(len(parameter_names_required_from_method)):
+                # TODO: Can we not simply make this a straight assignment?
+                parameters[parameter_names_required_from_method[j]] = subtask.given_params[parameter_names_required_from_method[j]]
+        return parameters
 
     def _expand_action_prechecks(self, subtask, search_model):
         assert type(subtask) == Subtask and type(subtask.task) == Action
@@ -114,6 +148,7 @@ class PartialOrderSolver(Solver):
         return True
 
     def _expand_action_apply_actions(self, subtask, search_model):
+        # TODO: Rename this to _expand_action_apply_effects
         if not subtask.task.effects is None:
             added_predicates = []
             for eff in subtask.task.effects.effects:

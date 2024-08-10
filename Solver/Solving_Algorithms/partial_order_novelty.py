@@ -2,6 +2,7 @@ import warnings
 from Solver.Solving_Algorithms.partial_order import PartialOrderSolver, Model, \
     Subtask, Action, Effects, ProblemPredicate, ForallCondition, Method
 from Internal_Representation.state_novelty import StateNovelty
+from Internal_Representation.precondition import Precondition
 from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Heuristics.seen_states_pruning import SeenStatesPruning
 
@@ -21,10 +22,11 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         self.num_not_novel_methods = 0
 
     def set_search_queue(self, search_queue):
-        if issubclass(search_queue, NoveltyGBFSQueue):
+        if issubclass(search_queue, NoveltyGBFSQueue) or isinstance(search_queue, NoveltyGBFSQueue):
             super().set_search_queue(search_queue)
         else:
-            warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected", RuntimeWarning)
+            warnings.warn("This solver forces the use of Novelty, as such search queue cannot be selected",
+                          RuntimeWarning)
 
     def _setup_set_heuristic(self):
         self.set_heuristic(SeenStatesPruning)
@@ -71,16 +73,29 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
         return novelty_score
 
     def _expand_action_apply_actions(self, subtask, search_model):
+        """
+        params:
+        :subtask - grounded action to be applied
+        :search_model - model for action to be applied to
+        returns:
+        None
+        """
         novelty = 0
-        if not subtask.task.effects is None:
+        effects = subtask.get_effects()
+        if effects is not None:
             added_predicates = []
-            for eff in subtask.task.effects.effects:
-                if type(eff) == Effects.Effect:
-                    novelty = self._expand_action_apply_pred_effect_novelty(eff, subtask, search_model, added_predicates, novelty)
-                elif type(eff) == Effects.ForAllEffect:
+            for eff in effects:
+                if type(eff) == Effects.Effect: # TODO: Change this to isinstance
+                    # TODO: This line is very similar to the one from the superclass
+                    # TODO: is there a way that we can prevent having an entire new method for a small change
+                    novelty = self._expand_action_apply_pred_effect_novelty(eff, subtask, search_model, added_predicates
+                                                                            , novelty)
+                # elif type(eff) == Effects.ForAllEffect:
+                elif isinstance(eff, Effects.ForAllEffect):
                     novelty = self._expand_action_apply_forall_effect_novelty(eff, subtask, search_model, novelty)
                 else:
-                    raise NotImplementedError
+                    raise TypeError('Type \'{}\' is not supported as an effect to apply in this method!'.format(
+                        type(eff).__name__))
         return novelty
 
     def _expand_action_apply_pred_effect_novelty(self, eff, subtask, search_model, added_predicates, novelty):
@@ -97,9 +112,10 @@ class PartialOrderNoveltySolver(PartialOrderSolver):
 
     def _expand_action_apply_forall_effect_novelty(self, eff, subtask, search_model, novelty):
         # Get parameters
-        assert type(eff.precondition.head) == ForallCondition
-        obs = eff.precondition.head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
-        forall_var_name = eff.precondition.head.selected_variable
+        precondition_head = eff.get_precondition().get_head()
+        assert isinstance(precondition_head, ForallCondition)
+        obs = precondition_head.get_satisfying_objects(subtask.given_params, search_model, self.problem)
+        forall_var_name = precondition_head.selected_variable
         # Iterate over found parameters
         for o in obs:
             for e in eff.effects:

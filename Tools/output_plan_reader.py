@@ -1,17 +1,21 @@
 import argparse
-import os.path, os
+import os
+import os.path
 import sys
 import pickle
 
+# TODO: Clean up this mess of imports
 original_path = os.getcwd()
 try:
     from Solver.Models.default_model import DefaultModel
     from Solver.Solving_Algorithms.solver import Solver
+    from runner import Runner
 except:
     os.chdir("../..")
     sys.path.insert(1, os.getcwd())
     from Solver.Models.default_model import DefaultModel
     from Solver.Solving_Algorithms.solver import Solver
+    from runner import Runner
     os.chdir(original_path)
 
 """Plans can be output and stored as pickle objects. This file opens the file and prints the contents"""

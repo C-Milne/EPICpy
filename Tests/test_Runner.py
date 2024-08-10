@@ -1,4 +1,3 @@
-import io
 import subprocess
 import unittest
 import unittest.mock
@@ -21,11 +20,12 @@ from Solver.Heuristics.tree_distance import TreeDistance
 from Solver.Heuristics.delete_relaxed import DeleteRelaxed
 from Solver.Parameter_Selection.All_Parameters import AllParameters
 from Solver.Parameter_Selection.Requirement_Selection import RequirementSelection
-from Solver.Solving_Algorithms.total_order import TotalOrderSolver
 from Solver.Search_Queues.Greedy_Best_First_Search_Queue import GBFSSearchQueue
+from Solver.Search_Queues.Novelty_GBFS_Search_Queue import NoveltyGBFSQueue
 from Solver.Progress_Tracking.panda_verify_format import PandaVerifyFormatTracker
 from Solver.Models.PandaVerifyModel import PandaVerifyModel
 from Solver.Models.model import Model
+from Solver.Solving_Algorithms.partial_order_novelty import PartialOrderNoveltySolver
 from Tools.output_plan_reader import read_plan, display_plan
 from Tests.TestTools.env_setup import env_setup
 
@@ -160,13 +160,13 @@ runner.py: error: Incorrect Usage."""
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
         controller.parse_domain()
         controller.parse_problem()
-        controller.set_solver_from_file('TotalOrderSolver', 'Solver/Solving_Algorithms/total_order.py')
-        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+        controller.set_solver_from_file('PartialOrderNoveltySolver', 'Solver/Solving_Algorithms/partial_order_novelty.py')
+        self.assertEqual(PartialOrderNoveltySolver.__name__, type(controller.solver).__name__)
 
     def test_runner_set_solver(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
-        controller.set_solver(TotalOrderSolver(controller.domain, controller.problem))
-        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+        controller.set_solver(PartialOrderNoveltySolver(controller.domain, controller.problem))
+        self.assertEqual(PartialOrderNoveltySolver.__name__, type(controller.solver).__name__)
 
     def test_runner_setting_SearchQueue_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
@@ -191,17 +191,14 @@ runner.py: error: Incorrect Usage."""
 
     def test_runner_setting_heu_paramselec_solver_searchQueue(self):
         controller = Runner(self.rover_col_path + "domain.hddl", self.rover_col_path + "p02.hddl")
-        controller.parse_domain()
-        controller.parse_problem()
-        controller.set_solver(TotalOrderSolver)
+        controller.set_solver(PartialOrderNoveltySolver)
         controller.set_heuristic(DeleteRelaxed)
         controller.set_parameter_selector(AllParameters)
-        controller.set_search_queue(GBFSSearchQueue)
 
-        self.assertEqual(TotalOrderSolver.__name__, type(controller.solver).__name__)
+        self.assertEqual(PartialOrderNoveltySolver.__name__, type(controller.solver).__name__)
         self.assertEqual(DeleteRelaxed.__name__, type(controller.solver.search_models.heuristic).__name__)
         self.assertEqual(AllParameters.__name__, type(controller.solver.parameter_selector).__name__)
-        self.assertEqual(GBFSSearchQueue.__name__, type(controller.solver.search_models).__name__)
+        self.assertEqual(NoveltyGBFSQueue.__name__, type(controller.solver.search_models).__name__)
 
     def test_runner_setting_progressTracker_from_path(self):
         controller = Runner(self.basic_domain_path, self.basic_pb1_path)
@@ -630,7 +627,7 @@ Search Models Created During Search: 3
         try:
             res = subprocess.run(
                 [self.python_command, "./runner.py", "Examples/Basic/basic.hddl", "Examples/Basic/pb1.hddl",
-                 "-solverModName", "TotalOrderSolver", "-solverPath", "Solver/Solving_Algorithms/total_order.py"],
+                 "-solverModName", "PartialOrderNoveltySolver", "-solverPath", "Solver/Solving_Algorithms/partial_order_novelty.py"],
                 check=True, capture_output=True, text=True).stdout
         except Exception as e:
             msg = e.stderr  # This is for debugger inspection only

@@ -17,13 +17,16 @@ class Effects:
     class ForAllEffect:
         def __init__(self, parameter, precondition, negated):
             self.parameters = parameter
-            self.precondition = precondition
+            self.precondition = precondition   # TODO: Make this private
             self.effects = []
             self.negated = negated
 
         def add_effect(self, effect):
             assert isinstance(effect, Effects.Effect)
             self.effects.append(effect)
+
+        def get_precondition(self):
+            return self.precondition
 
     def __init__(self):
         self.effects = []
@@ -51,6 +54,13 @@ class Effects:
         self.effects.append(self.RunTimeEffect(parameter))
 
     def add_forall_effect(self, parameter: Parameter, preconditions: Precondition, effects, negated: bool):
+        """Params:  - parameter : The parameter being used across the effects in the forall statement -
+                                  "For all X in list"
+                    - preconditions : criteria for selecting objects to apply the for all effect with
+                    - effects : List of Effect objects
+                    - Negated : Are we checking for the presence of the facts or omission
+            Returns: None
+        """
         for_ef = self.ForAllEffect(parameter, preconditions, negated)
         for e in effects:
             assert isinstance(e, self.Effect)

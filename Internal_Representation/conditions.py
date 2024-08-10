@@ -165,11 +165,11 @@ class ForAllCondition(Condition):
     def _collect_objects(self, param_dict, search_model, problem) -> list:
         if type(self.selector) == tuple and self.selector[0] == "type":
             return problem.get_objects_of_type(self.selector[1])
-        elif isinstance(self.selector, sys.modules['Internal_Representation.precondition'].Precondition):
+        elif isinstance(self.selector, sys.modules['Internal_Representation.precondition'].Precondition):   # TODO: Clean up this import
             obs = problem.get_all_objects()
 
             if self.selector_requirements is None:
-                self.selector_requirements = sys.modules['Solver.Solving_Algorithms.solver'].Requirements([], self.selector)
+                self.selector_requirements = sys.modules['Solver.Solving_Algorithms.solver'].Requirements([], self.selector)    # TODO: Clean up this import
                 self.selector_requirements.prepare_requirements()
 
             # Check there is only one unknown variable
@@ -194,6 +194,15 @@ class ForAllCondition(Condition):
             raise NotImplementedError
 
     def get_satisfying_objects(self, param_dict, search_model, problem):
+        """
+        params:
+            param_dict: {'parameter_name': object ...}
+            search_model: Model
+            problem: Problem
+
+        returns: [Object ... ] List of objects which satisfy the selection constraints of the forall condition
+
+        """
         return self._collect_objects(param_dict, search_model, problem)
 
 
