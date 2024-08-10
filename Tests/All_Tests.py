@@ -18,6 +18,7 @@ from test_problem import ProblemTests
 from test_tools_output_plan_reader import OutputPlanReaderTests
 from test_modifier import ModifierTests
 from test_partial_order_novelty import PartialOrderNoveltySolverTests
+from test_search_queue import SearchQueueTests
 
 
 def suite():
@@ -40,6 +41,7 @@ def suite():
     test_suite.addTest(unittest.makeSuite(OutputPlanReaderTests))
     test_suite.addTest(unittest.makeSuite(ModifierTests))
     test_suite.addTest(unittest.makeSuite(PartialOrderNoveltySolverTests))
+    test_suite.addTest(unittest.makeSuite(SearchQueueTests))
     return test_suite
 
 
